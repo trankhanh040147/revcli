@@ -111,6 +111,8 @@
 - [ ] Highlight active code block with distinct border
 - [ ] Show contextual hint "Press yb to copy" when code block is focused
 - [ ] `yb` yanks the highlighted block (not just last block)
+- [ ] Stop request, still retain the last request
+- [ ] Able to navigate through previous request prompt while typing current prompt
 
 ---
 
@@ -260,5 +262,7 @@
 |-----|--------|-------|
 | Navigation issues after reviews | Open | Viewport not updating properly |
 | Redundant spaces below terminal | Open | Viewport height calculation issue |
+| Can't yank the latest review | Open | Yank issue |
+| Yank code block do not work | Open | Yank issue |
 
 ---
