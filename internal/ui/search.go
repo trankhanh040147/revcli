@@ -26,11 +26,11 @@ type SearchState struct {
 
 // SearchMatch represents a match in the content
 type SearchMatch struct {
-	Line       int    // Line number (0-indexed)
-	StartCol   int    // Start column in the line
-	EndCol     int    // End column in the line
-	LineText   string // The full line text
-	MatchText  string // The matched text
+	Line      int    // Line number (0-indexed)
+	StartCol  int    // Start column in the line
+	EndCol    int    // End column in the line
+	LineText  string // The full line text
+	MatchText string // The matched text
 }
 
 // NewSearchState creates a new search state
@@ -276,4 +276,3 @@ func itoa(n int) string {
 
 	return string(result)
 }
-

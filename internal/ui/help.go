@@ -186,4 +186,3 @@ func RenderCompactHelp(state string) string {
 		return helpStyle.Render("?: help • q: quit")
 	}
 }
-

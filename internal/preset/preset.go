@@ -243,4 +243,3 @@ func List() []Preset {
 func (p *Preset) ApplyToPrompt(basePrompt string) string {
 	return basePrompt + "\n\n---\n\n" + p.Prompt
 }
-
