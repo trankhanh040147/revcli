@@ -106,13 +106,19 @@
 **Remaining Features:**
 
 ### Code Block Highlighting
-- [ ] Show cursor while navigating 
+- [ ] Show cursor while navigating
 - [ ] Detect code block under cursor based on viewport position
 - [ ] Highlight active code block with distinct border
+- [ ] Navigate between code blocks
 - [ ] Show contextual hint "Press yb to copy" when code block is focused
-- [ ] `yb` yanks the highlighted block (not just last block)
+- [ ] `yb` yanks the highlighted block (not just first/last block)
 - [ ] Stop request, still retain the last request
 - [ ] Able to navigate through previous request prompt while typing current prompt
+- [ ] Add flag to manage presets config
+
+### Yank Enhancements
+- [ ] `Y` - Yank only the last/current review (without chat history)
+- [ ] Current `y` behavior yanks full review + follow-up chat
 
 ---
 
@@ -260,9 +266,13 @@
 
 | Bug | Status | Notes |
 |-----|--------|-------|
-| Navigation issues after reviews | Open | Viewport not updating properly |
-| Redundant spaces below terminal | Open | Viewport height calculation issue |
-| Can't yank the latest review | Open | Yank issue |
-| Yank code block do not work | Open | Yank issue |
+| Navigation issues after reviews | Fixed | No longer auto-scrolls to bottom; users read from top |
+| Redundant spaces below terminal | Fixed | Dynamic viewport height calculation based on UI state |
+| Yank only copies initial review | Fixed | Now yanks full content including chat history |
+| Yank code block limited | Open | Always yanks the **last** code block; no way to select specific block (requires Code Block Highlighting feature) |
+| Panic when using --interactive flag | Fixed | Added nil checks for renderer fallback |
+| Can't type `?` in chat mode | Open | `?` opens help overlay instead of typing character |
+| Can't press Enter for newline in chat | Open | Enter sends message; no way to create multi-line input |
+| Textarea has white/highlighted background | Open | Default bubbletea textarea focus styling |
 
 ---

@@ -109,8 +109,12 @@ func NewModel(reviewCtx *appcontext.ReviewContext, client *gemini.Client, p *pre
 	si.CharLimit = 100
 	si.Width = 40
 
-	// Create renderer
-	renderer, _ := NewRenderer()
+	// Create renderer (with fallback if it fails)
+	renderer, err := NewRenderer()
+	if err != nil {
+		// Create a basic renderer as fallback
+		renderer = &Renderer{}
+	}
 
 	// Create context with cancellation
 	ctx, cancel := context.WithCancel(context.Background())
@@ -178,6 +182,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				// Exit search mode, keep results
 				m.state = m.previousState
 				m.searchInput.Blur()
+				m.viewport.Height = m.calculateViewportHeight()
 				return m, nil
 			case "enter":
 				// Confirm search and exit search mode
@@ -185,6 +190,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.search.Search(m.rawContent)
 				m.state = m.previousState
 				m.searchInput.Blur()
+				m.viewport.Height = m.calculateViewportHeight()
 				m.updateViewportWithSearch()
 				return m, nil
 			case "tab":
@@ -213,16 +219,19 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "esc":
 			if m.state == StateHelp {
 				m.state = m.previousState
+				m.viewport.Height = m.calculateViewportHeight()
 				return m, nil
 			}
 			if m.state == StateChatting {
 				m.state = StateReviewing
+				m.viewport.Height = m.calculateViewportHeight()
 				return m, nil
 			}
 		case "enter":
 			if m.state == StateReviewing {
 				m.state = StateChatting
 				m.textarea.Focus()
+				m.viewport.Height = m.calculateViewportHeight()
 				return m, nil
 			}
 			if m.state == StateChatting && !m.streaming {
@@ -253,6 +262,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.state = StateSearching
 				m.searchInput.SetValue(m.search.Query)
 				m.searchInput.Focus()
+				m.viewport.Height = m.calculateViewportHeight()
 				return m, textinput.Blink
 			}
 		case "n":
@@ -332,13 +342,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width = msg.Width
 		m.height = msg.Height
 
+		viewportHeight := m.calculateViewportHeight()
 		if !m.ready {
-			m.viewport = viewport.New(msg.Width, msg.Height-10)
+			m.viewport = viewport.New(msg.Width, viewportHeight)
 			m.viewport.Style = lipgloss.NewStyle().Padding(0, 2)
 			m.ready = true
 		} else {
 			m.viewport.Width = msg.Width
-			m.viewport.Height = msg.Height - 10
+			m.viewport.Height = viewportHeight
 		}
 		m.textarea.SetWidth(msg.Width - 4)
 
@@ -362,13 +373,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case ChatResponseMsg:
 		m.streaming = false
 		m.chatHistory = append(m.chatHistory, ChatMessage{Role: "assistant", Content: msg.Response})
-		m.updateViewport()
+		m.updateViewportAndScroll()
 
 	case ChatErrorMsg:
 		m.streaming = false
 		m.errorMsg = msg.Err.Error()
 		m.chatHistory = append(m.chatHistory, ChatMessage{Role: "assistant", Content: "Error: " + msg.Err.Error()})
-		m.updateViewport()
+		m.updateViewportAndScroll()
 
 	case yankTimeoutMsg:
 		// Timeout for yank combo - if lastKeyWasY is still true, yank entire review
@@ -379,10 +390,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case YankMsg:
 		m.yankFeedback = fmt.Sprintf("✓ Copied %s to clipboard!", msg.Type)
+		m.viewport.Height = m.calculateViewportHeight()
 		return m, ClearYankFeedbackCmd(2 * time.Second)
 
 	case YankFeedbackMsg:
 		m.yankFeedback = ""
+		m.viewport.Height = m.calculateViewportHeight()
 	}
 
 	// Update textarea in chat mode
@@ -415,7 +428,18 @@ func (m Model) sendChatMessage(question string) tea.Cmd {
 }
 
 // updateViewport updates the viewport content
+// scrollToBottom determines whether to scroll to the bottom after update
 func (m *Model) updateViewport() {
+	m.updateViewportWithScroll(false)
+}
+
+// updateViewportAndScroll updates viewport and scrolls to bottom (for chat responses)
+func (m *Model) updateViewportAndScroll() {
+	m.updateViewportWithScroll(true)
+}
+
+// updateViewportWithScroll updates the viewport content with optional scroll
+func (m *Model) updateViewportWithScroll(scrollToBottom bool) {
 	var content strings.Builder
 
 	// Render the main review response
@@ -455,7 +479,11 @@ func (m *Model) updateViewport() {
 
 	m.rawContent = content.String()
 	m.viewport.SetContent(m.rawContent)
-	m.viewport.GotoBottom()
+
+	// Only scroll to bottom for chat updates, not initial review
+	if scrollToBottom {
+		m.viewport.GotoBottom()
+	}
 }
 
 // updateViewportWithSearch updates the viewport with search highlighting
@@ -479,11 +507,46 @@ func (m *Model) updateViewportWithSearch() {
 	m.viewport.SetContent(displayContent)
 }
 
+// calculateViewportHeight calculates the dynamic viewport height based on UI state
+func (m *Model) calculateViewportHeight() int {
+	// Base reserved lines: header (2) + footer (2)
+	reserved := 4
+
+	// Search bar when active
+	if m.state == StateSearching {
+		reserved += 2
+	}
+
+	// Yank feedback when showing
+	if m.yankFeedback != "" {
+		reserved += 1
+	}
+
+	// Chat textarea when in chat mode
+	if m.state == StateChatting {
+		reserved += 4
+	}
+
+	height := m.height - reserved
+	if height < 5 {
+		height = 5 // Minimum height
+	}
+	return height
+}
+
 // scrollToCurrentMatch scrolls the viewport to show the current match
 func (m *Model) scrollToCurrentMatch() {
 	line := m.search.CurrentMatchLine()
 	if line < 0 {
 		return
+	}
+
+	// In filter mode, translate original line to filtered view index
+	if m.search.Mode == SearchModeFilter {
+		line = m.search.FilteredLineIndex(line)
+		if line < 0 {
+			return
+		}
 	}
 
 	// Calculate approximate line position and scroll there
@@ -501,17 +564,39 @@ func (m *Model) scrollToCurrentMatch() {
 // yankReview yanks the entire review content to clipboard
 func (m *Model) yankReview() tea.Cmd {
 	return func() tea.Msg {
-		content := m.reviewResponse
-		if content == "" {
+		var content strings.Builder
+
+		// Use raw review response (markdown without ANSI codes)
+		if m.reviewResponse != "" {
+			content.WriteString(m.reviewResponse)
+		}
+
+		// Add raw chat history
+		if len(m.chatHistory) > 0 {
+			content.WriteString("\n\n---\n\n## Follow-up Chat\n\n")
+			for _, msg := range m.chatHistory {
+				if msg.Role == "user" {
+					content.WriteString("**You:** ")
+					content.WriteString(msg.Content)
+				} else {
+					content.WriteString("**Assistant:**\n")
+					content.WriteString(msg.Content)
+				}
+				content.WriteString("\n\n")
+			}
+		}
+
+		result := content.String()
+		if result == "" {
 			return nil
 		}
 
-		err := clipboard.WriteAll(content)
+		err := clipboard.WriteAll(result)
 		if err != nil {
 			return ChatErrorMsg{Err: fmt.Errorf("failed to copy to clipboard: %w", err)}
 		}
 
-		return YankMsg{Content: content, Type: "review"}
+		return YankMsg{Content: result, Type: "review"}
 	}
 }
 

@@ -79,6 +79,9 @@ func NewRenderer() (*Renderer, error) {
 
 // RenderMarkdown renders markdown content for the terminal
 func (r *Renderer) RenderMarkdown(content string) (string, error) {
+	if r == nil || r.glamour == nil {
+		return content, nil // Return raw content if renderer not available
+	}
 	return r.glamour.Render(content)
 }
 
