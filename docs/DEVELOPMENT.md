@@ -282,3 +282,4 @@
 | Textarea has white/highlighted background | Fixed | Custom textarea styling with rounded borders |
 
 ---
+
