@@ -50,9 +50,18 @@ var (
 
 	// Border style for content boxes
 	boxStyle = lipgloss.NewStyle().
-			Border(lipgloss.RoundedBorder()).
-			BorderForeground(lipgloss.Color("#4B5563")).
-			Padding(1, 2)
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color("#4B5563")).
+		Padding(1, 2)
+
+	// Code block border style for active highlighting
+	codeBlockBorderStyle = lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color("#7C3AED")).
+		BorderTop(true).
+		BorderBottom(true).
+		BorderLeft(true).
+		BorderRight(true)
 
 	// Divider
 	dividerStyle = lipgloss.NewStyle().

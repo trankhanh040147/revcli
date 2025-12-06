@@ -74,7 +74,7 @@
 
 # v0.3 - Short Flags & Vim UX
 
-**Status:** In Progress
+**Status:** Implemented, In Review
 
 **Features Implemented:**
 
@@ -111,20 +111,27 @@
 
 **Remaining Features:**
 
-### Code Block Highlighting
-- [ ] Show cursor while navigating
-- [ ] Detect code block under cursor based on viewport position
-- [ ] Highlight active code block with distinct border
-- [ ] Navigate between code blocks
-- [ ] Show contextual hint "Press yb to copy" when code block is focused
-- [ ] `yb` yanks the highlighted block (not just first/last block)
-- [ ] Stop request, still retain the last request
-- [ ] Able to navigate through previous request prompt while typing current prompt
-- [ ] Add flag to manage presets config
+### Code Block Highlighting ✅
+- [x] Show cursor while navigating - Track viewport position
+- [x] Detect code block under cursor based on viewport position
+- [x] Highlight active code block with distinct border (purple border)
+- [x] Navigate between code blocks - `[` and `]` keys
+- [x] Show contextual hint "Press yb to copy" when code block is focused (in help panel)
+- [x] `yb` yanks the highlighted block (not just first/last block)
+
+### Chat/Request Management ✅
+- [x] Stop request - `Ctrl+X` cancels streaming requests while retaining partial response
+- [x] Navigate through previous request prompt - `Ctrl+P` (previous) and `Ctrl+N` (next) in chat mode
+
+### Configuration ✅
+- [x] Preset management commands - `revcli preset list/create/delete/show`
 
 ### Yank Enhancements ✅
 - [x] `Y` - Yank only the last/current review (without chat history)
 - [x] `y` - Yank entire conversation (review + follow-up chat)
+
+### Refactor (after finish all features)
+- [ ] Refactor all hardcoded values to contants
 
 ---
 
