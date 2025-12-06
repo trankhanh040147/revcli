@@ -103,6 +103,17 @@ func NewModel(reviewCtx *appcontext.ReviewContext, client *gemini.Client, p *pre
 	ta.SetHeight(3)
 	ta.ShowLineNumbers = false
 
+	// Custom textarea styling to avoid white background and row highlighting
+	ta.FocusedStyle.Base = lipgloss.NewStyle().
+		BorderStyle(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color("#7C3AED"))
+	ta.BlurredStyle.Base = lipgloss.NewStyle().
+		BorderStyle(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color("#4B5563"))
+	// Remove cursor line highlighting
+	ta.FocusedStyle.CursorLine = lipgloss.NewStyle()
+	ta.BlurredStyle.CursorLine = lipgloss.NewStyle()
+
 	// Create search input
 	si := textinput.New()
 	si.Placeholder = "Search..."
@@ -160,7 +171,6 @@ func (m Model) startReview() tea.Cmd {
 		_, err := m.client.SendMessageStream(m.ctx, m.reviewCtx.UserPrompt, func(chunk string) {
 			fullResponse.WriteString(chunk)
 		})
-
 		if err != nil {
 			return ReviewErrorMsg{Err: err}
 		}
@@ -234,6 +244,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.viewport.Height = m.calculateViewportHeight()
 				return m, nil
 			}
+			// In chat mode, let textarea handle Enter for newlines
+		case "alt+enter":
+			// Send message with Alt+Enter in chat mode
 			if m.state == StateChatting && !m.streaming {
 				question := strings.TrimSpace(m.textarea.Value())
 				if question != "" {
@@ -244,9 +257,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 			}
 
-		// Help overlay
+		// Help overlay (only in reviewing mode, not chatting - let textarea handle ?)
 		case "?":
-			if m.state == StateReviewing || m.state == StateChatting {
+			if m.state == StateReviewing {
 				m.previousState = m.state
 				m.state = StateHelp
 				return m, nil
@@ -300,6 +313,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				// 'yb' combo - yank code block
 				m.lastKeyWasY = false
 				return m, m.yankCodeBlock()
+			}
+			m.lastKeyWasY = false
+		case "Y":
+			// Yank only the last/most recent response
+			if m.state == StateReviewing {
+				m.lastKeyWasY = false
+				return m, m.yankLastResponse()
 			}
 			m.lastKeyWasY = false
 
@@ -634,6 +654,39 @@ func (m *Model) yankCodeBlock() tea.Cmd {
 	}
 }
 
+// yankLastResponse yanks only the last/most recent assistant response
+func (m *Model) yankLastResponse() tea.Cmd {
+	return func() tea.Msg {
+		var content string
+
+		// If there's chat history, get the last assistant message
+		if len(m.chatHistory) > 0 {
+			for i := len(m.chatHistory) - 1; i >= 0; i-- {
+				if m.chatHistory[i].Role == "assistant" {
+					content = m.chatHistory[i].Content
+					break
+				}
+			}
+		}
+
+		// If no chat history or no assistant message found, use the initial review
+		if content == "" {
+			content = m.reviewResponse
+		}
+
+		if content == "" {
+			return nil
+		}
+
+		err := clipboard.WriteAll(content)
+		if err != nil {
+			return ChatErrorMsg{Err: fmt.Errorf("failed to copy to clipboard: %w", err)}
+		}
+
+		return YankMsg{Content: content, Type: "last response"}
+	}
+}
+
 // View renders the UI
 func (m Model) View() string {
 	if !m.ready {
@@ -705,7 +758,7 @@ func (m Model) View() string {
 		}
 		s.WriteString(RenderHelp(helpText))
 	} else if m.state == StateChatting {
-		s.WriteString(RenderHelp("enter: send • esc: back • ?: help • q: quit"))
+		s.WriteString(RenderHelp("alt+enter: send • esc: back • q: quit"))
 	} else {
 		s.WriteString(RenderHelp("q: quit"))
 	}

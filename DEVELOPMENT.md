@@ -17,7 +17,11 @@
 ### Keyboard-First UX
 - Every action should be accessible via keyboard
 - `?` shows help overlay with all keybindings
+- **IMPORTANT:** When adding new keyboard shortcuts, always update the help panel (`internal/ui/help.go`) to document them
 - Minimize mouse dependency
+
+### Coding Styles
+- Define constants in [...constants.go], no hardcoding
 
 ---
 
@@ -94,9 +98,11 @@
 - [x] Help: `?` to show keybindings overlay
 
 ### Yank to Clipboard ✅
-- [x] `y` - Yank entire review to clipboard
+- [x] `y` - Yank entire review + chat history to clipboard
+- [x] `Y` - Yank only last response (without chat history)
 - [x] `yb` - Yank code block (currently yanks last code block)
 - [x] Visual feedback when yanked (2-second toast notification)
+- [x] Help panel (`?`) documents all yank keybindings
 
 ### Review Presets ✅
 - [x] `--preset <name>` / `-p` - Use predefined review style
@@ -116,9 +122,9 @@
 - [ ] Able to navigate through previous request prompt while typing current prompt
 - [ ] Add flag to manage presets config
 
-### Yank Enhancements
-- [ ] `Y` - Yank only the last/current review (without chat history)
-- [ ] Current `y` behavior yanks full review + follow-up chat
+### Yank Enhancements ✅
+- [x] `Y` - Yank only the last/current review (without chat history)
+- [x] `y` - Yank entire conversation (review + follow-up chat)
 
 ---
 
@@ -271,8 +277,8 @@
 | Yank only copies initial review | Fixed | Now yanks full content including chat history |
 | Yank code block limited | Open | Always yanks the **last** code block; no way to select specific block (requires Code Block Highlighting feature) |
 | Panic when using --interactive flag | Fixed | Added nil checks for renderer fallback |
-| Can't type `?` in chat mode | Open | `?` opens help overlay instead of typing character |
-| Can't press Enter for newline in chat | Open | Enter sends message; no way to create multi-line input |
-| Textarea has white/highlighted background | Open | Default bubbletea textarea focus styling |
+| Can't type `?` in chat mode | Fixed | `?` now only triggers help in reviewing mode, passes through in chat |
+| Can't press Enter for newline in chat | Fixed | Changed to `Alt+Enter` to send; Enter creates newlines |
+| Textarea has white/highlighted background | Fixed | Custom textarea styling with rounded borders |
 
 ---

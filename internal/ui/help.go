@@ -62,14 +62,16 @@ func (h *HelpOverlay) Render() string {
 		{
 			title: "Clipboard",
 			bindings: []keybinding{
-				{"y", "Yank entire review"},
+				{"y", "Yank entire review + chat history"},
+				{"Y", "Yank only last response"},
 				{"yb", "Yank code block under cursor"},
 			},
 		},
 		{
 			title: "Chat",
 			bindings: []keybinding{
-				{"Enter", "Enter chat mode / Send message"},
+				{"Enter", "Enter chat mode / Create newline"},
+				{"Alt+Enter", "Send message"},
 				{"Esc", "Exit chat mode"},
 			},
 		},
