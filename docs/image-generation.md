@@ -17,6 +17,7 @@ The image generation feature allows users to generate images from text prompts u
 - [x] Token usage display
 - [x] Cost calculation and display (USD)
 - [x] Cost display in VND (Vietnamese Dong)
+- [x] Cost estimation before generation (USD and VND)
 - [x] Image data extraction and saving
 - [x] Text description extraction (if provided by API)
 
@@ -47,7 +48,11 @@ cmd/
 - USD to VND exchange rate
 
 #### 2. Cost Calculation (`internal/image/cost.go`)
-- `CalculateCost()` function computes cost based on:
+- `EstimateCost()` function estimates cost before generation:
+  - Estimates input tokens from prompt length (~1 token per 4 characters)
+  - Uses fixed image output pricing based on resolution
+  - Returns estimated `CostBreakdown` in USD and VND
+- `CalculateCost()` function computes actual cost after generation:
   - Input tokens: $2.00 per 1M tokens
   - Output text tokens: $12.00 per 1M tokens
   - Output images: Fixed pricing by resolution
@@ -80,10 +85,11 @@ cmd/
   - `--interactive` / `-i`: Interactive mode (placeholder)
   - `--no-interactive` / `-I`: Force CLI-only mode
 - Displays:
+  - Estimated cost before generation (USD and VND)
   - Success message with file path
   - Text description (if available)
   - Token usage breakdown
-  - Cost breakdown in USD and VND
+  - Actual cost breakdown in USD and VND (for comparison with estimate)
 
 ## Pricing Reference
 
@@ -118,6 +124,10 @@ revcli generate-image -p "Futuristic cityscape" -r 4K -o city.png
 ## Output Format
 
 ```
+Estimated cost:
+  $0.0013 (Input: $0.0003, Output: $0.0010)
+  ~32.5 VND (Input: ~7.5 VND, Output: ~25.0 VND)
+
 Generating image...
 Prompt: A beautiful sunset over mountains
 Aspect Ratio: 1:1
@@ -146,13 +156,19 @@ The image generation feature is unrelated to code review functionality. Keeping 
 - Falls back to token-based calculation for unknown resolutions
 - Handles both image and text outputs separately
 
+### Cost Estimation Approach
+- Estimates input tokens using heuristic: ~1 token per 4 characters
+- Uses fixed image output pricing based on resolution (same as actual cost)
+- Provides cost preview before generation to help users make informed decisions
+- Estimation is conservative (typically slightly overestimates) to avoid surprises
+
 ## Future Enhancements
 
 ### Planned Features
 - [ ] Interactive TUI mode for prompt input and parameter selection
 - [ ] Batch image generation from multiple prompts
 - [ ] Image preview in terminal (if supported)
-- [ ] Cost estimation before generation
+- [x] Cost estimation before generation
 - [ ] Support for additional image models as they become available
 - [ ] Image editing/refinement capabilities
 
@@ -179,6 +195,8 @@ The image generation feature is unrelated to code review functionality. Keeping 
 - [x] Token usage is accurate
 - [x] Cost calculation is correct for different resolutions
 - [x] VND conversion displays correctly
+- [x] Cost estimation displays before generation
+- [x] Cost estimation is reasonably accurate
 - [x] File saving works with custom paths
 - [x] Directory creation for nested paths
 - [x] Error handling for invalid parameters

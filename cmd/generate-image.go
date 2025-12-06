@@ -90,6 +90,23 @@ func runGenerateImage(cmd *cobra.Command, args []string) error {
 		}
 	}
 
+	// Estimate cost before generation
+	estimatedCost := image.EstimateCost(imagePrompt, imageResolution)
+	if estimatedCost != nil {
+		fmt.Println("Estimated cost:")
+		fmt.Printf("  $%.6f (Input: $%.6f, Output: $%.6f)\n",
+			estimatedCost.TotalCost,
+			estimatedCost.InputCost,
+			estimatedCost.OutputCost,
+		)
+		fmt.Printf("  ~%.1f VND (Input: ~%.1f VND, Output: ~%.1f VND)\n",
+			estimatedCost.TotalCostVND,
+			estimatedCost.InputCostVND,
+			estimatedCost.OutputCostVND,
+		)
+		fmt.Println()
+	}
+
 	// Generate image
 	fmt.Println("Generating image...")
 	fmt.Printf("Prompt: %s\n", imagePrompt)
