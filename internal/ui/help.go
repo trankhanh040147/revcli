@@ -60,16 +60,28 @@ func (h *HelpOverlay) Render() string {
 			},
 		},
 		{
+			title: "Code Blocks",
+			bindings: []keybinding{
+				{"[", "Previous code block"},
+				{"]", "Next code block"},
+				{"yb", "Yank highlighted code block"},
+			},
+		},
+		{
 			title: "Clipboard",
 			bindings: []keybinding{
-				{"y", "Yank entire review"},
-				{"yb", "Yank code block under cursor"},
+				{"y", "Yank entire review + chat history"},
+				{"Y", "Yank only last response"},
 			},
 		},
 		{
 			title: "Chat",
 			bindings: []keybinding{
-				{"Enter", "Enter chat mode / Send message"},
+				{"Enter", "Enter chat mode / Create newline"},
+				{"Alt+Enter", "Send message"},
+				{"Ctrl+P", "Previous prompt"},
+				{"Ctrl+N", "Next prompt"},
+				{"Ctrl+X", "Cancel request"},
 				{"Esc", "Exit chat mode"},
 			},
 		},

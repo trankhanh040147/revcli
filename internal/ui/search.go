@@ -106,6 +106,33 @@ func (s *SearchState) CurrentMatchLine() int {
 	return s.Matches[s.CurrentMatch].Line
 }
 
+// FilteredLineIndex translates an original line number to its index in the filtered view.
+// Returns -1 if the line is not in the filtered set.
+func (s *SearchState) FilteredLineIndex(originalLine int) int {
+	if len(s.Matches) == 0 {
+		return -1
+	}
+
+	// Collect unique line numbers with matches in order
+	seen := make(map[int]bool)
+	var uniqueLines []int
+	for _, match := range s.Matches {
+		if !seen[match.Line] {
+			seen[match.Line] = true
+			uniqueLines = append(uniqueLines, match.Line)
+		}
+	}
+
+	// Find the index of the original line in the filtered view
+	for idx, line := range uniqueLines {
+		if line == originalLine {
+			return idx
+		}
+	}
+
+	return -1
+}
+
 // ToggleMode switches between highlight and filter modes
 func (s *SearchState) ToggleMode() {
 	if s.Mode == SearchModeHighlight {

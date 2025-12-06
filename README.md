@@ -112,14 +112,62 @@ If you're confident there are no secrets in your code (use with caution):
 revcli review --force
 ```
 
+### Use Review Presets
+
+Apply predefined review styles for focused analysis:
+
+```bash
+# Quick, high-level review
+revcli review --preset quick
+
+# Comprehensive, detailed review
+revcli review --preset strict
+
+# Security-focused review
+revcli review --preset security
+
+# Performance optimization focus
+revcli review --preset performance
+```
+
+Available presets: `quick`, `strict`, `security`, `performance`, `logic`, `style`, `typo`, `naming`
+
+You can also create custom presets in `~/.config/revcli/presets/*.yaml`. See [Development Roadmap](docs/DEVELOPMENT.md) for details.
+
+### Manage Presets
+
+Manage your custom presets with dedicated commands:
+
+```bash
+# List all presets (built-in and custom)
+revcli preset list
+
+# Create a new custom preset
+revcli preset create my-preset
+
+# Show preset details
+revcli preset show my-preset
+
+# Delete a custom preset
+revcli preset delete my-preset
+```
+
 ## Interactive Mode
 
 When running in interactive mode (default), you can:
 
 - **View the review:** The AI analysis is displayed in a scrollable viewport
-- **Ask follow-up questions:** Press `Enter` to enter chat mode
-- **Navigate:** Use arrow keys or scroll to navigate the review
+- **Ask follow-up questions:** Press `Enter` to enter chat mode, then `Alt+Enter` to send
+- **Navigate:** Use Vim-style keys (`j/k` for up/down, `g/G` for top/bottom) or arrow keys
+- **Code blocks:** Press `[` and `]` to navigate between code blocks, `yb` to copy highlighted block
+- **Search:** Press `/` to search within the review, `n/N` for next/previous match
+- **Yank to clipboard:** Press `y` to copy entire review, `Y` for last response only, `yb` for code blocks
+- **Prompt history:** In chat mode, use `Ctrl+P` (previous) and `Ctrl+N` (next) to navigate prompt history
+- **Cancel requests:** Press `Ctrl+X` to cancel a streaming request
+- **Help:** Press `?` to see all available keybindings
 - **Exit:** Press `q` to quit, `Esc` to exit chat mode
+
+See the [help overlay](docs/DEVELOPMENT.md#vim-style-keybindings) for the complete list of keyboard shortcuts.
 
 ## Context Preview
 
@@ -216,18 +264,37 @@ The changes implement a new user authentication handler...
 
 ## Command Reference
 
-| Flag | Description |
-|------|-------------|
-| `--base <ref>` | Base branch/commit to compare against |
-| `--staged` | Review only staged changes |
-| `--model <name>` | Gemini model (default: gemini-2.5-pro) |
-| `--force` | Skip secret detection |
-| `--no-interactive` | Disable interactive TUI |
-| `--api-key <key>` | Override GEMINI_API_KEY |
+| Flag | Short | Description |
+|------|------|-------------|
+| `--base <ref>` | `-b` | Base branch/commit to compare against |
+| `--staged` | `-s` | Review only staged changes |
+| `--model <name>` | `-m` | Gemini model (default: gemini-2.5-pro) |
+| `--force` | `-f` | Skip secret detection |
+| `--no-interactive` | `-I` | Disable interactive TUI |
+| `--interactive` | `-i` | Enable interactive TUI (default) |
+| `--api-key <key>` | `-k` | Override GEMINI_API_KEY |
+| `--preset <name>` | `-p` | Use predefined review preset (quick, strict, security, etc.) |
+| `--version` | `-v` | Show version information |
+
+## Development
+
+For development information, roadmap, and version-specific context:
+
+- **[Development Roadmap](docs/DEVELOPMENT.md)** - Complete roadmap with all versions, features, and known bugs
+- **[v0.3 Development Context](docs/v0.3.md)** - Detailed context for current version development
+
+The development documentation includes:
+- Design principles and coding standards
+- Feature implementation status
+- Bug tracking and fixes
+- Technical implementation notes
+- Related file references
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+Before contributing, please review the [Development Roadmap](docs/DEVELOPMENT.md) to understand the project's direction and design principles.
 
 ## License
 

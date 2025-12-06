@@ -11,7 +11,7 @@ GIT_COMMIT=$(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 # Linker flags
 LDFLAGS=-ldflags "-X main.Version=$(VERSION) -X main.BuildTime=$(BUILD_TIME) -X main.GitCommit=$(GIT_COMMIT)"
 
-.PHONY: all build run clean test lint install help
+.PHONY: all build run clean test lint install uninstall reinstall help
 
 ## help: Show this help message
 help:
@@ -39,6 +39,14 @@ review-staged:
 ## install: Install to $GOPATH/bin
 install:
 	$(GO) install $(LDFLAGS) $(MAIN_PACKAGE)
+
+## uninstall: Remove from $GOPATH/bin
+uninstall:
+	rm -f $(shell go env GOPATH)/bin/$(BINARY_NAME)
+
+## reinstall: Uninstall and reinstall to $GOPATH/bin
+reinstall:
+	make uninstall && make install
 
 ## test: Run tests
 test:
