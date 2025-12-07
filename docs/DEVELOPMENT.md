@@ -22,6 +22,7 @@
 
 ### Coding Styles
 - Define constants in [...constants.go], no hardcoding
+- **Input Reading:** Never use `fmt.Scanln()` for multi-word input. Use `bufio.NewReader(os.Stdin).ReadString('\n')` instead, then trim with `strings.TrimSpace()` or `strings.TrimSuffix(line, "\n")`. `fmt.Scanln()` only reads up to the first whitespace, causing input buffer pollution and bugs.
 
 ---
 
@@ -287,6 +288,7 @@
 | Can't type `?` in chat mode | Fixed | `?` now only triggers help in reviewing mode, passes through in chat |
 | Can't press Enter for newline in chat | Fixed | Changed to `Alt+Enter` to send; Enter creates newlines |
 | Textarea has white/highlighted background | Fixed | Custom textarea styling with rounded borders |
+| Preset create fails with multi-word descriptions | Fixed | `fmt.Scanln()` only reads first word; replaced with `bufio.Reader` for full-line input |
 
 ---
 

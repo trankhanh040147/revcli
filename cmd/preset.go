@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,9 +16,9 @@ import (
 )
 
 var (
-	presetNameFlag     string
-	presetDescription  string
-	presetPrompt       string
+	presetNameFlag    string
+	presetDescription string
+	presetPrompt      string
 )
 
 // presetCmd represents the preset command
@@ -147,23 +149,40 @@ func runPresetCreate(cmd *cobra.Command, args []string) error {
 	description := presetDescription
 	if description == "" {
 		fmt.Print("Description: ")
-		var desc string
-		fmt.Scanln(&desc)
-		description = desc
+		reader := bufio.NewReader(os.Stdin)
+		desc, err := reader.ReadString('\n')
+		if err != nil && err != io.EOF {
+			return fmt.Errorf("failed to read description: %w", err)
+		}
+		description = strings.TrimSpace(desc)
 	}
 
 	// Get prompt
 	promptText := presetPrompt
 	if promptText == "" {
 		fmt.Println("Enter the preset prompt (press Enter twice or Ctrl+D to finish):")
+		reader := bufio.NewReader(os.Stdin)
 		var lines []string
 		emptyCount := 0
 		for {
-			var line string
-			_, err := fmt.Scanln(&line)
-			if err != nil {
+			line, err := reader.ReadString('\n')
+			if err == io.EOF {
+				// EOF: add any partial line content, then break
+				line = strings.TrimSuffix(line, "\n")
+				if line != "" {
+					lines = append(lines, line)
+				}
+				// If we have no content at all, user cancelled
+				if len(lines) == 0 {
+					return fmt.Errorf("prompt input cancelled")
+				}
 				break
 			}
+			if err != nil {
+				return fmt.Errorf("failed to read prompt: %w", err)
+			}
+			// Trim the newline character
+			line = strings.TrimSuffix(line, "\n")
 			if line == "" {
 				emptyCount++
 				if emptyCount >= 2 {
@@ -293,7 +312,7 @@ func listCustomPresets() ([]string, error) {
 	}
 
 	presetDir := filepath.Join(homeDir, ".config", "revcli", "presets")
-	
+
 	// Check if directory exists
 	if _, err := os.Stat(presetDir); os.IsNotExist(err) {
 		return []string{}, nil
@@ -314,4 +333,3 @@ func listCustomPresets() ([]string, error) {
 
 	return presets, nil
 }
-
