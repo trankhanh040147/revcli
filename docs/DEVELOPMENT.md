@@ -163,6 +163,9 @@
 
 **Features:**
 
+### Setting Management
+- [ ] Can change default setting (new subcommand)
+
 ### Code Block Navigation
 - [ ] `[` / `]` - Navigate to previous/next code block
 - [ ] Code block index indicator (e.g., "Block 2/5")
@@ -287,6 +290,7 @@
 
 > Raw ideas for future consideration
 
+- Make the base prompt more generic/neutral (Not just Go reviewer)
 - Compare two branches directly (`revcli diff main feature-branch`)
 - Review specific files only (`revcli review src/api.go`)
 - Ignore patterns via `.revignore` file
