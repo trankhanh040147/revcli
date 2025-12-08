@@ -326,6 +326,9 @@
 | IS04: Missing feature to set default preset | Fixed | Added `preset default` command and config.yaml support for default preset |
 | IS05: Preset gets appended to system prompt, should optionally replace it | Fixed | Added `replace` field to preset YAML and `--preset-replace` flag to review command |
 | Flag redefined panic in preset command | Fixed | Duplicate flag definitions in `init()` function caused panic. Fixed by removing duplicate flag registrations. Always check for duplicate flag definitions when adding new flags. |
+| IS06: No helper found when run `rv review -h` | Fixed | Added `--preset-replace` flag to help examples in command Long description |
+| IS07: Flag is too long, not great for typing | Fixed | Added short alias `-R` for `--preset-replace` flag using `BoolVarP` |
+| IS08: Missing feature: edit system prompt | Fixed | Added `preset system` command with `show/edit/reset` subcommands. System prompt can be customized via `~/.config/revcli/presets/system.yaml` |
 
 ---
 

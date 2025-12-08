@@ -6,6 +6,7 @@ import (
 
 	"github.com/trankhanh040147/revcli/internal/filter"
 	"github.com/trankhanh040147/revcli/internal/git"
+	"github.com/trankhanh040147/revcli/internal/preset"
 	"github.com/trankhanh040147/revcli/internal/prompt"
 )
 
@@ -96,7 +97,13 @@ func BuildFromDiff(rawDiff string, files map[string]string) *ReviewContext {
 }
 
 // GetSystemPrompt returns the system prompt for the LLM
+// Checks for custom system prompt file first, falls back to default if not found
 func GetSystemPrompt() string {
+	customPrompt, found, err := preset.LoadSystemPrompt()
+	if err == nil && found {
+		return customPrompt
+	}
+	// Fallback to default system prompt
 	return prompt.SystemPrompt
 }
 

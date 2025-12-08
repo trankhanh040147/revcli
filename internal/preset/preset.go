@@ -487,3 +487,88 @@ func ClearDefaultPreset() error {
 	config.DefaultPreset = ""
 	return SaveConfig(config)
 }
+
+// GetSystemPromptPath returns the path to the system prompt preset file
+func GetSystemPromptPath() (string, error) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(homeDir, ".config", "revcli", "presets", "system.yaml"), nil
+}
+
+// LoadSystemPrompt loads the system prompt from custom file or returns empty string to use default
+// Returns the prompt text and a boolean indicating if custom prompt was found
+func LoadSystemPrompt() (string, bool, error) {
+	systemPromptPath, err := GetSystemPromptPath()
+	if err != nil {
+		return "", false, err
+	}
+
+	// Check if custom system prompt file exists
+	if _, err := os.Stat(systemPromptPath); os.IsNotExist(err) {
+		return "", false, nil
+	}
+
+	// Load custom system prompt
+	data, err := os.ReadFile(systemPromptPath)
+	if err != nil {
+		return "", false, fmt.Errorf("failed to read system prompt file: %w", err)
+	}
+
+	var preset Preset
+	if err := yaml.Unmarshal(data, &preset); err != nil {
+		return "", false, fmt.Errorf("failed to parse system prompt file: %w", err)
+	}
+
+	if preset.Prompt == "" {
+		return "", false, nil
+	}
+
+	return preset.Prompt, true, nil
+}
+
+// SaveSystemPrompt saves a custom system prompt to file
+func SaveSystemPrompt(promptText string) error {
+	systemPromptPath, err := GetSystemPromptPath()
+	if err != nil {
+		return err
+	}
+
+	// Ensure preset directory exists
+	presetDir := filepath.Dir(systemPromptPath)
+	if err := os.MkdirAll(presetDir, 0755); err != nil {
+		return fmt.Errorf("failed to create preset directory: %w", err)
+	}
+
+	preset := Preset{
+		Name:        "system",
+		Description: "Custom system prompt for code reviews",
+		Prompt:      promptText,
+	}
+
+	data, err := yaml.Marshal(&preset)
+	if err != nil {
+		return fmt.Errorf("failed to marshal system prompt: %w", err)
+	}
+
+	if err := os.WriteFile(systemPromptPath, data, 0644); err != nil {
+		return fmt.Errorf("failed to write system prompt file: %w", err)
+	}
+
+	return nil
+}
+
+// DeleteSystemPrompt removes the custom system prompt file to restore default
+func DeleteSystemPrompt() error {
+	systemPromptPath, err := GetSystemPromptPath()
+	if err != nil {
+		return err
+	}
+
+	if err := os.Remove(systemPromptPath); err != nil && !os.IsNotExist(err) {
+		return fmt.Errorf("failed to delete system prompt file: %w", err)
+	}
+
+	return nil
+}

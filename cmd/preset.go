@@ -14,6 +14,7 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/trankhanh040147/revcli/internal/preset"
+	"github.com/trankhanh040147/revcli/internal/prompt"
 	"github.com/trankhanh040147/revcli/internal/ui"
 )
 
@@ -120,6 +121,43 @@ Examples:
 	RunE: runPresetDefault,
 }
 
+// presetSystemCmd manages the system prompt
+var presetSystemCmd = &cobra.Command{
+	Use:   "system",
+	Short: "Manage system prompt",
+	Long: `Manage the custom system prompt used for code reviews.
+	
+The system prompt defines the AI's role and review style. By default, a built-in
+system prompt is used. You can customize it by creating a custom system prompt.`,
+}
+
+// presetSystemShowCmd shows the current system prompt
+var presetSystemShowCmd = &cobra.Command{
+	Use:   "show",
+	Short: "Show current system prompt",
+	Long:  `Display the current system prompt (custom or default).`,
+	RunE:  runPresetSystemShow,
+}
+
+// presetSystemEditCmd edits the system prompt
+var presetSystemEditCmd = &cobra.Command{
+	Use:   "edit",
+	Short: "Edit system prompt",
+	Long: `Edit the system prompt interactively or open in editor.
+	
+If a custom system prompt exists, it will be loaded for editing.
+Otherwise, the default system prompt will be used as a starting point.`,
+	RunE: runPresetSystemEdit,
+}
+
+// presetSystemResetCmd resets the system prompt to default
+var presetSystemResetCmd = &cobra.Command{
+	Use:   "reset",
+	Short: "Reset system prompt to default",
+	Long:  `Remove the custom system prompt file to restore the default system prompt.`,
+	RunE:  runPresetSystemReset,
+}
+
 func init() {
 	rootCmd.AddCommand(presetCmd)
 	presetCmd.AddCommand(presetListCmd)
@@ -130,6 +168,11 @@ func init() {
 	presetCmd.AddCommand(presetOpenCmd)
 	presetCmd.AddCommand(presetPathCmd)
 	presetCmd.AddCommand(presetDefaultCmd)
+	presetCmd.AddCommand(presetSystemCmd)
+
+	presetSystemCmd.AddCommand(presetSystemShowCmd)
+	presetSystemCmd.AddCommand(presetSystemEditCmd)
+	presetSystemCmd.AddCommand(presetSystemResetCmd)
 
 	presetCreateCmd.Flags().StringVarP(&presetNameFlag, "name", "n", "", "Preset name")
 	presetCreateCmd.Flags().StringVarP(&presetDescription, "description", "d", "", "Preset description")
@@ -686,6 +729,146 @@ func runPresetDefault(cmd *cobra.Command, args []string) error {
 	} else {
 		fmt.Printf("Default preset: %s\n", ui.RenderSuccess(defaultPreset))
 	}
+
+	return nil
+}
+
+func runPresetSystemShow(cmd *cobra.Command, args []string) error {
+	// Load system prompt (custom or default)
+	customPrompt, found, err := preset.LoadSystemPrompt()
+	if err != nil {
+		return fmt.Errorf("failed to load system prompt: %w", err)
+	}
+
+	if found {
+		fmt.Println(ui.RenderTitle("📝 Custom System Prompt"))
+		fmt.Println()
+		fmt.Println(ui.RenderSubtitle("Current system prompt (custom):"))
+		fmt.Println(customPrompt)
+		fmt.Println()
+		systemPromptPath, _ := preset.GetSystemPromptPath()
+		fmt.Printf("Location: %s\n", systemPromptPath)
+	} else {
+		fmt.Println(ui.RenderTitle("📝 System Prompt"))
+		fmt.Println()
+		fmt.Println(ui.RenderSubtitle("Current system prompt (default):"))
+		fmt.Println(prompt.SystemPrompt)
+		fmt.Println()
+		fmt.Println("No custom system prompt found. Use 'revcli preset system edit' to create one.")
+	}
+
+	return nil
+}
+
+func runPresetSystemEdit(cmd *cobra.Command, args []string) error {
+	// Load current system prompt (custom or default)
+	customPrompt, found, err := preset.LoadSystemPrompt()
+	if err != nil {
+		return fmt.Errorf("failed to load system prompt: %w", err)
+	}
+
+	// Get current prompt (custom or default)
+	var currentPrompt string
+	if found {
+		currentPrompt = customPrompt
+	} else {
+		currentPrompt = prompt.SystemPrompt
+	}
+
+	fmt.Println(ui.RenderTitle("✏️  Editing System Prompt"))
+	fmt.Println()
+	if currentPrompt != "" {
+		fmt.Println("Current system prompt:")
+		fmt.Println(currentPrompt)
+		fmt.Println()
+	}
+	fmt.Println("Enter new system prompt (press Enter twice or Ctrl+D to finish):")
+
+	// Create a single reader for stdin to avoid data loss when input is piped
+	stdinReader := bufio.NewReader(os.Stdin)
+
+	var lines []string
+	emptyCount := 0
+	for {
+		line, err := stdinReader.ReadString('\n')
+		if err == io.EOF {
+			// EOF: add any partial line content, then break
+			line = strings.TrimSuffix(line, "\n")
+			if line != "" {
+				lines = append(lines, line)
+			}
+			// If we have no content at all, user cancelled
+			if len(lines) == 0 {
+				return fmt.Errorf("system prompt input cancelled")
+			}
+			break
+		}
+		if err != nil {
+			return fmt.Errorf("failed to read system prompt: %w", err)
+		}
+		// Trim the newline character
+		line = strings.TrimSuffix(line, "\n")
+		if line == "" {
+			emptyCount++
+			if emptyCount >= 2 {
+				break
+			}
+		} else {
+			emptyCount = 0
+			lines = append(lines, line)
+		}
+	}
+	newPrompt := strings.Join(lines, "\n")
+
+	if newPrompt == "" {
+		return fmt.Errorf("system prompt text is required")
+	}
+
+	// Save custom system prompt
+	if err := preset.SaveSystemPrompt(newPrompt); err != nil {
+		return fmt.Errorf("failed to save system prompt: %w", err)
+	}
+
+	fmt.Println()
+	systemPromptPath, _ := preset.GetSystemPromptPath()
+	fmt.Println(ui.RenderSuccess("System prompt updated successfully!"))
+	fmt.Printf("Location: %s\n", systemPromptPath)
+	fmt.Println()
+	fmt.Println("The custom system prompt will be used in all future reviews.")
+	fmt.Println("Use 'revcli preset system reset' to restore the default.")
+
+	return nil
+}
+
+func runPresetSystemReset(cmd *cobra.Command, args []string) error {
+	// Check if custom system prompt exists
+	_, found, err := preset.LoadSystemPrompt()
+	if err != nil {
+		return fmt.Errorf("failed to check system prompt: %w", err)
+	}
+
+	if !found {
+		fmt.Println("No custom system prompt found. Already using default system prompt.")
+		return nil
+	}
+
+	// Confirm deletion
+	fmt.Printf("Are you sure you want to reset the system prompt to default? (y/N): ")
+	var confirm string
+	fmt.Scanln(&confirm)
+	if strings.ToLower(confirm) != "y" && strings.ToLower(confirm) != "yes" {
+		fmt.Println("Reset cancelled.")
+		return nil
+	}
+
+	// Delete custom system prompt file
+	if err := preset.DeleteSystemPrompt(); err != nil {
+		return fmt.Errorf("failed to reset system prompt: %w", err)
+	}
+
+	fmt.Println()
+	fmt.Println(ui.RenderSuccess("System prompt reset to default successfully!"))
+	fmt.Println("The default system prompt will be used in all future reviews.")
 
 	return nil
 }

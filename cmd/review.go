@@ -15,13 +15,13 @@ import (
 )
 
 var (
-	staged          bool
-	model           string
-	force           bool
-	interactive     bool
-	baseBranch      string
-	presetName      string
-	presetReplace   bool
+	staged        bool
+	model         string
+	force         bool
+	interactive   bool
+	baseBranch    string
+	presetName    string
+	presetReplace bool
 )
 
 // reviewCmd represents the review command
@@ -46,7 +46,11 @@ Examples:
   revcli review --no-interactive
 
   # Skip secret detection check
-  revcli review --force`,
+  revcli review --force
+
+  # Use preset with replace mode (replaces base prompt)
+  revcli review --preset quick --preset-replace
+  revcli review -p quick -R`,
 	RunE: runReview,
 }
 
@@ -60,7 +64,7 @@ func init() {
 	reviewCmd.Flags().BoolVarP(&interactive, "interactive", "i", true, "Enable interactive chat mode")
 	reviewCmd.Flags().BoolP("no-interactive", "I", false, "Disable interactive chat mode")
 	reviewCmd.Flags().StringVarP(&presetName, "preset", "p", "", "Review preset (quick, strict, security, performance, logic, style, typo, naming)")
-	reviewCmd.Flags().BoolVar(&presetReplace, "preset-replace", false, "Replace base prompt with preset prompt instead of appending")
+	reviewCmd.Flags().BoolVarP(&presetReplace, "preset-replace", "R", false, "Replace base prompt with preset prompt instead of appending")
 }
 
 func runReview(cmd *cobra.Command, args []string) error {
