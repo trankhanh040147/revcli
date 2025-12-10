@@ -141,14 +141,14 @@
 
 **Features:**
 
-### Code Block Highlighting & Navigation
+### Code Block Highlighting & Navigation (In Testing)
 - [ ] Code block detection in review/chat responses
 - [ ] Visual highlighting with purple border
 - [ ] Navigate with `[` / `]` keys
 - [ ] Contextual hints and block indicators
 - [ ] `yb` yanks highlighted block
 
-### Chat/Request Management
+### Chat/Request Management (In Testing)
 - [ ] `Ctrl+X` cancels streaming requests
 - [ ] Prompt history navigation (`Ctrl+P`/`Ctrl+N`)
 - [ ] Request cancellation feedback
@@ -156,6 +156,8 @@
 ### Refactor
 - [ ] Refactor hardcoded values to constants
 
+### Prompt First
+- Prompt first before start the conversation (optional)
 
 ---
 
@@ -296,6 +298,7 @@
 - Remove `built-in` type, built-in treated as custom presets
 
 **Uncategorized**
+- Ask user for MR intention/Summary MR intention based on diff change to verify business logic
 - Make the base prompt more generic/neutral (Not just Go reviewer)
 - Compare two branches directly (`revcli diff main feature-branch`)
 - Review specific files only (`revcli review src/api.go`)
