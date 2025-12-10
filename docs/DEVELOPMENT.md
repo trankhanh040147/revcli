@@ -94,66 +94,68 @@
 
 ---
 
-# v0.3 - Short Flags & Vim UX
+# v0.3.0 - Short Flags & Preset Management ✅
 
-**Status:** Implemented, In Review
+**Status:** Completed
 
 **Features Implemented:**
 
 ### Short Flag Aliases ✅
-- [x] Add short aliases for all flags:
-  | Long | Short | Description |
-  |------|-------|-------------|
-  | `--staged` | `-s` | Review staged changes |
-  | `--base` | `-b` | Base branch/commit |
-  | `--model` | `-m` | Model selection |
-  | `--force` | `-f` | Skip secret detection |
-  | `--interactive` | `-i` | Interactive mode |
-  | `--no-interactive` | `-I` | Non-interactive mode |
-  | `--api-key` | `-k` | API key |
-  | `--preset` | `-p` | Review preset |
-- [x] Add version flag (`--version`, `-v`)
+- [x] Short aliases for all flags (`-s`, `-b`, `-m`, `-f`, `-i`, `-I`, `-k`, `-p`)
+- [x] Version flag (`--version`, `-v`)
 
 ### Vim-Style Keybindings ✅
-- [x] Navigation: `j/k` (down/up), `g/G` (top/bottom), `Ctrl+d/u` (half-page), `Ctrl+f/b` (full page)
-- [x] Search: `/` to search, `n/N` for next/prev match, `Tab` to toggle highlight/filter mode
-- [x] Help: `?` to show keybindings overlay
+- [x] Navigation: `j/k`, `g/G`, `Ctrl+d/u/f/b`
+- [x] Search: `/`, `n/N`, `Tab` toggle
+- [x] Help overlay: `?` key
 
 ### Yank to Clipboard ✅
-- [x] `y` - Yank entire review + chat history to clipboard
-- [x] `Y` - Yank only last response (without chat history)
-- [x] `yb` - Yank code block (currently yanks last code block)
-- [x] Visual feedback when yanked (2-second toast notification)
-- [x] Help panel (`?`) documents all yank keybindings
+- [x] `y` - Yank entire review + chat history
+- [x] `Y` - Yank only last response
+- [x] `yb` - Yank code block
+- [x] Visual feedback (toast notification)
 
 ### Review Presets ✅
-- [x] `--preset <name>` / `-p` - Use predefined review style
+- [x] `--preset <name>` / `-p` flag
 - [x] Built-in presets: `quick`, `strict`, `security`, `performance`, `logic`, `style`, `typo`, `naming`
 - [x] Custom presets in `~/.config/revcli/presets/*.yaml`
+- [x] Default preset support via config
+- [x] Preset replace mode (`--preset-replace` / `-R`)
 
-**Remaining Features:**
+### Preset Management Commands ✅
+- [x] `preset list` - List all presets
+- [x] `preset create` - Create custom preset
+- [x] `preset edit` - Edit custom preset (external editor)
+- [x] `preset delete` - Delete custom preset
+- [x] `preset show` - Show preset details
+- [x] `preset open` - Open preset file/directory
+- [x] `preset path` - Show preset path
+- [x] `preset default` - Set/show default preset
+- [x] `preset system` - Manage system prompt (`show/edit/reset`)
 
-### Code Block Highlighting ✅
-- [x] Show cursor while navigating - Track viewport position
-- [x] Detect code block under cursor based on viewport position
-- [x] Highlight active code block with distinct border (purple border)
-- [x] Navigate between code blocks - `[` and `]` keys
-- [x] Show contextual hint "Press yb to copy" when code block is focused (in help panel)
-- [x] `yb` yanks the highlighted block (not just first/last block)
+---
 
-### Chat/Request Management ✅
-- [x] Stop request - `Ctrl+X` cancels streaming requests while retaining partial response
-- [x] Navigate through previous request prompt - `Ctrl+P` (previous) and `Ctrl+N` (next) in chat mode
+# v0.3.1 - Code Block Navigation & Chat Enhancements
 
-### Configuration ✅
-- [x] Preset management commands - `revcli preset list/create/delete/show`
+**Status:** Planned
 
-### Yank Enhancements ✅
-- [x] `Y` - Yank only the last/current review (without chat history)
-- [x] `y` - Yank entire conversation (review + follow-up chat)
+**Features:**
 
-### Refactor (after finish all features)
-- [ ] Refactor all hardcoded values to contants
+### Code Block Highlighting & Navigation
+- [ ] Code block detection in review/chat responses
+- [ ] Visual highlighting with purple border
+- [ ] Navigate with `[` / `]` keys
+- [ ] Contextual hints and block indicators
+- [ ] `yb` yanks highlighted block
+
+### Chat/Request Management
+- [ ] `Ctrl+X` cancels streaming requests
+- [ ] Prompt history navigation (`Ctrl+P`/`Ctrl+N`)
+- [ ] Request cancellation feedback
+
+### Refactor
+- [ ] Refactor hardcoded values to constants
+
 
 ---
 
