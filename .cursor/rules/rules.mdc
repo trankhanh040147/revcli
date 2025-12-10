@@ -1,0 +1,39 @@
+---
+alwaysApply: true
+---
+# revcli - Code Review CLI Tool
+
+## Project Context
+- CLI: Go, Cobra, Bubbletea TUI, Vim navigation
+- Config: `~/.config/revcli/config.yaml`
+
+## Design Principles
+- **Vim Navigation:** `j/k`, `g/G`, `/` - Update `internal/ui/help.go` when adding shortcuts
+- **CLI Flags:** All flags have short aliases (`-f`), unique per command, no redefinition in `init()`
+- **Keyboard-First:** All actions via keyboard, `?` shows help
+
+## Coding Standards
+- **Constants:** `[...constants.go]` files, no hardcoding
+- **Input:** `bufio.NewReader(os.Stdin).ReadString('\n')`, trim with `strings.TrimSpace/TrimSuffix`. Never create multiple readers in same function (causes pipe data loss)
+- **OS:** `runtime.GOOS` for platform commands (`xdg-open`/`open`/`explorer`), `$EDITOR` for editor
+- **Config:** `~/.config/revcli/config.yaml`, ensure dir with `os.MkdirAll`, YAML, set defaults
+- **Flags:** Unique per command, verify before adding, no `init()` redefinition
+- **Streams:** Output → `os.Stdout`, logs/errors → `os.Stderr` (enables piping)
+- **Signals:** Listen `os.Interrupt`, cancel root `context` for cleanup, no `os.Exit` in library code
+- **Cobra:** Use `RunE`, return errors to `main`, validate in `Args`/`PreRunE`
+- **TTY:** Check `isatty(stdout)`, disable colors/spinners if piping or `NO_COLOR`
+- **Concurrency:** `errgroup.Group` over `sync.WaitGroup`, propagate errors, handle context cancellation
+- **Timeouts:** Default timeout for all network/IO, never hang indefinitely
+- **Map Addresses:** Cannot take address of map index expressions directly (`&map[key]`). Assign first: `val := map[key]; return &val`
+- **Go Version:** Latest stable (1.25+), update `go.mod` on releases, `go mod tidy` after bumps
+- **Dependencies:** Latest stable, `go get -u ./...` periodically, `govulncheck` for security, pin majors
+- **Go Report Card:** Target A+. `gofmt -s`, `go vet`, `staticcheck`, `ineffassign`, `misspell`. Complexity ≤15, doc exports, error wrapping: `fmt.Errorf("ctx: %w", err)`
+- **File Size:** Manage code files into small parts to reduce token costs. Split large files, keep functions focused, prefer smaller modules
+
+## Bug Fix Protocol
+1. **Global Fix:** Search (`rg`/`fd`) for similar patterns, fix **all** occurrences
+2. **Documentation:** Update "Known Bugs" in `docs/DEVELOPMENT.md`, update "Coding Styles" if anti-pattern
+3. **Testing:** Verify Interactive, Piped (`|`), Redirected (`<`), Non-interactive modes
+
+## Code Style
+- Concise bullets over paragraphs, remove fluff, preserve meaning, clear actionable code

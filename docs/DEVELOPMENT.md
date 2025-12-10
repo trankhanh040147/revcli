@@ -1,7 +1,5 @@
 # Development Roadmap
 
----
-
 ## Design Principles
 
 > These principles guide all feature development and UX decisions.
@@ -9,47 +7,43 @@
 ### Vim-Style Navigation
 - All navigation should adapt Vim-style keybindings (`j/k`, `g/G`, `/`, etc.)
 - Modal interface where appropriate (normal mode, chat mode, search mode)
+- **IMPORTANT:** When adding new keyboard shortcuts, always update the help panel (`internal/ui/help.go`) to document them
 
 ### Concise CLI Flags
 - All flags should have short aliases for easy typing
 - Example: `--force` → `-f`, `--staged` → `-s`
+- Flags must be unique per command
+- Do not redefine flags in `init()`
 
 ### Keyboard-First UX
 - Every action should be accessible via keyboard
 - `?` shows help overlay with all keybindings
-- **IMPORTANT:** When adding new keyboard shortcuts, always update the help panel (`internal/ui/help.go`) to document them
 - Minimize mouse dependency
 
-### Coding Styles
-- Define constants in [...constants.go], no hardcoding
-- **Input Reading:** Never use `fmt.Scanln()` for multi-word input. Use `bufio.NewReader(os.Stdin).ReadString('\n')` instead, then trim with `strings.TrimSpace()` or `strings.TrimSuffix(line, "\n")`. `fmt.Scanln()` only reads up to the first whitespace, causing input buffer pollution and bugs.
-- **Multiple stdin readers:** Never create multiple `bufio.NewReader(os.Stdin)` instances in the same function. Each reader has its own buffer, and when a reader goes out of scope, any unconsumed buffered data is lost. This causes data loss when input is piped or read from a file. Always create a single reader and reuse it for all stdin operations.
-- **Cross-platform file operations:** When opening files or directories in external applications, use OS detection (`runtime.GOOS`) and appropriate commands: `xdg-open` (Linux), `open` (macOS), `explorer` (Windows). For editors, check `$EDITOR` environment variable with a fallback (e.g., `vi`).
-- **Config file management:** Store user configuration in `~/.config/revcli/config.yaml`. Always ensure the config directory exists before writing (`os.MkdirAll()`). Use YAML for structured config data. Provide sensible defaults when config doesn't exist.
-- **Flag definitions:** Never define the same flag twice in `init()` functions. Cobra will panic with "flag redefined" error. When adding flags, check if they're already defined. Use `grep` to search for flag names before adding new ones. Each flag should be defined exactly once per command.
-- **Flag definitions:** Never define the same flag twice in `init()` functions. Cobra will panic with "flag redefined" error. When adding flags, check if they're already defined. Use `grep` to search for flag names before adding new ones.
+## Coding Styles
 
-### Bug Fix Reminders
+- **Constants:** Define in `[...constants.go]`. No hardcoding.
+- **Input Reading:** Avoid `fmt.Scanln` (stops at whitespace). Use `bufio.NewReader(os.Stdin).ReadString('\n')`. Trim using `strings.TrimSpace` or `TrimSuffix`.
+- **Stdin:** Never create multiple `bufio.NewReader(os.Stdin)` instances in the same function. Instantiate **once** and reuse. Multiple instances cause data loss in pipes/file reads.
+- **OS Ops:** Use `runtime.GOOS` for external commands: `xdg-open` (Linux), `open` (macOS), `explorer` (Windows). Editor: Use `$EDITOR` env var or fallback.
+- **Config:** Path: `~/.config/langtut/config.yaml`. Ensure dir exists (`os.MkdirAll`). Use YAML. Set defaults if missing.
+- **Flags:** Ensure flags are unique per command. Do not redefine in `init()`. Verify existence before adding.
+- **Streams:** Strict separation: logical output → `os.Stdout`, logs/errors/debug → `os.Stderr`. Enables clean piping (`cmd > file`).
+- **Signal Handling:** Listen for `os.Interrupt` (`SIGINT`/`SIGTERM`). Cancel root `context` to trigger graceful shutdown/cleanup. Do not use `os.Exit` deep in library code.
+- **Cobra Usage:** Use `RunE` instead of `Run`. Return errors to `main` for centralized handling/exit codes. Validate inputs in `Args` or `PreRunE`, not logic body.
+- **TTY Detection:** Check if `stdout` is a terminal (`isatty`). Disable colors, spinners, and interactive prompts if piping or if `NO_COLOR` env is present.
+- **Concurrency:** Use `errgroup.Group` over raw `sync.WaitGroup` to propagate errors and handle context cancellation across multiple goroutines.
+- **Timeouts:** Default to a timeout for all network/IO contexts. Never allow a CLI command to hang indefinitely without user feedback.
+- **Iterators:** When using Google API iterators (`google.golang.org/api/iterator`), check `if err == iterator.Done` before treating errors as exceptions. `iterator.Done` signals normal end-of-stream, not an error condition.
+- **File Size:** Manage code files into small parts to reduce token costs. Split large files, keep functions focused, prefer smaller modules.
 
-**IMPORTANT:** When fixing bugs, always:
+## Bug Fix Protocol
 
-1. **Check for similar implementations** - Search the codebase for similar patterns that might have the same issue
-   - Use `rg` (ripgrep) for text search or `fd` for file search to find similar code patterns
-   - Fix all instances, not just the reported one
-   - Example: If fixing a bug with `fmt.Scanln()`, search for all uses with `rg "fmt\.Scanln"` in the codebase
-
-2. **Document the bug and fix** - Add the bug to the Known Bugs section and update Coding Styles if it's a pattern to avoid
-   - Add to Known Bugs table with status "Fixed"
-   - Update Coding Styles section if it's a common mistake to prevent
-   - Add implementation details to help future developers
-
-3. **Test edge cases** - Verify the fix works in different scenarios
-   - Interactive terminal input
-   - Piped input (`echo "data" | command`)
-   - File redirection (`command < file`)
-   - Non-interactive mode
-
----
+1. **Global Fix:** Search codebase (`rg`/`fd`) for similar patterns/implementations. Fix **all** occurrences, not just the reported one.
+2. **Documentation:**
+    - Update "Known Bugs" table (Status: Fixed).
+    - Update "Coding Styles" if the bug reflects a common anti-pattern.
+3. **Testing:** Verify edge cases: Interactive, Piped (`|`), Redirected (`<`), and Non-interactive modes.
 
 # v0.1 - MVP Release ✅
 
