@@ -135,31 +135,44 @@
 
 ---
 
-# v0.3.1 - Code Block Navigation & Chat Enhancements
+# v0.3.1 - Chat Enhancements
 
 **Status:** Planned
 
 **Features:**
-
-### Code Block Highlighting & Navigation (In Testing)
-- [ ] Code block detection in review/chat responses
-- [ ] Visual highlighting with purple border
-- [ ] Navigate with `[` / `]` keys
-- [ ] Contextual hints and block indicators
-- [ ] `yb` yanks highlighted block
 
 ### Chat/Request Management (In Testing)
 - [ ] `Ctrl+X` cancels streaming requests
 - [ ] Prompt history navigation (`Ctrl+P`/`Ctrl+N`)
 - [ ] Request cancellation feedback
 
+### Prompt First
+- [ ] Prompt first before start the conversation (optional)
+
 ### Refactor
+- [x] Refactor `model.go`
 - [ ] Refactor hardcoded values to constants
 
-### Prompt First
-- Prompt first before start the conversation (optional)
+# v0.3.2 - Prompt Memory
+
+**Status:** Raw ideas, need to review and discuss
+
+**Features:**
+
+**Reviews Interaction**
+- System prompt will make sure when review, the content will be break into reviews, for example:
+```md
+
+```
+- Can navigate and interactive with reviews:
+	- Can "Ignore from context" --> Condense the review and add to current context ignore section
+	- Can 'Ignore from system prompt' --> Add to system prompt **ignore section**
+	- Can 'Ignore from preset' --> Add to a preset's **ignore section**
 
 ---
+
+# v0.3.3 - Extend reading
+- Able to read all project for context, then combine with git diff 
 
 # v0.4 - Panes & Export (Lazy-git Style)
 
@@ -169,11 +182,6 @@
 
 ### Setting Management
 - [ ] Can change default setting (new subcommand)
-
-### Code Block Navigation
-- [ ] `[` / `]` - Navigate to previous/next code block
-- [ ] Code block index indicator (e.g., "Block 2/5")
-- [ ] Jump to specific block with number prefix (e.g., `2]` jumps to block 2)
 
 ### Panes Management Mode
 - [ ] Multi-pane layout inspired by lazy-git/lazy-docker
@@ -209,14 +217,6 @@
 
 **Features:**
 
-### Code Block Folding
-- [ ] `zc` - Fold/collapse current code block
-- [ ] `zo` - Unfold/expand current code block
-- [ ] `za` - Toggle fold state
-- [ ] `zM` - Fold all code blocks
-- [ ] `zR` - Unfold all code blocks
-- [ ] Collapsed indicator showing language and line count
-
 ### Token Rotation
 - [ ] Support multiple API keys
 - [ ] Round-robin rotation between keys
@@ -232,6 +232,29 @@
 - [ ] `--dry-run` / `-n` - Preview payload without API call
 - [ ] `--list-models` - Show available models
 - [ ] Token cost estimation
+
+# v0.6 - Code Block Management (Deferred)
+
+**Status:** Deferred
+
+**Features:**
+
+### Code Block Highlighting & Navigation
+- [ ] Code block detection in review/chat responses
+- [ ] Visual highlighting with purple border
+- [ ] Navigate with `[` / `]` keys
+- [ ] Contextual hints and block indicators
+- [ ] `yb` yanks highlighted block
+- [ ] Code block index indicator (e.g., "Block 2/5")
+- [ ] Jump to specific block with number prefix (e.g., `2]` jumps to block 2)
+
+### Code Block Folding
+- [ ] `zc` - Fold/collapse current code block
+- [ ] `zo` - Unfold/expand current code block
+- [ ] `za` - Toggle fold state
+- [ ] `zM` - Fold all code blocks
+- [ ] `zR` - Unfold all code blocks
+- [ ] Collapsed indicator showing language and line count
 
 ---
 
@@ -318,7 +341,7 @@
 | Navigation issues after reviews                                           | Fixed  | No longer auto-scrolls to bottom; users read from top                                                                                                                            |                                         |
 | Redundant spaces below terminal                                           | Fixed  | Dynamic viewport height calculation based on UI state                                                                                                                            |                                         |
 | Yank only copies initial review                                           | Fixed  | Now yanks full content including chat history                                                                                                                                    |                                         |
-| Yank code block limited                                                   | Open   | Always yanks the **last** code block; no way to select specific block (requires Code Block Highlighting feature)                                                                 |                                         |
+| Yank code block limited                                                   | Deferred | Always yanks the **last** code block; no way to select specific block (deferred to v0.6 Code Block Management)                                                                 |                                         |
 | Panic when using --interactive flag                                       | Fixed  | Added nil checks for renderer fallback                                                                                                                                           |                                         |
 | Can't type `?` in chat mode                                               | Fixed  | `?` now only triggers help in reviewing mode, passes through in chat                                                                                                             |                                         |
 | Can't press Enter for newline in chat                                     | Fixed  | Changed to `Alt+Enter` to send; Enter creates newlines                                                                                                                           |                                         |
