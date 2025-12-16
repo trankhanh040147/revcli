@@ -173,7 +173,7 @@ func runReview(cmd *cobra.Command, args []string) error {
 	}
 
 	// Non-interactive mode
-	return ui.RunSimple(ctx, reviewCtx, client, activePreset)
+	return ui.RunSimple(ctx, os.Stdout, reviewCtx, client, activePreset)
 }
 
 // printSecretsWarning prints a warning about detected secrets

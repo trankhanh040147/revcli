@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/charmbracelet/glamour"
@@ -50,18 +51,9 @@ var (
 
 	// Border style for content boxes
 	boxStyle = lipgloss.NewStyle().
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#4B5563")).
-		Padding(1, 2)
-
-	// Code block border style for active highlighting
-	codeBlockBorderStyle = lipgloss.NewStyle().
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#7C3AED")).
-		BorderTop(true).
-		BorderBottom(true).
-		BorderLeft(true).
-		BorderRight(true)
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(lipgloss.Color("#4B5563")).
+			Padding(1, 2)
 
 	// Divider
 	dividerStyle = lipgloss.NewStyle().
@@ -149,7 +141,7 @@ func RenderSecretWarning(secrets []SecretInfo) string {
 		sb.WriteString(warningStyle.Render("  • "))
 		sb.WriteString(s.FilePath)
 		sb.WriteString(" (line ")
-		sb.WriteString(string(rune(s.Line + '0')))
+		sb.WriteString(strconv.Itoa(s.Line))
 		sb.WriteString("): ")
 		sb.WriteString(s.Match)
 		sb.WriteString("\n")
@@ -171,7 +163,7 @@ type SecretInfo struct {
 // RenderLoadingDots renders animated loading dots
 func RenderLoadingDots(tick int) string {
 	dots := []string{"", ".", "..", "..."}
-	return spinnerStyle.Render("Analyzing" + dots[tick%4])
+	return spinnerStyle.Render("Analyzing" + dots[tick%len(dots)])
 }
 
 // RenderProgress renders a simple progress indicator

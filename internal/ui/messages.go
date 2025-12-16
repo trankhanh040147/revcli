@@ -52,10 +52,29 @@ type TickMsg struct{}
 // QuitMsg signals the program should quit
 type QuitMsg struct{}
 
+// YankType represents the type of yanked content
+type YankType int
+
+const (
+	YankTypeReview YankType = iota
+	YankTypeLastResponse
+)
+
+// String returns the string representation of YankType
+func (t YankType) String() string {
+	switch t {
+	case YankTypeReview:
+		return "review"
+	case YankTypeLastResponse:
+		return "last response"
+	default:
+		return "unknown"
+	}
+}
+
 // YankMsg signals that content was yanked to clipboard
 type YankMsg struct {
-	Content string
-	Type    string // "review" or "codeblock"
+	Type YankType
 }
 
 // YankFeedbackMsg signals that yank feedback should be cleared
@@ -70,4 +89,3 @@ func ClearYankFeedbackCmd(duration time.Duration) tea.Cmd {
 
 // yankTimeoutMsg signals that the yank combo timeout has elapsed
 type yankTimeoutMsg struct{}
-

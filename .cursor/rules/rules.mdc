@@ -17,12 +17,17 @@ alwaysApply: true
 - **Keybindings:** Map `Enter`/`Tab` to `save() + nextField()`. Tab must work in both editing and navigation modes. Show help with `?`. Define help text in `constants` (never inline).
 - **Key Handling:** Use `key.Matches(msg, m.keys.Binding)` with keymap structs. Never hardcode key strings or use `msg.String()`. All Bubbletea key comparisons MUST use `key.Matches()` with centralized `KeyMap` structs. Legacy string comparisons are forbidden.
 - **TUI Structure:** Decompose large `Update`/`View` functions (>15 complexity) into state-specific helpers (`updateKeyMsgReviewing`, `viewMain`, etc.). Keep main dispatcher minimal.
-- **Feature Removal:** When removing user-visible features, update docs and add brief in-code comments explaining rationale (e.g., "removed in v0.3.1, deferred to v0.6").
+- **State Derivation:** Helper functions that accept a `State` enum must not take redundant boolean flags derivable from that state. Derive booleans inside the helper (e.g., `isSearching := state == StateSearching`) to avoid inconsistent arguments and verbose call sites.
+- **Feature Removal:** When removing user-visible features, update docs and add brief in-code comments explaining rationale (e.g., "removed in v0.3.1").
 - **CRUD Logic:** `isEditMode` relies strictly on ID persistence (non-nil), not content.
 
 ### 2. Core Go Implementation
 - **Structure:** Go 1.25+. Keep files/modules small. Constants in `[...constants.go]` (no hardcoding).
 - **File Size:** Manage code files into small parts to reduce token costs. Split large files, keep functions focused, prefer smaller modules
+- **Constructors:** For mutable/stateful types, constructors MUST return pointers (`func NewType(...) *Type`). Prevents accidental copies and clarifies intended usage.
+- **Type Safety:** Use typed enums (`type Role int`) instead of stringly-typed constants for role/type fields. Prevents invalid assignments and enables compile-time checks.
+- **Numeric Formatting:** Use `strconv.Itoa()` or `fmt.Sprintf()` for int-to-string conversion. Never use rune arithmetic (`+'0'`, `rune(n)`) for numeric formatting.
+- **Slice Indexing:** Use `len(slice)` for modulo/indexing operations. Never hardcode slice lengths in modulo expressions (e.g., `%4`).
 - **Input Safety:** Single `bufio.NewReader(os.Stdin)` per function (never multiple). Trim input strings. Never use `fmt.Scanln` for user input; use `bufio.NewReader(os.Stdin).ReadString('\n')` and trim.
 - **Concurrency:** Use `errgroup.Group` (not `sync.WaitGroup`). Propagate errors. Handle context cancellation.
 - **Memory:** **Never** take address of map index (`&m[k]`). Assign to var first.
@@ -33,11 +38,13 @@ alwaysApply: true
 - **TUI I/O:** All file I/O in TUI Update functions must be wrapped in `tea.Cmd` to prevent blocking the event loop.
 - **JSON Library:** Use `github.com/bytedance/sonic` for all JSON operations (performance). Never use `encoding/json` for marshal/unmarshal.
 - **Slice Allocation:** Pre-allocate slice capacity when size is known: `make([]T, 0, len(source))` instead of `[]T{}`.
+- **Message Buses:** Pass intent-only messages (typed enums/flags). Avoid sending large content payloads that already exist in model state.
 
 ### 3. System & Configuration
 - **Config:** YAML in `~/.config/revcli/config.yaml` (use `os.MkdirAll`). Set defaults.
 - **Platform:** Use `runtime.GOOS` for generic commands (open/explorer) and `$EDITOR`.
 - **Streams:** Output → `os.Stdout`. Logs/Errors → `os.Stderr`.
+- **Output Abstraction:** Library/non-interactive flows should accept `io.Writer` parameter. Only top-level CLI commands bind directly to `os.Stdout`.
 - **TTY:** Check `isatty(stdout)`. Disable colors/spinners if piping or `NO_COLOR` set.
 - **Flags:** Unique short aliases per command. No redefinition in `init()`. Verify before adding.
 - **CRUD State:** `isEditMode` depends on **persistence** (e.g., non-nil ID), not content presence. Treat pre-filled new entities as `Create`.
@@ -51,12 +58,15 @@ alwaysApply: true
 - **[CRITICAL] DRY Enforcement:** Flag **any** repeated code patterns (data manipulation, error handling sequences, or TUI styling) appearing >2 times. These MUST be extracted into helper functions to reduce verbosity.
 - **Standards:** Target A+ Report Card. Complexity ≤15. Run `gofmt -s`, `vet`, `staticcheck`, `misspell`.
 - **Errors:** Wrap all errors: `fmt.Errorf("ctx: %w", err)`. Log errors before fallback handlers to make issues visible during development.
+- **Method Receivers:** Methods that mutate receiver state or call mutating methods MUST use pointer receivers `(m *Type)`
+- **Error Logging:** Errors in fallback handlers MUST be logged to `os.Stderr` before fallback to maintain visibility during development.
 - **Deps:** Pin majors. Update periodically (`go get -u`). Run `govulncheck`.
 
 ## Bug Fix Protocol
 1. **Global Fix:** Search (`rg`/`fd`) for similar patterns, fix **all** occurrences
 2. **Documentation:** Update "Known Bugs" in `docs/DEVELOPMENT.md`, update "Coding Styles" if anti-pattern
 3. **Testing:** Verify Interactive, Piped (`|`), Redirected (`<`), Non-interactive modes
+4. **Diff Completeness:** Include all new/modified files in diffs for complete review. Missing core logic files blocks critical checks.
 
 ## Code Style
 - Concise bullets over paragraphs, remove fluff, preserve meaning, clear actionable code

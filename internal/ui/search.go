@@ -2,6 +2,7 @@ package ui
 
 import (
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
@@ -275,31 +276,7 @@ func RenderSearchInput(query string, matchCount, currentMatch int, mode SearchMo
 func formatMatchStatus(current, total int, mode string) string {
 	statusStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#9CA3AF"))
 	if mode == "" {
-		return statusStyle.Render(" (" + itoa(current) + "/" + itoa(total) + ")")
+		return statusStyle.Render(" (" + strconv.Itoa(current) + "/" + strconv.Itoa(total) + ")")
 	}
-	return statusStyle.Render(" (" + itoa(current) + "/" + itoa(total) + " " + mode + ")")
-}
-
-// itoa converts int to string (simple implementation)
-func itoa(n int) string {
-	if n == 0 {
-		return "0"
-	}
-
-	var result []byte
-	negative := n < 0
-	if negative {
-		n = -n
-	}
-
-	for n > 0 {
-		result = append([]byte{byte('0' + n%10)}, result...)
-		n /= 10
-	}
-
-	if negative {
-		result = append([]byte{'-'}, result...)
-	}
-
-	return string(result)
+	return statusStyle.Render(" (" + strconv.Itoa(current) + "/" + strconv.Itoa(total) + " " + mode + ")")
 }

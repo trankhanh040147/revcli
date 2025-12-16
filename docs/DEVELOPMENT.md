@@ -126,21 +126,38 @@ Automatically loads rules from the `.cursor/rules/` directory. The `rules.mdc` f
 - [x] Remove code block navigation (`[`, `]`) and `yb` yank functionality (deferred to v0.6)
 - [x] Update all documentation to reflect removal
 - [x] Add in-code comments explaining rationale for removal
+- [x] `yy` now yanks entire review + chat history (no code-block navigation)
+- [x] `Y` yanks only the last assistant response
 
 ### Documentation Updates
 - [x] Update Coding Styles with TUI key-handling and feature-removal guidelines
 - [x] Update help text and footer to remove code block references
+- [x] Refactor `CalculateViewportHeight` to derive search/chat state from `State` enum instead of redundant boolean parameters
+- [x] Add error logging for markdown rendering fallbacks to maintain visibility during development
 
 ---
 
-# v0.3.2 - Prompt Memory
+
+# v0.3.2 - Context & Intent
 
 **Status**: Raw ideas, need to review and discuss
 
-**Features**: Reviews Interaction
+## Features
 
-### Prompt First
-- [ ] Prompt first before start the conversation (optional)
+#### 🎯 Intent-Driven Review (New "Prompt First")
+
+- [ ] **Pre-Review Form (`huh`):** Before scanning, ask:
+    - Custom instruction (e.g., "Focus on error handling").
+    - Select Focus Areas (Security, Perf, Logic).
+- [ ] **Smart Context:** If the user asks for "Security," automatically inject the `security` preset rules into the system prompt.
+
+#### 🧠 Context Pruning (Dynamic Ignore)
+
+- [ ] **"Summarize & Prune" Action:** In the TUI, pressing `i` on a file/block:
+    1. Uses a cheap model (Gemini Flash) to summarize the code block (e.g., `// func processData: handles standard CSV parsing`).
+    2. Replaces the actual code in the context window with this summary.
+    3. **Benefit:** Saves massive tokens for the _next_ turn of chat while keeping the "map" of the code.
+- [ ] **Negative Prompting:** "Ignore from System" adds a negative constraint to the session config (e.g., "User explicitly stated they don't care about variable names").
 
 ### Reviews Interaction
 - [ ] System prompt will make sure when review, the content will be break into reviews, for example:
@@ -151,11 +168,33 @@ Automatically loads rules from the `.cursor/rules/` directory. The `rules.mdc` f
 
 ---
 
+
+## Notes
+**New Libraries**: 
+1. **`charmbracelet/huh`** (Form/Input)
+    - **Use for:** The "Prompt First" feature.
+    - **Why:** It’s a newer library from Charm (Bubbletea creators). It builds accessible, beautiful forms (selects, text inputs, confirms) with zero boilerplate. 
+    - **UX Win:** A clean, modal-like form pops up before the heavy AI lifting starts.
+2. **`samber/lo`** (Utility)
+    - **Use for:** "Refactor" phase.
+    - **Why:** It's a Lodash-style library for Go using Generics. It makes slice/map manipulation (filtering reviews, mapping ignored files) incredibly concise and readable.
+    - **Example:** `lo.Filter(reviews, func(x, _ int) bool { return !x.Ignored })`
+	
+
+|**Feature**|**Library**|**Implementation Concept**|
+|---|---|---|
+|**Pre-Flight Form**|`charmbracelet/huh`|Run this in `root.PreRunE`. If `!NonInteractive`, launching a `huh.NewForm` blocks execution until the user picks a focus (Security/Performance) or types a custom intent.|
+|**Review Navigation**|`charmbracelet/bubbles/list`|Since we need to treat reviews as items, switch from a simple viewport to a `bubbles/list`. Each item in the list is a struct `{Title, Severity, File, Line, Explanation}`.|
+|**Data Filtering**|`samber/lo`|`reviews = lo.Filter(reviews, func(r Review, _ int) bool { return !config.IsIgnored(r.RuleID) })`. Much cleaner than `for` loops.|
+
 # v0.3.3 - Chat Enhancements
 
 **Status:** Planned
 
 **Features:**
+
+#### 🛠️ Refactoring & Optimization
+- [ ] **`samber/lo` Integration:** Refactor slice logic in `diff` and `review` packages.
 
 ### Chat/Request Management (In Testing)
 - [ ] `Ctrl+X` cancels streaming requests
@@ -353,6 +392,18 @@ Automatically loads rules from the `.cursor/rules/` directory. The `rules.mdc` f
 | IS10: Not enter default value when editing                                | Fixed  | Improved default value prompts with clearer instructions and explicit current value display.                                                                                     |                                         |
 | IS11: Can not move cursor up and down when edit prompt                    | Fixed  | Replaced line-by-line stdin input with external editor (`$EDITOR` or `vi` fallback) for multiline prompt editing.                                                                |                                         |
 | IS12: Preset files when saved got `\n` instead of breaks                  | Fixed  | Added custom `MarshalYAML()` method to `Preset` struct to use literal block scalars (`                                                                                           | `) for multiline prompts in YAML files. |
+| Manual layout calculation in help overlay                                | Fixed  | Replaced manual padding calculation with `lipgloss.Place()` for proper centering.                                                                                                |
+| Swallowed renderer initialization error                                  | Fixed  | Added error logging to `os.Stderr` before fallback to maintain visibility during development.                                                                                    |
+| Inconsistent method receivers in Model                                   | Fixed  | Converted all state-mutating methods from value receivers to pointer receivers for consistency and correctness.                                                                 |
+| Stringly-typed message fields                                            | Fixed  | Added typed constants (`YankTypeReview`, `YankTypeLastResponse`, `ChatRoleUser`, `ChatRoleAssistant`) to replace raw string literals.                                           |
+| Incomplete review request: core logic missing                            | Fixed  | Process issue: missing new files in diff. TUI refactor files (`update.go`, `view.go`) now included. Core logic properly decomposed.                                                |
+| Inconsistent pointer receiver usage in constructor                      | Fixed  | Changed `NewModel` to return `*Model` instead of `Model`. Aligns with idiomatic Go for mutable types and prevents accidental copies.                                             |
+| Stringly-typed enum (ChatRole, YankType)                                | Fixed  | Replaced string constants with typed enums (`type ChatRole int`, `type YankType int`). Enables compile-time type safety and prevents invalid assignments.                      |
+| Monolithic Model file                                                    | Fixed  | Split `startReview` into `model_review.go`, viewport helpers into `viewport.go`. `model.go` now focused on struct definition and constructor only.                            |
+| Incorrect integer-to-string conversion in RenderSecretWarning            | Fixed  | Replaced `string(rune(s.Line + '0'))` with `strconv.Itoa(s.Line)`. Also replaced custom `itoa()` function with `strconv.Itoa()`. Never use rune arithmetic for numeric formatting. |
+| Direct stdout writes in RunSimple                                       | Fixed  | Refactored `RunSimple` to accept `io.Writer` parameter. Enables testing and output redirection. Library functions should accept `io.Writer`, only CLI commands bind to `os.Stdout`. |
+| Unused Content field in YankMsg                                         | Fixed  | Removed `Content` field from `YankMsg`, now intent-only with `Type` field. Message buses should pass intents, not duplicate large content already in model state. |
+| Magic number in RenderLoadingDots modulo                                | Fixed  | Replaced `dots[tick%4]` with `dots[tick%len(dots)]`. Never hardcode slice lengths in modulo/indexing operations. |
 
 ---
 

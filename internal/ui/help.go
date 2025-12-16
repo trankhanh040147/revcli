@@ -60,17 +60,9 @@ func (h *HelpOverlay) Render() string {
 			},
 		},
 		{
-			title: "Code Blocks",
-			bindings: []keybinding{
-				{"[", "Previous code block"},
-				{"]", "Next code block"},
-				{"yb", "Yank highlighted code block"},
-			},
-		},
-		{
 			title: "Clipboard",
 			bindings: []keybinding{
-				{"y", "Yank entire review + chat history"},
+				{"y / yy", "Yank entire review + chat history"},
 				{"Y", "Yank only last response"},
 			},
 		},
@@ -143,41 +135,11 @@ func (h *HelpOverlay) Render() string {
 		Italic(true).
 		Render("Press ? or Esc to close"))
 
-	// Calculate box dimensions
+	// Render box content
 	boxContent := borderStyle.Render(content.String())
 
-	// Center the box
-	boxWidth := lipgloss.Width(boxContent)
-	boxHeight := lipgloss.Height(boxContent)
-
-	horizontalPadding := (h.width - boxWidth) / 2
-	if horizontalPadding < 0 {
-		horizontalPadding = 0
-	}
-
-	verticalPadding := (h.height - boxHeight) / 2
-	if verticalPadding < 0 {
-		verticalPadding = 0
-	}
-
-	// Build final overlay with centering
-	var result strings.Builder
-
-	// Add vertical padding
-	for i := 0; i < verticalPadding; i++ {
-		result.WriteString("\n")
-	}
-
-	// Add horizontal padding to each line
-	lines := strings.Split(boxContent, "\n")
-	padding := strings.Repeat(" ", horizontalPadding)
-	for _, line := range lines {
-		result.WriteString(padding)
-		result.WriteString(line)
-		result.WriteString("\n")
-	}
-
-	return result.String()
+	// Center the box using lipgloss.Place()
+	return lipgloss.Place(h.width, h.height, lipgloss.Center, lipgloss.Center, boxContent)
 }
 
 // RenderCompact renders a compact version of the help for the footer
