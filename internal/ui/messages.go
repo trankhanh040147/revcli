@@ -29,6 +29,41 @@ type StreamDoneMsg struct {
 	FullResponse string
 }
 
+// streamChunkCmd creates a command to listen for chunks from a channel
+// It will block until a chunk arrives, so it should be used in a goroutine-safe way
+func streamChunkCmd(chunkChan chan string) tea.Cmd {
+	return func() tea.Msg {
+		chunk, ok := <-chunkChan
+		if !ok {
+			// Channel closed, return nil to stop listening
+			return nil
+		}
+		return StreamChunkMsg{Chunk: chunk}
+	}
+}
+
+// streamDoneCmd creates a command to listen for completion from a channel
+func streamDoneCmd(doneChan chan string) tea.Cmd {
+	return func() tea.Msg {
+		fullResponse, ok := <-doneChan
+		if !ok {
+			return nil
+		}
+		return StreamDoneMsg{FullResponse: fullResponse}
+	}
+}
+
+// streamErrorCmd creates a command to listen for errors from a channel
+func streamErrorCmd(errChan chan error) tea.Cmd {
+	return func() tea.Msg {
+		err, ok := <-errChan
+		if !ok {
+			return nil
+		}
+		return ReviewErrorMsg{Err: err}
+	}
+}
+
 // ChatResponseMsg contains a response to a follow-up question
 type ChatResponseMsg struct {
 	Response string
@@ -89,3 +124,10 @@ func ClearYankFeedbackCmd(duration time.Duration) tea.Cmd {
 
 // yankTimeoutMsg signals that the yank combo timeout has elapsed
 type yankTimeoutMsg struct{}
+
+// PruneFileMsg contains the result of pruning a file
+type PruneFileMsg struct {
+	FilePath string
+	Summary  string
+	Err      error
+}

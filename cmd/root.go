@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+
+	"github.com/trankhanh040147/revcli/internal/config"
 )
 
 // Version information (set at build time)
@@ -38,7 +40,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	// Global flags
-	rootCmd.PersistentFlags().StringVarP(&apiKey, "api-key", "k", "", "Gemini API key (overrides GEMINI_API_KEY env var)")
+	rootCmd.PersistentFlags().StringVarP(&apiKey, "api-key", "k", "", fmt.Sprintf("Gemini API key (overrides %s env var)", config.EnvGeminiAPIKey))
 
 	// Custom version template
 	rootCmd.SetVersionTemplate(fmt.Sprintf("revcli version %s (commit: %s, built: %s)\n", version, commit, date))
@@ -47,11 +49,11 @@ func init() {
 // initConfig reads in config from environment variables
 func initConfig() {
 	if apiKey == "" {
-		apiKey = os.Getenv("GEMINI_API_KEY")
+		apiKey = os.Getenv(config.EnvGeminiAPIKey)
 	}
 
 	if apiKey == "" {
-		fmt.Fprintln(os.Stderr, "Warning: GEMINI_API_KEY not set. Set it via environment variable or --api-key flag.")
+		fmt.Fprintf(os.Stderr, "Warning: %s not set. Set it via environment variable or --api-key flag.\n", config.EnvGeminiAPIKey)
 	}
 }
 

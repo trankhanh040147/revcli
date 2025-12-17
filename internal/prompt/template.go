@@ -67,6 +67,11 @@ Be concise but thorough. Focus on the most impactful feedback. If the code looks
 
 // BuildReviewPrompt constructs the full prompt for code review
 func BuildReviewPrompt(rawDiff string, fileContents map[string]string) string {
+	return BuildReviewPromptWithPruning(rawDiff, fileContents, nil)
+}
+
+// BuildReviewPromptWithPruning constructs the full prompt for code review with pruning support
+func BuildReviewPromptWithPruning(rawDiff string, fileContents map[string]string, prunedFiles map[string]string) string {
 	var builder strings.Builder
 
 	builder.WriteString("## Code Review Request\n\n")
@@ -84,6 +89,16 @@ func BuildReviewPrompt(rawDiff string, fileContents map[string]string) string {
 		builder.WriteString("Below are the complete contents of the modified files for additional context:\n\n")
 
 		for path, content := range fileContents {
+			// Check if file is pruned
+			if prunedFiles != nil {
+				if summary, pruned := prunedFiles[path]; pruned {
+					// Use summary instead of full content
+					builder.WriteString(fmt.Sprintf("#### File: `%s` (Pruned)\n\n", path))
+					builder.WriteString(fmt.Sprintf("*Summary: %s*\n\n", summary))
+					continue
+				}
+			}
+
 			// Determine language for syntax highlighting
 			lang := getLanguageFromPath(path)
 
@@ -159,4 +174,3 @@ func MaxTokenWarning(prompt string, maxTokens int) string {
 	}
 	return ""
 }
-

@@ -93,7 +93,7 @@ revcli review --staged
 The default model is `gemini-2.5-pro`. You can also use other models:
 
 ```bash
-revcli review --model gemini-1.5-flash
+revcli review --model gemini-2.5-flash
 ```
 
 ### Non-Interactive Mode

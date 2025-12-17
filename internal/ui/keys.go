@@ -42,6 +42,12 @@ type KeyMap struct {
 	// Yank
 	YankReview key.Binding
 	YankLast   key.Binding
+
+	// File list
+	FileList      key.Binding
+	FileListPrune key.Binding
+	SelectFile    key.Binding
+	Back          key.Binding
 }
 
 // DefaultKeyMap returns the default keymap
@@ -158,6 +164,23 @@ func DefaultKeyMap() KeyMap {
 			key.WithKeys("Y"),
 			key.WithHelp("Y", "yank last"),
 		),
+
+		// File list
+		FileList: key.NewBinding(
+			key.WithKeys("i"),
+			key.WithHelp("i", "file list"),
+		),
+		FileListPrune: key.NewBinding(
+			key.WithKeys("i"),
+			key.WithHelp("i", "prune file"),
+		),
+		SelectFile: key.NewBinding(
+			key.WithKeys("enter"),
+			key.WithHelp("enter", "select/view"),
+		),
+		Back: key.NewBinding(
+			key.WithKeys("esc"),
+			key.WithHelp("esc", "back"),
+		),
 	}
 }
-

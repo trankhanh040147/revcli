@@ -2,7 +2,6 @@ package context
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/trankhanh040147/revcli/internal/filter"
 	"github.com/trankhanh040147/revcli/internal/git"
@@ -24,6 +23,10 @@ type ReviewContext struct {
 	UserPrompt string
 	// EstimatedTokens is the rough token count
 	EstimatedTokens int
+	// Intent is the user's review intent and focus areas
+	Intent *Intent
+	// PrunedFiles maps file paths to their summaries (for token optimization)
+	PrunedFiles map[string]string
 }
 
 // Builder constructs the review context from git changes
@@ -31,6 +34,7 @@ type Builder struct {
 	staged     bool
 	force      bool
 	baseBranch string
+	intent     *Intent
 }
 
 // NewBuilder creates a new context builder
@@ -39,7 +43,14 @@ func NewBuilder(staged, force bool, baseBranch string) *Builder {
 		staged:     staged,
 		force:      force,
 		baseBranch: baseBranch,
+		intent:     nil,
 	}
+}
+
+// WithIntent sets the intent for the builder
+func (b *Builder) WithIntent(intent *Intent) *Builder {
+	b.intent = intent
+	return b
 }
 
 // Build gathers git changes and assembles the review context
@@ -55,16 +66,14 @@ func (b *Builder) Build() (*ReviewContext, error) {
 
 	// Step 3: Check for secrets (unless force is enabled)
 	if filterResult.HasSecrets() && !b.force {
-		return &ReviewContext{
-			SecretsFound: filterResult.SecretsFound,
-		}, fmt.Errorf("potential secrets detected in code. Use --force to proceed anyway")
+		return nil, SecretsError{Matches: filterResult.SecretsFound}
 	}
 
 	// Step 4: Filter the diff to remove ignored files
 	filteredDiff := filter.FilterDiff(diffResult.RawDiff)
 
-	// Step 5: Build the prompt
-	userPrompt := prompt.BuildReviewPrompt(filteredDiff, filterResult.FilteredFiles)
+	// Step 5: Build the prompt (with pruning support)
+	userPrompt := prompt.BuildReviewPromptWithPruning(filteredDiff, filterResult.FilteredFiles, nil)
 
 	// Step 6: Estimate tokens
 	estimatedTokens := prompt.EstimateTokens(userPrompt)
@@ -76,6 +85,8 @@ func (b *Builder) Build() (*ReviewContext, error) {
 		SecretsFound:    filterResult.SecretsFound,
 		UserPrompt:      userPrompt,
 		EstimatedTokens: estimatedTokens,
+		Intent:          b.intent,
+		PrunedFiles:     make(map[string]string),
 	}, nil
 }
 
@@ -117,78 +128,32 @@ func GetSystemPromptWithPreset(presetPrompt string, replace bool) string {
 	return prompt.SystemPrompt + "\n\n---\n\n" + presetPrompt
 }
 
-// Summary returns a summary of what will be reviewed
-func (rc *ReviewContext) Summary() string {
-	fileCount := len(rc.FileContents)
-	ignoredCount := len(rc.IgnoredFiles)
-
-	summary := fmt.Sprintf("📋 Review Context:\n")
-	summary += fmt.Sprintf("   • Files to review: %d\n", fileCount)
-	if ignoredCount > 0 {
-		summary += fmt.Sprintf("   • Files ignored: %d\n", ignoredCount)
-	}
-	summary += fmt.Sprintf("   • Estimated tokens: ~%d\n", rc.EstimatedTokens)
-
-	// Token warning
-	if warning := prompt.MaxTokenWarning(rc.UserPrompt, 100000); warning != "" {
-		summary += fmt.Sprintf("   ⚠️  %s\n", warning)
-	}
-
-	return summary
-}
-
-// DetailedSummary returns a detailed summary including file list
-func (rc *ReviewContext) DetailedSummary() string {
-	var sb strings.Builder
-
-	sb.WriteString("📋 Review Context\n")
-	sb.WriteString("─────────────────\n\n")
-
-	// Files to review
-	sb.WriteString("📁 Files to review:\n")
-	if len(rc.FileContents) == 0 {
-		sb.WriteString("   (none)\n")
+// GetSystemPromptWithIntent returns the system prompt incorporating intent and preset
+func GetSystemPromptWithIntent(intent *Intent, presetPrompt string, presetReplace bool) string {
+	// Start with base prompt or preset
+	var basePrompt string
+	if presetReplace && presetPrompt != "" {
+		basePrompt = presetPrompt
 	} else {
-		totalSize := 0
-		for path, content := range rc.FileContents {
-			size := len(content)
-			totalSize += size
-			sb.WriteString(fmt.Sprintf("   • %s (%s)\n", path, formatBytes(size)))
-		}
-		sb.WriteString(fmt.Sprintf("\n   Total: %d files, %s\n", len(rc.FileContents), formatBytes(totalSize)))
-	}
-
-	// Ignored files
-	if len(rc.IgnoredFiles) > 0 {
-		sb.WriteString("\n🚫 Ignored files:\n")
-		for _, path := range rc.IgnoredFiles {
-			sb.WriteString(fmt.Sprintf("   • %s\n", path))
+		basePrompt = GetSystemPrompt()
+		if presetPrompt != "" && !presetReplace {
+			basePrompt = basePrompt + "\n\n---\n\n" + presetPrompt
 		}
 	}
 
-	// Token estimate
-	sb.WriteString(fmt.Sprintf("\n📊 Token Estimate: ~%d tokens\n", rc.EstimatedTokens))
-
-	// Token warning
-	if warning := prompt.MaxTokenWarning(rc.UserPrompt, 100000); warning != "" {
-		sb.WriteString(fmt.Sprintf("⚠️  %s\n", warning))
+	// If no intent, return base prompt
+	if intent == nil {
+		return basePrompt
 	}
 
-	return sb.String()
-}
+	// Get focus area presets
+	focusPresets, err := GetFocusAreaPresets()
+	if err != nil {
+		// If we can't get presets, just use base prompt with intent
+		return BuildSystemPromptWithIntent(basePrompt, intent, nil)
+	}
 
-// formatBytes formats bytes into human readable format
-func formatBytes(bytes int) string {
-	const unit = 1024
-	if bytes < unit {
-		return fmt.Sprintf("%d B", bytes)
-	}
-	div, exp := int64(unit), 0
-	for n := int64(bytes) / unit; n >= unit; n /= unit {
-		div *= unit
-		exp++
-	}
-	return fmt.Sprintf("%.1f %cB", float64(bytes)/float64(div), "KMGTPE"[exp])
+	return BuildSystemPromptWithIntent(basePrompt, intent, focusPresets)
 }
 
 // HasChanges returns true if there are changes to review

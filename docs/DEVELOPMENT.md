@@ -64,7 +64,7 @@ Automatically loads rules from the `.cursor/rules/` directory. The `rules.mdc` f
   - Total tokens
 
 **Breaking Changes:**
-- Default model changed: `gemini-1.5-flash` → `gemini-2.5-pro`
+- Default model changed: `gemini-2.5-flash` → `gemini-2.5-pro`
 
 ---
 
@@ -136,33 +136,51 @@ Automatically loads rules from the `.cursor/rules/` directory. The `rules.mdc` f
 - [x] Add error logging for markdown rendering fallbacks to maintain visibility during development
 
 ---
-# v0.3.2 - Context & Intent
+# v0.3.2 - Context & Intent ✅
 
-**Status**: Raw ideas, need to review and discuss
+**Status**: Completed
 
 ## Features
 
-#### 🎯 Intent-Driven Review (New "Prompt First")
+#### 🎯 Intent-Driven Review (New "Prompt First") ✅
 
-- [ ] **Pre-Review Form (`huh`):** Before scanning, ask:
+- [x] **Pre-Review Form (`huh`):** Before scanning, ask:
     - Custom instruction (e.g., "Focus on error handling").
-    - Select Focus Areas (Security, Perf, Logic).
-- [ ] **Smart Context:** If the user asks for "Security," automatically inject the `security` preset rules into the system prompt.
+    - Select Focus Areas (Security, Performance, Logic, Style, Typo, Naming).
+    - Negative constraints (what to ignore).
+- [x] **Smart Context:** If the user asks for "Security," automatically inject the `security` preset rules into the system prompt.
+- [x] **Intent Integration:** Intent collected via `ui.CollectIntent()` in `cmd/review.go`, passed to `Builder.WithIntent()`, merged into system prompt via `BuildSystemPromptWithIntent()`.
 
-#### 🧠 Context Pruning (Dynamic Ignore)
+#### 🧠 Context Pruning (Dynamic Ignore) ✅
 
-- [ ] **"Summarize & Prune" Action:** In the TUI, pressing `i` on a file/block:
-    1. Uses a cheap model (Gemini Flash) to summarize the code block (e.g., `// func processData: handles standard CSV parsing`).
-    2. Replaces the actual code in the context window with this summary.
-    3. **Benefit:** Saves massive tokens for the _next_ turn of chat while keeping the "map" of the code.
-- [ ] **Negative Prompting:** "Ignore from System" adds a negative constraint to the session config (e.g., "User explicitly stated they don't care about variable names").
+- [x] **"Summarize & Prune" Action:** In the TUI, pressing `i` in reviewing mode:
+    1. Enters file list view (`StateFileList`) using `bubbles/list`.
+    2. User selects file and presses `i` to prune.
+    3. Uses Gemini Flash model (`gemini-2.5-flash`) to summarize the code file.
+    4. Replaces the actual code in the context window with summary in subsequent prompts.
+    5. **Benefit:** Saves massive tokens for the _next_ turn of chat while keeping the "map" of the code.
+- [x] **File List Navigation:** Vim-style navigation (`j/k`) through files, visual indicator (✓) for pruned files.
+- [x] **Pruning Integration:** `PrunedFiles` map in `ReviewContext`, used by `BuildReviewPromptWithPruning()` in prompt template.
+- [x] **Negative Prompting:** Negative constraints collected in intent form, added to system prompt as "User explicitly stated to ignore: [constraints]".
 
-### Integrating new libs
+### Implementation Details
 
-| **Feature**           | **Library**                  | **Implementation Concept**                                                                                                                                                  |
-| --------------------- | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Pre-Flight Form**   | `charmbracelet/huh`          | Run this in `root.PreRunE`. If `!NonInteractive`, launching a `huh.NewForm` blocks execution until the user picks a focus (Security/Performance) or types a custom intent.  |
-| **Review Navigation** | `charmbracelet/bubbles/list` | Since we need to treat reviews as items, switch from a simple viewport to a `bubbles/list`. Each item in the list is a struct `{Title, Severity, File, Line, Explanation}`. |
+**New Files:**
+- `internal/ui/intent_form.go` - Pre-review form using `huh.NewForm`
+- `internal/context/intent.go` - Intent struct and `BuildSystemPromptWithIntent()` helper
+- `internal/ui/file_list.go` - File list component using `bubbles/list`
+- `internal/ui/prune.go` - `PruneFile()` function using Gemini Flash for summarization
+- `internal/ui/update_filelist.go` - File list state update handlers
+- `internal/ui/update_prune.go` - Pruning action handlers
+
+**Modified Files:**
+- `cmd/review.go` - Collects intent before building context
+- `cmd/review_helpers.go` - Integrates intent with builder via `WithIntent()`
+- `internal/context/builder.go` - Added `Intent` field and `WithIntent()` method, `PrunedFiles` in `ReviewContext`
+- `internal/prompt/template.go` - Added `BuildReviewPromptWithPruning()` to use summaries
+- `internal/ui/model.go` - Added `StateFileList` state and `fileList` model
+- `internal/ui/update_reviewing.go` - Added `i` keybinding to enter file list mode
+- `internal/ui/view_model.go` - Added `viewFileList()` renderer
 
 # v0.3.3 - Chat Enhancements
 
@@ -386,6 +404,21 @@ Automatically loads rules from the `.cursor/rules/` directory. The `rules.mdc` f
 | Direct stdout writes in RunSimple                                       | Fixed  | Refactored `RunSimple` to accept `io.Writer` parameter. Enables testing and output redirection. Library functions should accept `io.Writer`, only CLI commands bind to `os.Stdout`. |
 | Unused Content field in YankMsg                                         | Fixed  | Removed `Content` field from `YankMsg`, now intent-only with `Type` field. Message buses should pass intents, not duplicate large content already in model state. |
 | Magic number in RenderLoadingDots modulo                                | Fixed  | Replaced `dots[tick%4]` with `dots[tick%len(dots)]`. Never hardcode slice lengths in modulo/indexing operations. |
+| File size: update.go exceeds 200-line limit                             | Fixed  | Split into state-specific files: `update_reviewing.go`, `update_chatting.go`, `update_searching.go`, `update_filelist.go`, `update_help.go`, `update_prune.go`. Main `update.go` now ~150 lines. |
+| os.Exit in command logic (printSecretsWarning)                          | Fixed  | Changed to return `ErrSecretsDetected` error. Only `main.go` calls `os.Exit`. |
+| Blocking I/O in tea.Cmd (os.Getenv inside pruneFileCmd)                 | Fixed  | Added `apiKey` field to Model, inject as parameter to `pruneFileCmd`. Dependency injection pattern for all tea.Cmd functions. |
+| File size: builder.go exceeds 200-line limit                            | Fixed  | Extracted formatters (`Summary`, `DetailedSummary`, `formatBytes`) to `formatters.go`. |
+| File size: model.go exceeds 200-line limit                              | Fixed  | Extracted `RunSimple` to `simple_run.go`, moved `ChatMessage`/`ChatRole` to `chat.go`. |
+| Function size: runReview exceeds 50-line limit                          | Fixed  | Extracted helpers: `loadActivePreset`, `buildReviewContext`, `initializeAPIClient` to `review_helpers.go`. |
+| Duplicated state transition logic                                       | Fixed  | Added `returnToPreviousState()` helper method, replaced 5 duplicated occurrences. |
+| Duplicated help strings                                                  | Fixed  | Use `RenderCompactHelp(state)` in `viewFooter()` and `viewFileList()`. Centralized in `help.go`. |
+| Ambiguous key binding (FileList and PruneFile both "i")                 | Fixed  | Renamed `PruneFile` to `FileListPrune` for clarity. Contextual handling remains. |
+| Hardcoded environment variable name                                     | Fixed  | Created `internal/config/constants.go` with `EnvGeminiAPIKey` constant. All references updated. |
+| Inconsistent UI rendering (fmt.Println in command)                      | Fixed  | Created `review_output.go` with writer-based helpers: `printReviewHeader`, `printContextSummary`, `printSecretsWarning`. |
+| Streaming API blocks UI in model_review.go                              | Fixed  | Refactored `startReview()` to use goroutine + channel pattern. Streaming chunks sent via `StreamChunkMsg`, completion via `StreamDoneMsg`. UI remains responsive during streaming. |
+| Non-nil return with error in builder.go                                | Fixed  | Created `SecretsError` type and `ErrSecretsDetected` sentinel. `Build()` now returns `(nil, SecretsError{Matches: ...})` instead of non-nil context with error. |
+| Redundant nil checks for PrunedFiles                                    | Fixed  | Removed redundant `PrunedFiles == nil` checks from `update.go`, `update_filelist.go`, and `file_list.go`. Contract guarantees non-nil initialization in `builder.go:91`. |
+| Hardcoded error type check in cmd/review.go                            | Fixed  | Replaced struct field check with `errors.As()` to extract `SecretsError` and access `Matches`. Uses proper error type checking instead of checking struct fields. |
 
 ---
 

@@ -78,6 +78,15 @@ func (h *HelpOverlay) Render() string {
 			},
 		},
 		{
+			title: "File List",
+			bindings: []keybinding{
+				{"i", "Enter file list / Prune selected file"},
+				{"j/k", "Navigate files"},
+				{"Enter", "View selected file"},
+				{"Esc", "Back to review"},
+			},
+		},
+		{
 			title: "General",
 			bindings: []keybinding{
 				{"?", "Toggle this help"},
@@ -149,11 +158,13 @@ func RenderCompactHelp(state string) string {
 
 	switch state {
 	case "reviewing":
-		return helpStyle.Render("j/k: scroll • /: search • ?: help • enter: chat • q: quit")
+		return helpStyle.Render("j/k: scroll • /: search • i: file list • ?: help • enter: chat • q: quit")
 	case "chatting":
 		return helpStyle.Render("enter: send • esc: back • ?: help • q: quit")
 	case "searching":
 		return helpStyle.Render("enter: confirm • tab: mode • n/N: matches • esc: cancel")
+	case "filelist":
+		return helpStyle.Render("j/k: navigate • i: prune • Enter: view • Esc: back")
 	case "help":
 		return helpStyle.Render("?: close • esc: close")
 	default:

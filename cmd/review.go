@@ -2,15 +2,14 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
 
+	"github.com/trankhanh040147/revcli/internal/config"
 	appcontext "github.com/trankhanh040147/revcli/internal/context"
-	"github.com/trankhanh040147/revcli/internal/filter"
-	"github.com/trankhanh040147/revcli/internal/gemini"
-	"github.com/trankhanh040147/revcli/internal/preset"
 	"github.com/trankhanh040147/revcli/internal/ui"
 )
 
@@ -59,7 +58,7 @@ func init() {
 
 	reviewCmd.Flags().BoolVarP(&staged, "staged", "s", false, "Review only staged changes (git diff --staged)")
 	reviewCmd.Flags().StringVarP(&baseBranch, "base", "b", "", "Base branch/commit to compare against (e.g., main, develop, abc123)")
-	reviewCmd.Flags().StringVarP(&model, "model", "m", "gemini-2.5-pro", "Gemini model to use (gemini-2.5-pro, gemini-1.5-flash, etc.)")
+	reviewCmd.Flags().StringVarP(&model, "model", "m", "gemini-2.5-pro", "Gemini model to use (gemini-2.5-pro, gemini-2.5-flash, etc.)")
 	reviewCmd.Flags().BoolVarP(&force, "force", "f", false, "Skip secret detection and proceed anyway")
 	reviewCmd.Flags().BoolVarP(&interactive, "interactive", "i", true, "Enable interactive chat mode")
 	reviewCmd.Flags().BoolP("no-interactive", "I", false, "Disable interactive chat mode")
@@ -71,7 +70,7 @@ func runReview(cmd *cobra.Command, args []string) error {
 	// Check for API key
 	apiKey := GetAPIKey()
 	if apiKey == "" {
-		return fmt.Errorf("GEMINI_API_KEY is required. Set it via environment variable or --api-key flag")
+		return fmt.Errorf("%s is required. Set it via environment variable or --api-key flag", config.EnvGeminiAPIKey)
 	}
 
 	// Handle --no-interactive flag
@@ -88,57 +87,39 @@ func runReview(cmd *cobra.Command, args []string) error {
 	}
 
 	// Load preset: use specified preset or default preset
-	var activePreset *preset.Preset
-	if presetName != "" {
-		var err error
-		activePreset, err = preset.Get(presetName)
-		if err != nil {
-			return err
-		}
-	} else {
-		// Try to load default preset
-		defaultPresetName, err := preset.GetDefaultPreset()
-		if err == nil && defaultPresetName != "" {
-			activePreset, err = preset.Get(defaultPresetName)
-			if err != nil {
-				// Default preset doesn't exist anymore, ignore
-				activePreset = nil
-			}
-		}
+	activePreset, err := loadActivePreset(presetName, presetReplace)
+	if err != nil {
+		return err
 	}
 
-	// Apply --preset-replace flag override if set
-	if activePreset != nil && presetReplace {
-		activePreset.Replace = true
+	// Step 0: Collect intent (if interactive)
+	var intent *appcontext.Intent
+	if interactive {
+		fmt.Println(ui.RenderTitle("🔍 Code Review"))
+		fmt.Println()
+		fmt.Println("Configure your review intent (press Ctrl+C to skip)...")
+		fmt.Println()
+		var err error
+		intent, err = ui.CollectIntent(interactive)
+		if err != nil {
+			return fmt.Errorf("failed to collect intent: %w", err)
+		}
+		fmt.Println()
 	}
 
 	// Step 1: Build the review context
-	fmt.Println(ui.RenderTitle("🔍 Code Review"))
-	fmt.Println()
-
-	if activePreset != nil {
-		mode := "append"
-		if activePreset.Replace {
-			mode = "replace"
-		}
-		fmt.Printf("Using preset: %s (%s) [mode: %s]\n", activePreset.Name, activePreset.Description, mode)
-	}
-
-	if baseBranch != "" {
-		fmt.Printf("Comparing against: %s\n", baseBranch)
-	} else if staged {
-		fmt.Println("Reviewing staged changes...")
-	} else {
-		fmt.Println("Reviewing uncommitted changes...")
-	}
+	printReviewHeader(os.Stdout, activePreset, baseBranch, staged)
 
 	builder := appcontext.NewBuilder(staged, force, baseBranch)
-	reviewCtx, err := builder.Build()
+	reviewCtx, err := buildReviewContext(builder, intent)
 	if err != nil {
-		// Check if it's a secrets error
-		if reviewCtx != nil && len(reviewCtx.SecretsFound) > 0 {
-			printSecretsWarning(reviewCtx.SecretsFound)
-			return fmt.Errorf("review aborted due to potential secrets")
+		// Check if it's a secrets error using errors.Is/As
+		var secretsErr appcontext.SecretsError
+		if errors.As(err, &secretsErr) {
+			if printErr := printSecretsWarning(os.Stdout, secretsErr.Matches); printErr != nil {
+				return printErr
+			}
+			return ErrSecretsDetected
 		}
 		return fmt.Errorf("failed to build review context: %w", err)
 	}
@@ -150,16 +131,13 @@ func runReview(cmd *cobra.Command, args []string) error {
 	}
 
 	// Print detailed summary with file list
-	fmt.Println(ui.RenderSuccess("Changes collected!"))
-	fmt.Println()
-	fmt.Println(reviewCtx.DetailedSummary())
-	fmt.Println()
+	printContextSummary(os.Stdout, reviewCtx)
 
 	// Step 2: Initialize Gemini client
 	fmt.Println("Connecting to Gemini API...")
-	client, err := gemini.NewClient(ctx, apiKey, model)
+	client, err := initializeAPIClient(ctx, apiKey, model)
 	if err != nil {
-		return fmt.Errorf("failed to create Gemini client: %w", err)
+		return err
 	}
 	defer client.Close()
 
@@ -169,26 +147,9 @@ func runReview(cmd *cobra.Command, args []string) error {
 	// Step 3: Run the review
 	if interactive {
 		// Interactive TUI mode
-		return ui.Run(reviewCtx, client, activePreset)
+		return ui.Run(reviewCtx, client, activePreset, apiKey)
 	}
 
 	// Non-interactive mode
 	return ui.RunSimple(ctx, os.Stdout, reviewCtx, client, activePreset)
-}
-
-// printSecretsWarning prints a warning about detected secrets
-func printSecretsWarning(secrets []filter.SecretMatch) {
-	fmt.Println(ui.RenderError("Potential secrets detected in your code!"))
-	fmt.Println()
-
-	for _, s := range secrets {
-		fmt.Printf("  • %s (line %d): %s\n", s.FilePath, s.Line, s.Match)
-	}
-
-	fmt.Println()
-	fmt.Println(ui.RenderWarning("Review aborted to prevent sending secrets to external API."))
-	fmt.Println(ui.RenderHelp("Use --force to proceed anyway (not recommended)"))
-	fmt.Println()
-
-	os.Exit(1)
 }

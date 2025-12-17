@@ -73,17 +73,19 @@ func (m *Model) viewMain() string {
 func (m *Model) viewFooter() string {
 	switch m.state {
 	case StateSearching:
-		return RenderHelp("enter: confirm • tab: toggle mode • esc: cancel")
+		return RenderCompactHelp("searching")
 	case StateReviewing:
 		if m.search.Query != "" && m.search.MatchCount() > 0 {
 			return RenderHelp(fmt.Sprintf("n/N: next/prev (%d/%d) • /: search • ?: help • q: quit",
 				m.search.CurrentMatch+1, m.search.MatchCount()))
 		}
-		return RenderHelp("j/k: scroll • y: yank • /: search • ?: help • q: quit")
+		return RenderCompactHelp("reviewing")
 	case StateChatting:
-		return RenderHelp("alt+enter: send • esc: back • q: quit")
+		return RenderCompactHelp("chatting")
+	case StateFileList:
+		return RenderCompactHelp("filelist")
 	default:
-		return RenderHelp("q: quit")
+		return RenderCompactHelp("")
 	}
 }
 
@@ -104,9 +106,32 @@ func (m *Model) View() string {
 		return m.viewLoading()
 	case StateError:
 		return m.viewError()
+	case StateFileList:
+		return m.viewFileList()
 	case StateReviewing, StateChatting, StateSearching:
 		return m.viewMain()
 	default:
 		return ""
 	}
+}
+
+// viewFileList renders the file list view
+func (m *Model) viewFileList() string {
+	var s strings.Builder
+	s.WriteString(RenderTitle("📁 Files to Review"))
+	s.WriteString("\n\n")
+	s.WriteString(m.fileList.View())
+	s.WriteString("\n")
+
+	// Yank feedback
+	if m.yankFeedback != "" {
+		s.WriteString("\n")
+		s.WriteString(RenderSuccess(m.yankFeedback))
+	}
+
+	// Footer
+	s.WriteString("\n")
+	s.WriteString(RenderCompactHelp("filelist"))
+
+	return s.String()
 }

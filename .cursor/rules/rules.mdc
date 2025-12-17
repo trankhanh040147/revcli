@@ -42,6 +42,7 @@ alwaysApply: true
 ### 3. Core Go Implementation & Structure
 - **File Size (CRITICAL):** Manage code files into small parts to reduce token costs. Split large files, keep functions focused, prefer smaller modules.
 - **Structure:** Keep files/modules small and focused. Constants in `[...constants.go]` (no hardcoding).
+- **Environment Variables:** Define env var names as constants in `internal/config/constants.go`. 
 - **Functional Helpers (`lo`):**
   - **Strictly** use `samber/lo` for slice/map filtering, mapping, and finding.
   - **Ban** `for` loops for simple data transformation.
@@ -54,6 +55,7 @@ alwaysApply: true
 - **Constructors:** Return pointers (`func NewType(...) *Type`) for stateful types.
 - **Memory Safety:** **Never** address map index directly. Pre-allocate slices.
 - **TUI I/O:** Wrap file I/O in `tea.Cmd` to prevent blocking the UI.
+- **Dependency Injection:** Inject dependencies (API keys, config) as parameters. Store in model struct.
 
 ### 4. System & Configuration
 - **Config:** YAML in `~/.config/revcli/config.yaml`. Use `os.MkdirAll`. Set defaults.
@@ -66,6 +68,7 @@ alwaysApply: true
 
 ### 5. Quality & Maintenance
 - **[CRITICAL] DRY Enforcement:** Flag repeated logic >2 times. Extract to helpers or use `samber/lo`.
+- **State Transitions:** Extract repeated state transition logic (e.g., `m.state = m.previousState; m.viewport.Height = ...`) into helper methods like `returnToPreviousState()`.
 - **Error Handling:** Wrap errors: `fmt.Errorf("ctx: %w", err)`. Log before fallback.
 - **Method Receivers:** Mutating methods MUST use pointer receivers `(m *Type)`.
 - **Standards:** Complexity ≤15. Run `gofmt -s`, `staticcheck`.

@@ -39,7 +39,7 @@
 
 ### Command Flags
 - `--staged` - Review only staged changes
-- `--model` - Specify Gemini model (default: `gemini-1.5-flash`)
+- `--model` - Specify Gemini model (default: `gemini-2.5-flash`)
 - `--force` - Skip secret detection (use with caution)
 - `--no-interactive` - Non-interactive mode for CI/scripts
 
