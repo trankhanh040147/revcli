@@ -181,8 +181,7 @@ frontmatter, which ensures:
 - [x] **File List Navigation:** Vim-style navigation (`j/k`) through files, visual indicator (✓) for pruned files.
 - [x] **Pruning Integration:** `PrunedFiles` map in `ReviewContext`, used by `BuildReviewPromptWithPruning()` in prompt
   template.
-- [x] **Negative Prompting:** Negative constraints collected in intent form, added to system prompt as "User explicitly
-  stated to ignore: [constraints]".
+- [x] **Negative Prompting:** Negative constraints collected in intent form, added to system prompt as "User explicitly stated to ignore: [constraints]".
 
 #### Gemini New Provider
 - [x] Migrating Gemini provider
