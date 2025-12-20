@@ -3,243 +3,177 @@ package gemini
 import (
 	"context"
 	"fmt"
-	"io"
+	"os"
+	"path/filepath"
 
-	"github.com/google/generative-ai-go/genai"
-	"google.golang.org/api/iterator"
-	"google.golang.org/api/option"
+	"github.com/bytedance/sonic"
+	"github.com/trankhanh040147/revcli/internal/config"
+	"github.com/trankhanh040147/revcli/internal/preset"
+	"google.golang.org/genai"
 )
 
-// Client wraps the Gemini API client
-type Client struct {
-	client    *genai.Client
-	model     *genai.GenerativeModel
-	chat      *genai.ChatSession
-	modelID   string
-	lastUsage *TokenUsage
-}
+// StreamCallback remains the same
+type StreamCallback func(string)
 
-// TokenUsage contains token usage information from a response
+// TokenUsage matches the new SDK field names
 type TokenUsage struct {
 	PromptTokens     int32
 	CompletionTokens int32
 	TotalTokens      int32
 }
 
-// StreamCallback is called for each chunk of streamed response
-type StreamCallback func(chunk string)
+type Client struct {
+	client     *genai.Client
+	modelID    string
+	lastUsage  *TokenUsage
+	modelConfig *preset.ModelParams
+	safetyThreshold string
+	// In the new SDK, history is maintained as a slice of Content
+	history []*genai.Content
+	// System instructions are passed per request in the config
+	systemPrompt string
+}
 
-// NewClient creates a new Gemini client
-func NewClient(ctx context.Context, apiKey, modelID string) (*Client, error) {
-	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
+func NewClient(ctx context.Context, apiKey, modelID string, config *preset.Config) (*Client, error) {
+	// The new client automatically picks up API key from env if cfg is nil,
+	// but we'll set it explicitly for your use case.
+	cfg := &genai.ClientConfig{
+		APIKey:  apiKey,
+		Backend: genai.BackendGeminiAPI,
+	}
+	client, err := genai.NewClient(ctx, cfg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create Gemini client: %w", err)
 	}
 
-	model := client.GenerativeModel(modelID)
+	// Load config or use defaults
+	var modelConfig *preset.ModelParams
+	var safetyThreshold string
+	if config != nil && config.Gemini != nil {
+		modelConfig = config.Gemini.ModelParams
+		if config.Gemini.SafetySettings != nil {
+			safetyThreshold = config.Gemini.SafetySettings.Threshold
+		}
+	}
 
-	// Configure the model for code review
-	model.SetTemperature(0.3) // Lower temperature for more focused responses
-	model.SetTopP(0.95)
-	model.SetTopK(40)
-
-	// Set safety settings to be less restrictive for code content
-	model.SafetySettings = []*genai.SafetySetting{
-		{
-			Category:  genai.HarmCategoryHarassment,
-			Threshold: genai.HarmBlockOnlyHigh,
-		},
-		{
-			Category:  genai.HarmCategoryHateSpeech,
-			Threshold: genai.HarmBlockOnlyHigh,
-		},
-		{
-			Category:  genai.HarmCategoryDangerousContent,
-			Threshold: genai.HarmBlockOnlyHigh,
-		},
-		{
-			Category:  genai.HarmCategorySexuallyExplicit,
-			Threshold: genai.HarmBlockOnlyHigh,
-		},
+	// Apply defaults if not provided
+	if modelConfig == nil {
+		modelConfig = &preset.ModelParams{
+			Temperature: DefaultModelTemperature,
+			TopP:         DefaultModelTopP,
+			TopK:         DefaultModelTopK,
+		}
+	}
+	if safetyThreshold == "" {
+		safetyThreshold = preset.DefaultSafetyThreshold
 	}
 
 	return &Client{
-		client:  client,
-		model:   model,
-		modelID: modelID,
+		client:          client,
+		modelID:         modelID,
+		modelConfig:     modelConfig,
+		safetyThreshold: safetyThreshold,
 	}, nil
 }
 
-// StartChat initializes a chat session with the system prompt
+// StartChat sets the system prompt and clears history
 func (c *Client) StartChat(systemPrompt string) {
-	c.model.SystemInstruction = &genai.Content{
-		Parts: []genai.Part{genai.Text(systemPrompt)},
-	}
-	c.chat = c.model.StartChat()
+	c.systemPrompt = systemPrompt
+	c.history = make([]*genai.Content, 0, DefaultHistoryCapacity)
 }
 
-// SendMessage sends a message and returns the full response
-func (c *Client) SendMessage(ctx context.Context, message string) (string, error) {
-	if c.chat == nil {
-		return "", fmt.Errorf("chat session not initialized, call StartChat first")
+// rollbackLastHistoryEntry removes the last entry from history
+func (c *Client) rollbackLastHistoryEntry() {
+	if len(c.history) > 0 {
+		c.history = c.history[:len(c.history)-1]
 	}
-
-	resp, err := c.chat.SendMessage(ctx, genai.Text(message))
-	if err != nil {
-		return "", fmt.Errorf("failed to send message: %w", err)
-	}
-
-	return extractText(resp), nil
 }
 
-// SendMessageStream sends a message and streams the response
-func (c *Client) SendMessageStream(ctx context.Context, message string, callback StreamCallback) (string, error) {
-	if c.chat == nil {
-		return "", fmt.Errorf("chat session not initialized, call StartChat first")
-	}
-
-	iter := c.chat.SendMessageStream(ctx, genai.Text(message))
-
-	var fullResponse string
-	var lastResp *genai.GenerateContentResponse
-	for {
-		resp, err := iter.Next()
-		if err == iterator.Done {
-			break
-		}
-		if err != nil {
-			return fullResponse, fmt.Errorf("stream error: %w", err)
-		}
-
-		lastResp = resp
-		chunk := extractText(resp)
-		fullResponse += chunk
-		if callback != nil {
-			callback(chunk)
-		}
-	}
-
-	// Extract token usage from the last response
-	if lastResp != nil {
-		c.lastUsage = extractUsage(lastResp)
-	}
-
-	return fullResponse, nil
-}
-
-// GenerateContent sends a one-off generation request (no chat history)
-func (c *Client) GenerateContent(ctx context.Context, systemPrompt, userPrompt string) (string, error) {
-	// Create a temporary model with system instruction
-	model := c.client.GenerativeModel(c.modelID)
-	model.SystemInstruction = &genai.Content{
-		Parts: []genai.Part{genai.Text(systemPrompt)},
-	}
-
-	resp, err := model.GenerateContent(ctx, genai.Text(userPrompt))
-	if err != nil {
-		return "", fmt.Errorf("failed to generate content: %w", err)
-	}
-
-	return extractText(resp), nil
-}
-
-// GenerateContentStream sends a one-off generation request with streaming
-func (c *Client) GenerateContentStream(ctx context.Context, systemPrompt, userPrompt string, callback StreamCallback) (string, error) {
-	// Create a temporary model with system instruction
-	model := c.client.GenerativeModel(c.modelID)
-	model.SystemInstruction = &genai.Content{
-		Parts: []genai.Part{genai.Text(systemPrompt)},
-	}
-	model.SetTemperature(0.3)
-
-	iter := model.GenerateContentStream(ctx, genai.Text(userPrompt))
-
-	var fullResponse string
-	for {
-		resp, err := iter.Next()
-		if err == iterator.Done {
-			break
-		}
-		if err != nil {
-			return fullResponse, fmt.Errorf("stream error: %w", err)
-		}
-
-		chunk := extractText(resp)
-		fullResponse += chunk
-		if callback != nil {
-			callback(chunk)
-		}
-	}
-
-	return fullResponse, nil
-}
-
-// Close closes the client connection
-func (c *Client) Close() error {
-	if c.client != nil {
-		return c.client.Close()
-	}
-	return nil
-}
-
-// extractText extracts text content from a GenerateContentResponse
-func extractText(resp *genai.GenerateContentResponse) string {
-	if resp == nil || len(resp.Candidates) == 0 {
-		return ""
-	}
-
-	var text string
-	for _, candidate := range resp.Candidates {
-		if candidate.Content != nil {
-			for _, part := range candidate.Content.Parts {
-				if t, ok := part.(genai.Text); ok {
-					text += string(t)
-				}
-			}
-		}
-	}
-
-	return text
-}
-
-// StreamWriter wraps an io.Writer for streaming responses
-type StreamWriter struct {
-	Writer io.Writer
-}
-
-// Write implements StreamCallback for writing to an io.Writer
-func (sw *StreamWriter) Write(chunk string) {
-	sw.Writer.Write([]byte(chunk))
-}
-
-// GetModelID returns the current model ID
-func (c *Client) GetModelID() string {
-	return c.modelID
-}
-
-// GetLastUsage returns the token usage from the last API call
 func (c *Client) GetLastUsage() *TokenUsage {
 	return c.lastUsage
 }
 
-// extractUsage extracts token usage from a response
-func extractUsage(resp *genai.GenerateContentResponse) *TokenUsage {
-	if resp == nil || resp.UsageMetadata == nil {
-		return nil
-	}
-
-	return &TokenUsage{
-		PromptTokens:     resp.UsageMetadata.PromptTokenCount,
-		CompletionTokens: resp.UsageMetadata.CandidatesTokenCount,
-		TotalTokens:      resp.UsageMetadata.TotalTokenCount,
-	}
+func (c *Client) GetModelID() string {
+	return c.modelID
 }
 
-// FormatUsage returns a formatted string of token usage
-func (u *TokenUsage) FormatUsage() string {
-	if u == nil {
-		return "Token usage not available"
+// SessionData represents the serializable session state
+type SessionData struct {
+	SystemPrompt string            `json:"systemPrompt"`
+	History      []*genai.Content  `json:"history"`
+	ModelID      string            `json:"modelID"`
+}
+
+// getSessionPath returns the path to a session file
+func getSessionPath(sessionName string) (string, error) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
 	}
-	return fmt.Sprintf("Tokens: %d prompt + %d completion = %d total",
-		u.PromptTokens, u.CompletionTokens, u.TotalTokens)
+	sessionDir := filepath.Join(homeDir, config.ConfigDirName, config.AppDirName, config.SessionsDirName)
+	if err := os.MkdirAll(sessionDir, 0755); err != nil {
+		return "", fmt.Errorf("failed to create sessions directory: %w", err)
+	}
+	return filepath.Join(sessionDir, sessionName+".json"), nil
+}
+
+// SaveSession saves the current session (history and system prompt) to disk
+func (c *Client) SaveSession(sessionName string) error {
+	if sessionName == "" {
+		return fmt.Errorf("session name cannot be empty")
+	}
+
+	sessionPath, err := getSessionPath(sessionName)
+	if err != nil {
+		return err
+	}
+
+	sessionData := SessionData{
+		SystemPrompt: c.systemPrompt,
+		History:      c.history,
+		ModelID:      c.modelID,
+	}
+
+	data, err := sonic.MarshalIndent(sessionData, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal session data: %w", err)
+	}
+
+	if err := os.WriteFile(sessionPath, data, 0644); err != nil {
+		return fmt.Errorf("failed to write session file: %w", err)
+	}
+
+	return nil
+}
+
+// LoadSession loads a session (history and system prompt) from disk
+func (c *Client) LoadSession(sessionName string) error {
+	if sessionName == "" {
+		return fmt.Errorf("session name cannot be empty")
+	}
+
+	sessionPath, err := getSessionPath(sessionName)
+	if err != nil {
+		return err
+	}
+
+	data, err := os.ReadFile(sessionPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return fmt.Errorf("session '%s' not found", sessionName)
+		}
+		return fmt.Errorf("failed to read session file: %w", err)
+	}
+
+	var sessionData SessionData
+	if err := sonic.Unmarshal(data, &sessionData); err != nil {
+		return fmt.Errorf("failed to unmarshal session data: %w", err)
+	}
+
+	// Restore session state
+	c.systemPrompt = sessionData.SystemPrompt
+	c.history = sessionData.History
+	// Note: modelID is not changed as it's tied to the client instance
+
+	return nil
 }

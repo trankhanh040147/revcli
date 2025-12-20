@@ -6,64 +6,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/samber/lo"
+	"github.com/trankhanh040147/revcli/internal/util"
 	"gopkg.in/yaml.v3"
 )
-
-// Preset defines a review preset configuration
-type Preset struct {
-	Name        string `yaml:"name"`
-	Description string `yaml:"description"`
-	Prompt      string `yaml:"prompt"`
-	Replace     bool   `yaml:"replace,omitempty"` // If true, replace base prompt instead of appending
-}
-
-// MarshalYAML implements custom YAML marshaling to use literal block scalars for multiline prompts
-func (p *Preset) MarshalYAML() (interface{}, error) {
-	// Build the mapping node manually to control formatting
-	root := &yaml.Node{
-		Kind:    yaml.MappingNode,
-		Content: []*yaml.Node{},
-	}
-
-	// Add name field
-	root.Content = append(root.Content,
-		&yaml.Node{Kind: yaml.ScalarNode, Value: "name"},
-		&yaml.Node{Kind: yaml.ScalarNode, Value: p.Name},
-	)
-
-	// Add description field
-	root.Content = append(root.Content,
-		&yaml.Node{Kind: yaml.ScalarNode, Value: "description"},
-		&yaml.Node{Kind: yaml.ScalarNode, Value: p.Description},
-	)
-
-	// Add prompt field with literal style for multiline content
-	promptNode := &yaml.Node{
-		Kind:  yaml.ScalarNode,
-		Value: p.Prompt,
-		Style: yaml.LiteralStyle, // Use | literal block scalar
-	}
-	root.Content = append(root.Content,
-		&yaml.Node{Kind: yaml.ScalarNode, Value: "prompt"},
-		promptNode,
-	)
-
-	// Add replace field only if true
-	if p.Replace {
-		root.Content = append(root.Content,
-			&yaml.Node{Kind: yaml.ScalarNode, Value: "replace"},
-			&yaml.Node{Kind: yaml.ScalarNode, Value: "true"},
-		)
-	}
-
-	// Return root node directly - yaml.Marshal() will wrap it in a document automatically
-	return root, nil
-}
-
-// Config defines the revcli configuration
-type Config struct {
-	DefaultPreset string `yaml:"default_preset,omitempty"`
-}
 
 // BuiltInPresets contains all built-in review presets
 var BuiltInPresets = map[string]Preset{
@@ -239,7 +185,7 @@ func Get(name string) (*Preset, error) {
 	preset, err := loadCustomPreset(name)
 	if err != nil {
 		// Try to find similar presets
-		similar := FindSimilarPresets(name, 2)
+		similar := findSimilarPresets(name, 2)
 
 		var suggestion string
 		if len(similar) > 0 {
@@ -254,97 +200,6 @@ func Get(name string) (*Preset, error) {
 	}
 
 	return preset, nil
-}
-
-// FindSimilarPresets finds preset names similar to the given name using Levenshtein distance
-// threshold: maximum edit distance to consider a preset as similar (lower = more strict)
-func FindSimilarPresets(name string, threshold int) []string {
-	allNames := GetAllPresetNames()
-	similar := make([]string, 0)
-
-	name = strings.ToLower(name)
-	nameLen := len(name)
-
-	for _, presetName := range allNames {
-		presetNameLower := strings.ToLower(presetName)
-
-		// Skip exact matches
-		if presetNameLower == name {
-			continue
-		}
-
-		// For very short inputs (1-2 chars), use prefix matching
-		if nameLen <= 2 {
-			if strings.HasPrefix(presetNameLower, name) {
-				similar = append(similar, presetName)
-				continue
-			}
-		}
-
-		// Calculate Levenshtein distance
-		distance := levenshteinDistance(name, presetNameLower)
-
-		// For short inputs (3-4 chars), use relative similarity (percentage-based)
-		// For longer inputs, use absolute threshold
-		var isSimilar bool
-		if nameLen <= 4 {
-			// Use relative similarity: distance should be <= 50% of input length
-			maxDistance := (nameLen + 1) / 2 // Allow up to 50% of input length as distance
-			isSimilar = distance <= maxDistance
-		} else {
-			// Use absolute threshold for longer inputs
-			isSimilar = distance <= threshold
-		}
-
-		// Also check if the input is a substring of the preset name (for partial matches)
-		isSubstring := strings.HasPrefix(presetNameLower, name) || strings.Contains(presetNameLower, name)
-
-		if isSimilar || (isSubstring && nameLen >= 3) {
-			similar = append(similar, presetName)
-		}
-	}
-
-	return similar
-}
-
-// levenshteinDistance calculates the edit distance between two strings
-func levenshteinDistance(s1, s2 string) int {
-	r1, r2 := []rune(s1), []rune(s2)
-	column := make([]int, len(r1)+1)
-
-	for y := 1; y <= len(r1); y++ {
-		column[y] = y
-	}
-
-	for x := 1; x <= len(r2); x++ {
-		column[0] = x
-		lastDiag := x - 1
-		for y := 1; y <= len(r1); y++ {
-			oldDiag := column[y]
-			cost := 0
-			if r1[y-1] != r2[x-1] {
-				cost = 1
-			}
-			column[y] = min(column[y]+1, column[y-1]+1, lastDiag+cost)
-			lastDiag = oldDiag
-		}
-	}
-
-	return column[len(r1)]
-}
-
-// min returns the minimum of three integers
-func min(a, b, c int) int {
-	if a < b {
-		if a < c {
-			return a
-		}
-		return c
-	}
-	if b < c {
-		return b
-	}
-	return c
 }
 
 // loadCustomPreset attempts to load a preset from ~/.config/revcli/presets/
@@ -441,96 +296,6 @@ func (p *Preset) ApplyToPrompt(basePrompt string) string {
 	return basePrompt + "\n\n---\n\n" + p.Prompt
 }
 
-// getConfigPath returns the path to the config file
-func getConfigPath() (string, error) {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return "", err
-	}
-	return filepath.Join(homeDir, ".config", "revcli", "config.yaml"), nil
-}
-
-// LoadConfig loads the configuration from ~/.config/revcli/config.yaml
-func LoadConfig() (*Config, error) {
-	configPath, err := getConfigPath()
-	if err != nil {
-		return nil, err
-	}
-
-	// If config file doesn't exist, return default config
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		return &Config{}, nil
-	}
-
-	data, err := os.ReadFile(configPath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read config file: %w", err)
-	}
-
-	var config Config
-	if err := yaml.Unmarshal(data, &config); err != nil {
-		return nil, fmt.Errorf("failed to parse config file: %w", err)
-	}
-
-	return &config, nil
-}
-
-// SaveConfig saves the configuration to ~/.config/revcli/config.yaml
-func SaveConfig(config *Config) error {
-	configPath, err := getConfigPath()
-	if err != nil {
-		return err
-	}
-
-	// Ensure config directory exists
-	configDir := filepath.Dir(configPath)
-	if err := os.MkdirAll(configDir, 0755); err != nil {
-		return fmt.Errorf("failed to create config directory: %w", err)
-	}
-
-	data, err := yaml.Marshal(config)
-	if err != nil {
-		return fmt.Errorf("failed to marshal config: %w", err)
-	}
-
-	if err := os.WriteFile(configPath, data, 0644); err != nil {
-		return fmt.Errorf("failed to write config file: %w", err)
-	}
-
-	return nil
-}
-
-// GetDefaultPreset returns the default preset name from config, or empty string if not set
-func GetDefaultPreset() (string, error) {
-	config, err := LoadConfig()
-	if err != nil {
-		return "", err
-	}
-	return config.DefaultPreset, nil
-}
-
-// SetDefaultPreset sets the default preset in the config file
-func SetDefaultPreset(presetName string) error {
-	config, err := LoadConfig()
-	if err != nil {
-		return err
-	}
-
-	config.DefaultPreset = presetName
-	return SaveConfig(config)
-}
-
-// ClearDefaultPreset removes the default preset from the config file
-func ClearDefaultPreset() error {
-	config, err := LoadConfig()
-	if err != nil {
-		return err
-	}
-
-	config.DefaultPreset = ""
-	return SaveConfig(config)
-}
-
 // GetSystemPromptPath returns the path to the system prompt preset file
 func GetSystemPromptPath() (string, error) {
 	homeDir, err := os.UserHomeDir()
@@ -614,4 +379,52 @@ func DeleteSystemPrompt() error {
 	}
 
 	return nil
+}
+
+// findSimilarPresets finds preset names similar to the given name using Levenshtein distance
+// threshold: maximum edit distance to consider a preset as similar (lower = more strict)
+func findSimilarPresets(name string, threshold int) []string {
+	allNames := GetAllPresetNames()
+	name = strings.ToLower(name)
+	nameLen := len(name)
+
+	return lo.FilterMap(allNames, func(presetName string, _ int) (string, bool) {
+		presetNameLower := strings.ToLower(presetName)
+
+		// Skip exact matches
+		if presetNameLower == name {
+			return "", false
+		}
+
+		// For very short inputs (1-2 chars), use prefix matching
+		if nameLen <= 2 {
+			if strings.HasPrefix(presetNameLower, name) {
+				return presetName, true
+			}
+			return "", false
+		}
+
+		// Calculate Levenshtein distance
+		distance := util.LevenshteinDistance(name, presetNameLower)
+
+		// For short inputs (3-4 chars), use relative similarity (percentage-based)
+		// For longer inputs, use absolute threshold
+		var isSimilar bool
+		if nameLen <= 4 {
+			// Use relative similarity: distance should be <= 50% of input length
+			maxDistance := nameLen / 2 // Allow up to 50% of input length as distance
+			isSimilar = distance <= maxDistance
+		} else {
+			// Use absolute threshold for longer inputs
+			isSimilar = distance <= threshold
+		}
+
+		// Also check if the input is a substring of the preset name (for partial matches)
+		isSubstring := strings.HasPrefix(presetNameLower, name) || strings.Contains(presetNameLower, name)
+
+		if isSimilar || (isSubstring && nameLen >= 3) {
+			return presetName, true
+		}
+		return "", false
+	})
 }

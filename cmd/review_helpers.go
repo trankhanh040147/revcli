@@ -3,7 +3,9 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"log"
 
+	"github.com/trankhanh040147/revcli/internal/config"
 	appcontext "github.com/trankhanh040147/revcli/internal/context"
 	"github.com/trankhanh040147/revcli/internal/gemini"
 	"github.com/trankhanh040147/revcli/internal/preset"
@@ -46,12 +48,26 @@ func buildReviewContext(builder *appcontext.Builder, intent *appcontext.Intent) 
 	return builder.Build()
 }
 
-// initializeAPIClient initializes and returns a Gemini API client
-func initializeAPIClient(ctx context.Context, apiKey, model string) (*gemini.Client, error) {
-	client, err := gemini.NewClient(ctx, apiKey, model)
+// initializeClient initializes and returns a Gemini API client with the given model
+func initializeClient(ctx context.Context, apiKey, model string) (*gemini.Client, error) {
+	cfg, err := preset.LoadConfig()
+	if err != nil {
+		log.Printf("warn: failed to load configuration, proceeding with defaults: %v", err)
+		cfg = nil
+	}
+	client, err := gemini.NewClient(ctx, apiKey, model, cfg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create Gemini client: %w", err)
 	}
 	return client, nil
 }
 
+// initializeAPIClient initializes and returns a Gemini API client
+func initializeAPIClient(ctx context.Context, apiKey, model string) (*gemini.Client, error) {
+	return initializeClient(ctx, apiKey, model)
+}
+
+// initializeFlashClient initializes and returns a Gemini Flash API client for prune operations
+func initializeFlashClient(ctx context.Context, apiKey string) (*gemini.Client, error) {
+	return initializeClient(ctx, apiKey, config.ModelGeminiFlash)
+}

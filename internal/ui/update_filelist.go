@@ -33,7 +33,7 @@ func (m *Model) updateKeyMsgFileList(msg tea.KeyMsg) (*Model, tea.Cmd) {
 		ctx, cancel := context.WithCancel(m.rootCtx)
 		m.activeCancel = cancel
 		// Trigger prune command
-		return m, pruneFileCmd(ctx, m.apiKey, filePath, content)
+		return m, pruneFileCmd(ctx, m.flashClient, filePath, content)
 	case key.Matches(msg, m.keys.SelectFile):
 		// View selected file (for now, just go back)
 		m.returnToPreviousState()

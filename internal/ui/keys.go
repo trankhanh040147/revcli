@@ -32,12 +32,13 @@ type KeyMap struct {
 	Help key.Binding
 
 	// Chat
-	EnterChat     key.Binding
-	ExitChat      key.Binding
-	SendMessage   key.Binding
-	PrevPrompt    key.Binding
-	NextPrompt    key.Binding
-	CancelRequest key.Binding
+	EnterChat      key.Binding
+	ExitChat       key.Binding
+	SendMessage    key.Binding
+	PrevPrompt     key.Binding
+	NextPrompt     key.Binding
+	CancelRequest  key.Binding
+	ToggleWebSearch key.Binding
 
 	// Yank
 	YankReview key.Binding
@@ -154,6 +155,10 @@ func DefaultKeyMap() KeyMap {
 		CancelRequest: key.NewBinding(
 			key.WithKeys("ctrl+x"),
 			key.WithHelp("ctrl+x", "cancel request"),
+		),
+		ToggleWebSearch: key.NewBinding(
+			key.WithKeys("ctrl+w"),
+			key.WithHelp("ctrl+w", "toggle web search"),
 		),
 
 		// Yank

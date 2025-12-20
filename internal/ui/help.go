@@ -74,6 +74,7 @@ func (h *HelpOverlay) Render() string {
 				{"Ctrl+P", "Previous prompt"},
 				{"Ctrl+N", "Next prompt"},
 				{"Ctrl+X", "Cancel request"},
+				{"Ctrl+W", "Toggle web search"},
 				{"Esc", "Exit chat mode"},
 			},
 		},
@@ -160,7 +161,7 @@ func RenderCompactHelp(state string) string {
 	case "reviewing":
 		return helpStyle.Render("j/k: scroll • /: search • i: file list • ?: help • enter: chat • q: quit")
 	case "chatting":
-		return helpStyle.Render("enter: send • esc: back • ?: help • q: quit")
+		return helpStyle.Render("enter: send • ctrl+w: toggle web search • esc: back • ?: help • q: quit")
 	case "searching":
 		return helpStyle.Render("enter: confirm • tab: mode • n/N: matches • esc: cancel")
 	case "filelist":

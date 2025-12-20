@@ -18,6 +18,7 @@ func CollectIntent(interactive bool) (*appcontext.Intent, error) {
 	var customInstruction string
 	var focusAreas []string
 	var negativeConstraints string
+	var webSearchEnabled bool = true // Default to enabled
 
 	form := huh.NewForm(
 		huh.NewGroup(
@@ -45,6 +46,11 @@ func CollectIntent(interactive bool) (*appcontext.Intent, error) {
 				Description("What should be ignored? (e.g., 'variable names', 'style issues')").
 				Value(&negativeConstraints).
 				CharLimit(200),
+
+			huh.NewConfirm().
+				Title("Enable Web Search").
+				Description("Allow Gemini to search the web for additional context (default: enabled)").
+				Value(&webSearchEnabled),
 		),
 	).WithTheme(huh.ThemeCatppuccin()).
 		WithWidth(80).
@@ -74,6 +80,7 @@ func CollectIntent(interactive bool) (*appcontext.Intent, error) {
 		CustomInstruction:   strings.TrimSpace(customInstruction),
 		FocusAreas:          focusAreas,
 		NegativeConstraints: negativeList,
+		WebSearchEnabled:    webSearchEnabled,
 	}
 
 	return intent, nil

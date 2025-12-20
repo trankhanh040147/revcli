@@ -184,6 +184,10 @@ frontmatter, which ensures:
 - [x] **Negative Prompting:** Negative constraints collected in intent form, added to system prompt as "User explicitly
   stated to ignore: [constraints]".
 
+#### Gemini New Provider
+- [x] Migrating Gemini provider
+- [x] Toggle Enable Web Search on each request as checkbox, can be changed in follow-ups questions as well (default = true)
+
 ### Implementation Details
 
 **New Files:**
@@ -202,15 +206,15 @@ frontmatter, which ensures:
 - `internal/context/builder.go` - Added `Intent` field and `WithIntent()` method, `PrunedFiles` in `ReviewContext`
 - `internal/prompt/template.go` - Added `BuildReviewPromptWithPruning()` to use summaries
 - `internal/ui/model.go` - Added `StateFileList` state and `fileList` model
-- `internal/ui/update_reviewing.go` - Added `i` keybinding to enter file list mode
+- `internal/ui/update_reviewing.go` - Added `i` keybinding to enter file list model
 - `internal/ui/view_model.go` - Added `viewFileList()` renderer
 
 ### Issues Found
 
 - [x] IS01: Cannot ask follow-ups questions --> can not type
-- [ ] IS02: Can not quit (`q`) after get streaming error
-- [ ] IS03: Need to detect/bypass `FinishReasonSafety`
-- [ ] IS04: Can not cancel streaming
+- [x] IS02: Can not quit (`q`) after get streaming error
+- [x] IS03: Need to detect/bypass `FinishReasonSafety`
+- [x] IS04: Can not cancel streaming
 
 # v0.3.3 - Chat Enhancements
 
@@ -219,8 +223,10 @@ frontmatter, which ensures:
 **Features:**
 
 ### Raw Ideas
-
 - [ ] Focus Areas Management: Add an option to type any focus areas user want
+
+### Enhance Pruning Animation
+- [ ] Add loading for pruning files
 
 ### Integrating new libs
 

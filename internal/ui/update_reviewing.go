@@ -97,6 +97,13 @@ func (m *Model) updateKeyMsgReviewing(msg tea.KeyMsg) (*Model, tea.Cmd) {
 			m.activeCancel = nil
 		}
 		return m, tea.Quit
+	case key.Matches(msg, m.keys.CancelRequest):
+		if m.streaming && m.activeCancel != nil {
+			m.activeCancel()
+			m.activeCancel = nil
+		}
+		m.transitionToErrorOnCancel()
+		return m, nil
 	case key.Matches(msg, m.keys.Search):
 		m.previousState = m.state
 		m.state = StateSearching

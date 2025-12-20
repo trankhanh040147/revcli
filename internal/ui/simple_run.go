@@ -35,11 +35,17 @@ func RunSimple(ctx context.Context, w io.Writer, reviewCtx *appcontext.ReviewCon
 		return fmt.Errorf("failed to create renderer: %w", err)
 	}
 
+	// Get web search setting from intent (default to true if intent is nil)
+	webSearchEnabled := true
+	if reviewCtx.Intent != nil {
+		webSearchEnabled = reviewCtx.Intent.WebSearchEnabled
+	}
+
 	// Stream the response
 	startTime := time.Now()
 	response, err := client.SendMessageStream(ctx, reviewCtx.UserPrompt, func(chunk string) {
 		fmt.Fprint(w, chunk)
-	})
+	}, webSearchEnabled)
 	if err != nil {
 		return fmt.Errorf("review failed: %w", err)
 	}
@@ -67,4 +73,3 @@ func RunSimple(ctx context.Context, w io.Writer, reviewCtx *appcontext.ReviewCon
 
 	return nil
 }
-

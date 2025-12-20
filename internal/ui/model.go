@@ -3,7 +3,7 @@ package ui
 import (
 	"context"
 	"fmt"
-	"os"
+	"log"
 
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/spinner"
@@ -43,6 +43,7 @@ type Model struct {
 
 	// Gemini client
 	client       *gemini.Client
+	flashClient  *gemini.Client     // Shared client for prune operations (gemini-flash)
 	rootCtx      context.Context    // Root context for cancellation chain
 	activeCancel context.CancelFunc // Cancel function for currently active command
 	apiKey       string             // API key for prune operations
@@ -72,8 +73,9 @@ type Model struct {
 	height int
 
 	// Flags
-	ready     bool
-	streaming bool
+	ready            bool
+	streaming        bool
+	webSearchEnabled bool // Web search toggle for follow-up questions (default: true, resets per question)
 
 	// Streaming channels (set during StreamStartMsg)
 	streamChunkChan chan string
@@ -93,7 +95,7 @@ type Model struct {
 }
 
 // NewModel creates a new application model
-func NewModel(reviewCtx *appcontext.ReviewContext, client *gemini.Client, p *preset.Preset, apiKey string) *Model {
+func NewModel(reviewCtx *appcontext.ReviewContext, client *gemini.Client, flashClient *gemini.Client, p *preset.Preset, apiKey string) *Model {
 	// Create spinner
 	s := spinner.New()
 	s.Spinner = spinner.Dot
@@ -129,7 +131,7 @@ func NewModel(reviewCtx *appcontext.ReviewContext, client *gemini.Client, p *pre
 	// Create renderer (with fallback if it fails)
 	renderer, err := NewRenderer()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "warning: failed to initialize markdown renderer: %v\n", err)
+		log.Printf("warning: failed to initialize markdown renderer: %v", err)
 		renderer = &Renderer{}
 	}
 
@@ -143,6 +145,7 @@ func NewModel(reviewCtx *appcontext.ReviewContext, client *gemini.Client, p *pre
 		state:              StateLoading,
 		reviewCtx:          reviewCtx,
 		client:             client,
+		flashClient:        flashClient,
 		rootCtx:            rootCtx,
 		activeCancel:       nil,
 		apiKey:             apiKey,
@@ -155,6 +158,7 @@ func NewModel(reviewCtx *appcontext.ReviewContext, client *gemini.Client, p *pre
 		renderer:           renderer,
 		ready:              false,
 		streaming:          false,
+		webSearchEnabled:   true, // Default to enabled
 		promptHistory:      []string{},
 		promptHistoryIndex: -1,
 		keys:               DefaultKeyMap(),
@@ -170,8 +174,8 @@ func (m *Model) Init() tea.Cmd {
 }
 
 // Run starts the Bubbletea program
-func Run(reviewCtx *appcontext.ReviewContext, client *gemini.Client, p *preset.Preset, apiKey string) error {
-	model := NewModel(reviewCtx, client, p, apiKey)
+func Run(reviewCtx *appcontext.ReviewContext, client *gemini.Client, flashClient *gemini.Client, p *preset.Preset, apiKey string) error {
+	model := NewModel(reviewCtx, client, flashClient, p, apiKey)
 	program := tea.NewProgram(model, tea.WithAltScreen())
 
 	if _, err := program.Run(); err != nil {
@@ -179,4 +183,26 @@ func Run(reviewCtx *appcontext.ReviewContext, client *gemini.Client, p *preset.P
 	}
 
 	return nil
+}
+
+// resetStreamState resets streaming state and clears all stream channels
+func (m *Model) resetStreamState() {
+	m.streaming = false
+	m.streamChunkChan = nil
+	m.streamErrChan = nil
+	m.streamDoneChan = nil
+}
+
+// transitionToErrorOnCancel handles state transition when a request is cancelled
+func (m *Model) transitionToErrorOnCancel() {
+	m.resetStreamState()
+	// Always transition to error state with appropriate message
+	if m.reviewResponse != "" {
+		m.state = StateError
+		m.errorMsg = "Request cancelled (partial response available)"
+		m.updateViewport() // Update viewport to show partial response
+	} else {
+		m.state = StateError
+		m.errorMsg = "Request cancelled"
+	}
 }

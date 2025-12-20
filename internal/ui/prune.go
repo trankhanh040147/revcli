@@ -10,26 +10,20 @@ import (
 
 // PruneFile summarizes a file using Gemini Flash model
 // Returns the summary string and any error
-func PruneFile(apiKey, filePath, content string) (string, error) {
-	// Use Gemini Flash for cheap summarization
-	flashClient, err := gemini.NewClient(context.Background(), apiKey, "gemini-2.5-flash")
-	if err != nil {
-		return "", fmt.Errorf("failed to create flash client: %w", err)
+// flashClient must be a non-nil client instance (typically gemini-2.5-flash)
+func PruneFile(ctx context.Context, flashClient *gemini.Client, filePath, content string) (string, error) {
+	if flashClient == nil {
+		return "", fmt.Errorf("flash client is nil")
 	}
-	defer flashClient.Close()
 
 	// Build summarization prompt
-	prompt := fmt.Sprintf(`Summarize this code file in one sentence. Focus on what the file does, its main purpose, and key functionality. Be concise.
-
-File: %s
-
-%s`, filePath, content)
+	prompt := fmt.Sprintf(PruneFilePromptTemplate, filePath, content)
 
 	// Use a simple system prompt for summarization
 	systemPrompt := "You are a code summarization assistant. Provide concise, one-sentence summaries of code files."
 
 	// Generate summary
-	summary, err := flashClient.GenerateContent(context.Background(), systemPrompt, prompt)
+	summary, err := flashClient.GenerateContent(ctx, systemPrompt, prompt)
 	if err != nil {
 		return "", fmt.Errorf("failed to generate summary: %w", err)
 	}

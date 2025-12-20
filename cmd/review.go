@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -139,15 +140,22 @@ func runReview(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	defer client.Close()
 
 	fmt.Println(ui.RenderSuccess(fmt.Sprintf("Connected to %s", client.GetModelID())))
 	fmt.Println()
 
+	// Initialize flash client for prune operations
+	flashClient, err := initializeFlashClient(ctx, apiKey)
+	if err != nil {
+		// Log warning but continue - pruning will fail gracefully if needed
+		log.Printf("warning: failed to create flash client: %v", err)
+		flashClient = nil
+	}
+
 	// Step 3: Run the review
 	if interactive {
 		// Interactive TUI mode
-		return ui.Run(reviewCtx, client, activePreset, apiKey)
+		return ui.Run(reviewCtx, client, flashClient, activePreset, apiKey)
 	}
 
 	// Non-interactive mode

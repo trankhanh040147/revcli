@@ -5,19 +5,21 @@ import (
 	"fmt"
 
 	tea "github.com/charmbracelet/bubbletea"
+
+	"github.com/trankhanh040147/revcli/internal/gemini"
 )
 
 // pruneFileCmd creates a command to prune a file
-func pruneFileCmd(ctx context.Context, apiKey, filePath, content string) tea.Cmd {
+func pruneFileCmd(ctx context.Context, flashClient *gemini.Client, filePath, content string) tea.Cmd {
 	return func() tea.Msg {
-		if apiKey == "" {
+		if flashClient == nil {
 			return PruneFileMsg{
 				FilePath: filePath,
-				Err:      fmt.Errorf("API key not set"),
+				Err:      fmt.Errorf("flash client not initialized"),
 			}
 		}
 
-		summary, err := PruneFile(apiKey, filePath, content)
+		summary, err := PruneFile(ctx, flashClient, filePath, content)
 		return PruneFileMsg{
 			FilePath: filePath,
 			Summary:  summary,

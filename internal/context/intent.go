@@ -15,6 +15,8 @@ type Intent struct {
 	FocusAreas []string
 	// NegativeConstraints are things the user wants to ignore
 	NegativeConstraints []string
+	// WebSearchEnabled controls whether web search is enabled for Gemini requests (default: true)
+	WebSearchEnabled bool
 }
 
 // BuildSystemPromptWithIntent builds the system prompt incorporating intent

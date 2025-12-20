@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"golang.org/x/sync/errgroup"
+
 	appcontext "github.com/trankhanh040147/revcli/internal/context"
 	"github.com/trankhanh040147/revcli/internal/gemini"
 	"github.com/trankhanh040147/revcli/internal/prompt"
@@ -32,45 +34,64 @@ func (m *Model) startReview() tea.Cmd {
 		)
 	}
 
+	// Get web search setting from intent (default to true if intent is nil)
+	webSearchEnabled := true
+	if m.reviewCtx.Intent != nil {
+		webSearchEnabled = m.reviewCtx.Intent.WebSearchEnabled
+	}
+
 	// Create new context for this command
 	ctx, cancel := context.WithCancel(m.rootCtx)
 	m.activeCancel = cancel
 	// Return command that starts streaming in goroutine
-	return streamReviewCmd(ctx, m.client, userPrompt)
+	return streamReviewCmd(ctx, m.client, userPrompt, webSearchEnabled)
 }
 
 // streamReviewCmd creates a command that streams the review response
-func streamReviewCmd(ctx context.Context, client *gemini.Client, userPrompt string) tea.Cmd {
+func streamReviewCmd(ctx context.Context, client *gemini.Client, userPrompt string, webSearchEnabled bool) tea.Cmd {
 	return func() tea.Msg {
 		// Channel to send chunks from goroutine to tea program
-		chunkChan := make(chan string, 10)
-		errChan := make(chan error, 1)
-		doneChan := make(chan string, 1)
+		chunkChan := make(chan string, gemini.ChunkChannelBufferSize)
+		errChan := make(chan error, gemini.ErrorChannelBufferSize)
+		doneChan := make(chan string, gemini.DoneChannelBufferSize)
 
-		// Start streaming in goroutine
-		go func() {
+		// Start streaming using errgroup for proper error propagation
+		g, gCtx := errgroup.WithContext(ctx)
+		g.Go(func() error {
 			var fullResponse strings.Builder
 
-			_, err := client.SendMessageStream(ctx, userPrompt, func(chunk string) {
+			_, err := client.SendMessageStream(gCtx, userPrompt, func(chunk string) {
 				fullResponse.WriteString(chunk)
 				select {
 				case chunkChan <- chunk:
-				case <-ctx.Done():
+				case <-gCtx.Done():
 					return
 				}
-			})
+			}, webSearchEnabled)
 
 			if err != nil {
 				select {
 				case errChan <- err:
-				case <-ctx.Done():
+				case <-gCtx.Done():
 				}
-				return
+				return err
 			}
 
 			select {
 			case doneChan <- fullResponse.String():
-			case <-ctx.Done():
+			case <-gCtx.Done():
+			}
+			return nil
+		})
+
+		// Wait for completion in background and handle errors
+		go func() {
+			if err := g.Wait(); err != nil {
+				// Error already sent through errChan, but ensure it's sent if errgroup fails
+				select {
+				case errChan <- err:
+				case <-ctx.Done():
+				}
 			}
 		}()
 

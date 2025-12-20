@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 
+	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
@@ -16,6 +17,8 @@ func (m *Model) returnToPreviousState() {
 }
 
 // handleChatCompletion handles chat response completion (success or error)
+// Note: webSearchEnabled is reset in update_chatting.go when sending the message,
+// so it's already set to true when this handler runs
 func (m *Model) handleChatCompletion(content string, isError bool) {
 	m.streaming = false
 	m.chatHistory = append(m.chatHistory, ChatMessage{Role: ChatRoleAssistant, Content: content})
@@ -85,11 +88,7 @@ func (m *Model) handleStreamMessages(msg tea.Msg) (*Model, tea.Cmd, bool) {
 		// Streaming complete: set final response and transition to reviewing state
 		m.state = StateReviewing
 		m.reviewResponse = msg.FullResponse
-		m.streaming = false
-		// Clear streaming channels
-		m.streamChunkChan = nil
-		m.streamErrChan = nil
-		m.streamDoneChan = nil
+		m.resetStreamState()
 		// Clear active cancel (command completed)
 		m.activeCancel = nil
 		m.updateViewport()
@@ -112,11 +111,7 @@ func (m *Model) handleReviewMessages(msg tea.Msg) {
 	case ReviewErrorMsg:
 		m.state = StateError
 		m.errorMsg = msg.Err.Error()
-		m.streaming = false
-		// Clear streaming channels
-		m.streamChunkChan = nil
-		m.streamErrChan = nil
-		m.streamDoneChan = nil
+		m.resetStreamState()
 		// Clear active cancel (command completed/errored)
 		m.activeCancel = nil
 	}
@@ -249,6 +244,23 @@ func (m *Model) updateNonKeyMsg(msg tea.Msg) (*Model, tea.Cmd) {
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
+		// Handle quit keys globally (including during loading/streaming)
+		if key.Matches(msg, m.keys.Quit) || key.Matches(msg, m.keys.ForceQuit) {
+			if m.activeCancel != nil {
+				m.activeCancel()
+				m.activeCancel = nil
+			}
+			return m, tea.Quit
+		}
+		// Handle cancel request globally when streaming (including during loading)
+		if key.Matches(msg, m.keys.CancelRequest) && m.streaming {
+			if m.activeCancel != nil {
+				m.activeCancel()
+				m.activeCancel = nil
+			}
+			m.transitionToErrorOnCancel()
+			return m, nil
+		}
 		// Route to state-specific handlers
 		switch m.state {
 		case StateSearching:
@@ -264,7 +276,7 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case StateError:
 			return m.updateKeyMsgError(msg)
 		default:
-			// Loading state doesn't handle keys
+			// Loading state doesn't handle other keys
 			return m.updateNonKeyMsg(msg)
 		}
 	default:
