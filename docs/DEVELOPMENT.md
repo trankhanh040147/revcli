@@ -232,9 +232,9 @@ frontmatter, which ensures:
 - [ ] **`samber/lo` Integration:** Refactor slice logic in `diff` and `review` packages.
 
 | **Feature**        | **Library** | **Implementation Concept**                                                                                                        |
-|--------------------|-------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| ------------------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | **Data Filtering** | `samber/lo` | `reviews = lo.Filter(reviews, func(r Review, _ int) bool { return !config.IsIgnored(r.RuleID) })`. Much cleaner than `for` loops. |
-|                    |             |                                                                                                                                   |
+
 
 ### Chat/Request Management (In Testing)
 
