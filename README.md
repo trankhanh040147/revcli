@@ -1,5 +1,6 @@
 # revcli
 
+[![Latest Release](https://img.shields.io/github/v/release/trankhanh040147/revcli.svg)](https://github.com/trankhanh040147/revcli/releases)
 [![Go Report Card](https://goreportcard.com/badge/github.com/trankhanh040147/revcli)](https://goreportcard.com/report/github.com/trankhanh040147/revcli)
 [![Go Reference](https://pkg.go.dev/badge/github.com/trankhanh040147/revcli.svg)](https://pkg.go.dev/github.com/trankhanh040147/revcli)
 [![OpenSSF](https://img.shields.io/badge/OpenSSF-deps.dev-purple)](https://deps.dev/go/github.com%2Ftrankhanh040147%2Frevcli)
