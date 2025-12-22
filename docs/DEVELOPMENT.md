@@ -215,45 +215,49 @@ frontmatter, which ensures:
 - [x] IS03: Need to detect/bypass `FinishReasonSafety`
 - [x] IS04: Can not cancel streaming
 
+Here is the updated **v0.4.0** plan with the completed SDK migration removed.
 
-# v0.4.0 - Structured Intelligence
+# v0.4.0 - Responsive control  
 
 **Status:** Planned
 
-**Features:**
-- [ ] **Function Calling:** Use Gemini Tools to return issues as JSON objects (File, Line, Severity, Comment).
-- [ ] **Structured UI:** Render the JSON issues in a list, not just a markdown blob.
+### 1. Interaction & Feedback
 
-### Raw Ideas
-- [ ] Focus Areas Management: Add an option to type any focus areas user want
-- [ ] **Apply function calling**
-- [ ] **integrating GitHub Actions** (Auto build/test, auto release, scorecard (OpenSSF),...)
-- [ ] **fix**: unable to show token usages in interactive mode 
+* [ ] **Async Pruning:** Wrap pruning logic in `tea.Cmd` with spinner feedback to prevent UI freezing.
+* [ ] **Cancellation:** Implement `context.WithCancel` for `Ctrl+X` interruption during generation.
+* [ ] **Intent Input:** Upgrade `huh` form to accept custom text intent ("Focus on X").
 
-### Enhance Pruning Animation
-- [ ] Add loading for pruning files
+### 2. DevOps & CI/CD
 
-### Chat/Request Management (In Testing)
+* [ ] **Security Workflow:** Integrate **OpenSSF Scorecard** (`scorecard.yaml`) for supply chain security.
+* [ ] **Release Automation:** Configure **GoReleaser** (`.goreleaser.yaml`) for multi-platform builds and Homebrew tap.
+* [ ] **CI Pipeline:** Add `golangci-lint` and `go test -race` workflow.* [ ] **CI Pipeline:** Add `golangci-lint` and `go test -race` workflow.
 
-- [ ] `Ctrl+X` cancels streaming requests (after follow-ups question)
-- [ ] Prompt history navigation (`Ctrl+P`/`Ctrl+N`)
-- [ ] Request cancellation feedback
+# v0.4.1 - Structured Intelligence
 
-# v0.4.1 - Extend reading
+### Core features
 
-### The "Logic" Engine
-- [ ] **Smart Context (Tree-sitter):** Detect function changes in diff -> find usages in repo -> add to context.
-- [ ] **Dependency Graph:** simple map of which packages import the changed files.
+#### 1. Core Logic & Data Structure (Prerequisite)
 
-### Integrating new libs
-- [ ] **`samber/lo` Integration:** Refactor slice logic in `diff` and `review` packages.
+* [ ] **Define Schema:** Implement `ReviewIssue` struct and map it to **OpenAPI 3.0** schema.
+* [ ] **Tool Configuration:** Configure `submit_review` tool to force **deterministic** JSON output.
+* [ ] **JSON Unmarshaling:** Implement logic to bridge `map[string]interface{}` responses back to strict Go structs.
+* [ ] **Safe Fallback:** Handle cases where the model refuses to call the function (fallback to text).
 
-| **Feature**        | **Library** | **Implementation Concept**                                                                                                        |
-| ------------------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| **Data Filtering** | `samber/lo` | `reviews = lo.Filter(reviews, func(r Review, _ int) bool { return !config.IsIgnored(r.RuleID) })`. Much cleaner than `for` loops. |
-### Raw Ideas
-- Able to read all project for context, then combine with git diff
-- [ ] **Ignore management**
+#### 2. TUI & Visualization (UX Focused)
+
+* [ ] **List View:** Replace Markdown viewport with `bubbles/list` for navigable issue tracking.
+* [ ] **Custom Delegate:** Implement `lipgloss` rendering for colored Severity pills and Category tags.
+* [ ] **Detail State:** Create `StateDetailView` (Enter key) to render full suggestion/context using Glamour.
+* [ ] **Token Transparency:** Extract `UsageMetadata` from JSON response; display "Tokens In/Out & Cost" in list footer.
+
+### Planned features
+#### Context Intelligence
+* [ ] **Dependency Graph:** Implement Regex-based import scanning to find "Related Context" (files that import the changed code).
+* [ ] **Smart Pruning:** Feed "Related Context" summaries into the prompt to detect breaking changes in other files.
+#### Refactoring
+* [ ] **`samber/lo` Integration:** Refactor slice logic in `diff` and `review` packages using declarative pipelines (Filter, Map).
+* [ ] **Ignore Management:** Implement `.revignore` support (using `samber/lo` to filter).
 
 # v0.4.2 - Panes & Export (Lazy-git Style)
 
