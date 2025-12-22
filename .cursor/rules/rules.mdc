@@ -4,7 +4,7 @@ alwaysApply: true
 # revcli - Language Learning CLI Tool
 
 ## Project Context
-- **Core:** Go (1.25+), Cobra (CLI)
+- **Core:** Go (1.25.0) Cobra (CLI)
 - **TUI Stack:**
   - `bubbletea` (Elm architecture)
   - `lipgloss` (Styling & Layout)

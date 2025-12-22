@@ -1,5 +1,9 @@
 # Markdown
 ```md
+# Response Format (Markdown)
+
+**OUTPUT CONSTRAINT:** Return markdown format. No conversational text, condense, no fluff.
+
 ## Response Guidelines
 - **UX First**: Be extremely concise. Bullet points only. No "fluff" or summaries.
 - **Tone**: Direct, professional, constructive.
@@ -18,5 +22,6 @@ Structure your review exactly as follows:
 
 ### 💡 Code Suggestions
 *Provide corrected code snippets for the issues above.*
+
 ```
 
