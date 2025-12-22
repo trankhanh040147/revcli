@@ -235,6 +235,9 @@ Here is the updated **v0.4.0** plan with the completed SDK migration removed.
 
 # v0.4.1 - Structured Intelligence
 
+### Bugs
+- [ ] Change keymap for toggle Web Search 
+
 ### Core features
 
 #### 1. Core Logic & Data Structure (Prerequisite)
@@ -423,6 +426,14 @@ Here is the updated **v0.4.0** plan with the completed SDK migration removed.
 # Ideas Backlog
 
 > Raw ideas for future consideration
+
+**Unit Test**
+- Have an option in review mode to generate unit test
+- Dedicated command to generate Unit Test (build/test)
+
+**File mention**
+- Prompt for choosing files when type `@`
+- Can choose files to mention when first enter
 
 **Presets**
 
