@@ -215,42 +215,55 @@ frontmatter, which ensures:
 - [x] IS03: Need to detect/bypass `FinishReasonSafety`
 - [x] IS04: Can not cancel streaming
 
-# v0.3.3 - Chat Enhancements
+
+# v0.4.0 - Structured Intelligence
 
 **Status:** Planned
 
 **Features:**
+- [ ] **Function Calling:** Use Gemini Tools to return issues as JSON objects (File, Line, Severity, Comment).
+- [ ] **Structured UI:** Render the JSON issues in a list, not just a markdown blob.
 
 ### Raw Ideas
 - [ ] Focus Areas Management: Add an option to type any focus areas user want
+- [ ] **Apply function calling**
+- [ ] **integrating GitHub Actions** (Auto build/test, auto release, scorecard (OpenSSF),...)
+- [ ] **fix**: unable to show token usages in interactive mode 
 
 ### Enhance Pruning Animation
 - [ ] Add loading for pruning files
 
-### Integrating new libs
+### Chat/Request Management (In Testing)
 
+- [ ] `Ctrl+X` cancels streaming requests (after follow-ups question)
+- [ ] Prompt history navigation (`Ctrl+P`/`Ctrl+N`)
+- [ ] Request cancellation feedback
+
+# v0.4.1 - Extend reading
+
+### The "Logic" Engine
+- [ ] **Smart Context (Tree-sitter):** Detect function changes in diff -> find usages in repo -> add to context.
+- [ ] **Dependency Graph:** simple map of which packages import the changed files.
+
+### Integrating new libs
 - [ ] **`samber/lo` Integration:** Refactor slice logic in `diff` and `review` packages.
 
 | **Feature**        | **Library** | **Implementation Concept**                                                                                                        |
 | ------------------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | **Data Filtering** | `samber/lo` | `reviews = lo.Filter(reviews, func(r Review, _ int) bool { return !config.IsIgnored(r.RuleID) })`. Much cleaner than `for` loops. |
-
-
-### Chat/Request Management (In Testing)
-
-- [ ] `Ctrl+X` cancels streaming requests
-- [ ] Prompt history navigation (`Ctrl+P`/`Ctrl+N`)
-- [ ] Request cancellation feedback
-
-# v0.3.4 - Extend reading
-
+### Raw Ideas
 - Able to read all project for context, then combine with git diff
+- [ ] **Ignore management**
 
-# v0.4 - Panes & Export (Lazy-git Style)
+# v0.4.2 - Panes & Export (Lazy-git Style)
 
 **Status:** Planned
 
 **Features:**
+
+### The "Lazy" Experience (UX)
+- [ ] **Interactive Patching:** `Apply` button that actually writes code.
+- [ ] **Panes:** Reviews | Chat | Config (Tab to switch).
 
 ### Setting Management
 
