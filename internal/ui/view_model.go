@@ -21,7 +21,7 @@ var (
 // viewLoading renders the loading state
 func (m *Model) viewLoading() string {
 	var s strings.Builder
-	s.WriteString(RenderTitle("🔍 Go Code Review"))
+	s.WriteString(RenderTitle("🔍 LLM Review"))
 	s.WriteString("\n")
 	s.WriteString(m.spinner.View())
 	s.WriteString(" Analyzing your code changes...\n\n")
@@ -34,7 +34,7 @@ func (m *Model) viewLoading() string {
 // viewError renders the error state
 func (m *Model) viewError() string {
 	var s strings.Builder
-	s.WriteString(RenderTitle("🔍 Go Code Review"))
+	s.WriteString(RenderTitle("🔍 LLM Review"))
 	s.WriteString("\n")
 	s.WriteString(RenderError(m.errorMsg))
 	s.WriteString("\n")
@@ -51,7 +51,7 @@ func (m *Model) viewError() string {
 // viewMain renders the main reviewing/chatting/searching state
 func (m *Model) viewMain() string {
 	var s strings.Builder
-	s.WriteString(RenderTitle("🔍 Go Code Review"))
+	s.WriteString(RenderTitle("🔍 LLM Review"))
 	s.WriteString("\n")
 	s.WriteString(m.viewport.View())
 	s.WriteString("\n")

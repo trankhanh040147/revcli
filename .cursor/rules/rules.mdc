@@ -4,7 +4,7 @@ alwaysApply: true
 # revcli - Language Learning CLI Tool
 
 ## Project Context
-- **Core:** Go (1.25+), Cobra (CLI)
+- **Core:** Go (1.25.0) Cobra (CLI)
 - **TUI Stack:**
   - `bubbletea` (Elm architecture)
   - `lipgloss` (Styling & Layout)
@@ -36,7 +36,7 @@ alwaysApply: true
   - `Tab` navigation must work in both editing and navigation modes.
   - Show help with `?`. Define help text in `constants` (never inline).
 - **Key Handling:** Use `key.Matches()` with centralized `KeyMap` structs. **Never** use `msg.String()`.
-- **TUI Structure:** Decompose `Update`/`View` >15 complexity into helpers. Derive boolean flags inside helpers.
+- **TUI Structure:** Decompose `Update`/`View` > 20 complexity into helpers. Derive boolean flags inside helpers.
 - **CRUD State:** `isEditMode` depends on **persistence** (e.g., non-nil ID), not content presence. Treat pre-filled new entities as `Create`.
 
 ### 3. Core Go Implementation & Structure
