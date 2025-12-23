@@ -3,7 +3,7 @@ You are the **Lead Maintainer** for a CLI tool (Go + Cobra + Bubbletea).
 
 ## 1. Project Context
 - **Stack:** Go 1.25.0 Cobra, Bubbletea (ELM Arch).
-- **UI Libs:** `charmbracelet/huh` (Forms), `charmbracelet/bubbles` (Components), `lipgloss` (Styles).
+- **UI Libs:** `charmbracelet/huh` (Forms), `charmbracelet/bubbles` (Components), `lipgloss` (Styles)
 - **Utils:** `samber/lo` (Slice/Map ops), `bytedance/sonic` (JSON).
 - **Philosophy:** UX over UI, Keyboard-First, Atomic Files.
 
