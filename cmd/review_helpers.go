@@ -1,13 +1,8 @@
 package cmd
 
 import (
-	"context"
-	"fmt"
-	"log"
-
-	"github.com/trankhanh040147/revcli/internal/config"
+	"github.com/charmbracelet/crush/internal/message"
 	appcontext "github.com/trankhanh040147/revcli/internal/context"
-	"github.com/trankhanh040147/revcli/internal/gemini"
 	"github.com/trankhanh040147/revcli/internal/preset"
 )
 
@@ -48,26 +43,22 @@ func buildReviewContext(builder *appcontext.Builder, intent *appcontext.Intent) 
 	return builder.Build()
 }
 
-// initializeClient initializes and returns a Gemini API client with the given model
-func initializeClient(ctx context.Context, apiKey, model string) (*gemini.Client, error) {
-	cfg, err := preset.LoadConfig()
-	if err != nil {
-		log.Printf("warn: failed to load configuration, proceeding with defaults: %v", err)
-		cfg = nil
-	}
-	client, err := gemini.NewClient(ctx, apiKey, model, cfg)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create Gemini client: %w", err)
-	}
-	return client, nil
+// buildReviewPrompt builds the review prompt from context and preset
+// TODO: using preset later
+func buildReviewPrompt(reviewCtx *appcontext.ReviewContext, preset *preset.Preset) string {
+	// Start with the user prompt from context
+	prompt := reviewCtx.UserPrompt
+
+	// If there are pruned files, the prompt should already include them
+	// (handled by prompt.BuildReviewPromptWithPruning)
+	return prompt
 }
 
-// initializeAPIClient initializes and returns a Gemini API client
-func initializeAPIClient(ctx context.Context, apiKey, model string) (*gemini.Client, error) {
-	return initializeClient(ctx, apiKey, model)
-}
-
-// initializeFlashClient initializes and returns a Gemini Flash API client for prune operations
-func initializeFlashClient(ctx context.Context, apiKey string) (*gemini.Client, error) {
-	return initializeClient(ctx, apiKey, config.ModelGeminiFlash)
+// buildAttachments converts review context files to message attachments
+func buildAttachments(reviewCtx *appcontext.ReviewContext) []message.Attachment {
+	var attachments []message.Attachment
+	for filePath, content := range reviewCtx.FileContents {
+		attachments = append(attachments, message.NewTextAttachment(filePath, content))
+	}
+	return attachments
 }
