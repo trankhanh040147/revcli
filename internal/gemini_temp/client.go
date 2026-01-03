@@ -1,4 +1,4 @@
-package gemini
+package gemini_temp
 
 import (
 	"context"
@@ -23,10 +23,10 @@ type TokenUsage struct {
 }
 
 type Client struct {
-	client     *genai.Client
-	modelID    string
-	lastUsage  *TokenUsage
-	modelConfig *preset.ModelParams
+	client          *genai.Client
+	modelID         string
+	lastUsage       *TokenUsage
+	modelConfig     *preset.ModelParams
 	safetyThreshold string
 	// In the new SDK, history is maintained as a slice of Content
 	history []*genai.Content
@@ -60,8 +60,8 @@ func NewClient(ctx context.Context, apiKey, modelID string, config *preset.Confi
 	if modelConfig == nil {
 		modelConfig = &preset.ModelParams{
 			Temperature: DefaultModelTemperature,
-			TopP:         DefaultModelTopP,
-			TopK:         DefaultModelTopK,
+			TopP:        DefaultModelTopP,
+			TopK:        DefaultModelTopK,
 		}
 	}
 	if safetyThreshold == "" {
@@ -99,9 +99,9 @@ func (c *Client) GetModelID() string {
 
 // SessionData represents the serializable session state
 type SessionData struct {
-	SystemPrompt string            `json:"systemPrompt"`
-	History      []*genai.Content  `json:"history"`
-	ModelID      string            `json:"modelID"`
+	SystemPrompt string           `json:"systemPrompt"`
+	History      []*genai.Content `json:"history"`
+	ModelID      string           `json:"modelID"`
 }
 
 // getSessionPath returns the path to a session file

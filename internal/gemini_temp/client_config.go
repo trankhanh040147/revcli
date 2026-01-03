@@ -1,4 +1,4 @@
-package gemini
+package gemini_temp
 
 import (
 	"github.com/samber/lo"
@@ -56,4 +56,3 @@ func (c *Client) appendUserMessageAndPrepareTurn(message string, webSearchEnable
 	c.history = append(c.history, userMsg)
 	return userMsg, config
 }
-

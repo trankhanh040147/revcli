@@ -1,4 +1,4 @@
-package gemini
+package gemini_temp
 
 import (
 	"context"

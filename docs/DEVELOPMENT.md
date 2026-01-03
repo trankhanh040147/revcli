@@ -248,7 +248,13 @@ Here is the updated **v0.4.0** plan with the completed SDK migration removed.
 - [ ] **Secure Release Automation:** Configure GoReleaser (`.goreleaser.yaml`) for multi-platform builds, Homebrew tap, and integrate Cosign for artifact signing.
 - [ ] **Fast & Comprehensive CI Pipeline:** Add `golangci-lint` (strict config) and `go test -race`; optimize for speed and provide local pre-commit targets.
 
-# v0.4.0.1 - Code Quality Refactoring ✅
+# v0.5.0 - Agent Architecture (?)
+
+- Adapt Agent Architecture like `https://github.com/charmbracelet/crush`
+- Rewrite tools and refactor codes 
+
+
+# v0.6.0 - Code Quality Refactoring ✅
 
 **Status:** Completed
 
@@ -270,7 +276,7 @@ Here is the updated **v0.4.0** plan with the completed SDK migration removed.
 ### Rules Updated
 - Added anti-pattern guidance: Prefer optional parameters over "With*" function variants to avoid duplication
 
-# v0.4.1 - Structured Intelligence
+# v0.7.0 - Structured Intelligence
 
 ### Bugs
 
@@ -316,7 +322,7 @@ Here is the updated **v0.4.0** plan with the completed SDK migration removed.
 - [ ] **`samber/lo` Integration:** Refactor slice logic in `diff` and `review` packages using declarative pipelines (Filter, Map).
 - [ ] **Ignore Management:** Implement `.revignore` support (using `samber/lo` to filter).
 
-# v0.4.2 - Panes & Export (Lazy-git Style)
+# v0.8.0 - Panes & Export (Lazy-git Style)
 
 **Status:** Planned
 
@@ -363,7 +369,7 @@ Here is the updated **v0.4.0** plan with the completed SDK migration removed.
 
 ---
 
-# v0.5 - Power User Features
+# v0.9.0 - Power User Features
 
 **Status:** Future
 

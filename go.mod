@@ -1,6 +1,6 @@
 module github.com/trankhanh040147/revcli
 
-go 1.25.4
+go 1.25.0
 
 require (
 	github.com/atotto/clipboard v0.1.4

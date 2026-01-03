@@ -1,4 +1,4 @@
-package gemini
+package gemini_temp
 
 import "google.golang.org/genai"
 
@@ -61,4 +61,3 @@ func getAllHarmCategories() []genai.HarmCategory {
 		genai.HarmCategoryCivicIntegrity,
 	}
 }
-
