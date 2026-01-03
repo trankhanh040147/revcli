@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/charmbracelet/lipgloss"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 )
 
 // Styles for web search indicator (defined once at package level)
@@ -124,28 +125,28 @@ func (m *Model) viewFooter() string {
 }
 
 // View renders the UI
-func (m *Model) View() string {
+func (m *Model) View() tea.View {
 	if !m.ready {
-		return "\n  Initializing..."
+		return tea.NewView("\n  Initializing...")
 	}
 
 	// If help overlay is active, render it
 	if m.state == StateHelp {
 		helpOverlay := NewHelpOverlay(m.width, m.height)
-		return helpOverlay.Render()
+		return tea.NewView(helpOverlay.Render())
 	}
 
 	switch m.state {
 	case StateLoading:
-		return m.viewLoading()
+		return tea.NewView(m.viewLoading())
 	case StateError:
-		return m.viewError()
+		return tea.NewView(m.viewError())
 	case StateFileList:
-		return m.viewFileList()
+		return tea.NewView(m.viewFileList())
 	case StateReviewing, StateChatting, StateSearching:
-		return m.viewMain()
+		return tea.NewView(m.viewMain())
 	default:
-		return ""
+		return tea.NewView("")
 	}
 }
 

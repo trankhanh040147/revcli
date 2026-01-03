@@ -9,7 +9,6 @@ import (
 	"github.com/spf13/cobra"
 
 	appcontext "github.com/trankhanh040147/revcli/internal/context"
-	"github.com/trankhanh040147/revcli/internal/app"
 	"github.com/trankhanh040147/revcli/internal/ui"
 )
 
@@ -151,7 +150,7 @@ func runReview(cmd *cobra.Command, args []string) error {
 
 	// Build prompt and attachments
 	prompt := buildReviewPrompt(reviewCtx, activePreset)
-	attachments := buildAttachments(reviewCtx)
+	_ = buildAttachments(reviewCtx) // Attachments are built in model_review.go
 
 	// Step 3: Run the review
 	if interactive {

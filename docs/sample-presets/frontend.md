@@ -1,3 +1,7 @@
+---
+feature: 5_projects/revcli/docs/sample-presets/attachments/Pasted image 20260103165452.png
+thumbnail: thumbnails/resized/5dcb47760f32efcd8446401eb8b69f95_86cf658e.webp
+---
 # Configuration Variables
 - **Framework**: [e.g., React/Next.js]
 - **State Management**: [e.g., TanStack Query, Zustand]
@@ -28,7 +32,7 @@ You are a Principal Frontend Engineer. Your mission is to provide surgical-grade
 - *Briefly summarize the user's question and acknowledge the specific problem they are trying to solve.*
 - *Mention any `TODO` items found and confirm you will provide solutions for them.*
 
-## 🔴 Critical (Must Fix)
+## 🔴 Crit![[Pasted image 20260103165452.png]]ical (Must Fix)
 - **Reference**: `[file:line]`
 - **Issue**: [Logic bugs or severe performance bottlenecks]
 - **SOTA Fix**: [Optimized code solution]

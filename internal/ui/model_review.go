@@ -2,9 +2,10 @@ package ui
 
 import (
 	"context"
+	"path/filepath"
 	"strings"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "charm.land/bubbletea/v2"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/trankhanh040147/revcli/internal/app"
@@ -17,7 +18,12 @@ import (
 func buildAttachments(reviewCtx *appcontext.ReviewContext) []message.Attachment {
 	var attachments []message.Attachment
 	for filePath, content := range reviewCtx.FileContents {
-		attachments = append(attachments, message.NewTextAttachment(filePath, content))
+		attachments = append(attachments, message.Attachment{
+			FilePath: filePath,
+			FileName: filepath.Base(filePath),
+			MimeType: "text/plain",
+			Content:  []byte(content),
+		})
 	}
 	return attachments
 }

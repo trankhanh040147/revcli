@@ -3,9 +3,9 @@ package ui
 import (
 	"time"
 
-	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/textinput"
-	tea "github.com/charmbracelet/bubbletea"
+	"charm.land/bubbles/v2/key"
+	"charm.land/bubbles/v2/textinput"
+	tea "charm.land/bubbletea/v2"
 )
 
 // handleYank handles yank commands and returns (model, cmd, handled)
@@ -41,25 +41,10 @@ func (m *Model) handleNavigation(msg tea.KeyMsg) (*Model, tea.Cmd) {
 		return m, nil
 	}
 
-	switch {
-	case key.Matches(msg, m.keys.Down):
-		m.viewport.LineDown(1)
-	case key.Matches(msg, m.keys.Up):
-		m.viewport.LineUp(1)
-	case key.Matches(msg, m.keys.Top):
-		m.viewport.GotoTop()
-	case key.Matches(msg, m.keys.Bottom):
-		m.viewport.GotoBottom()
-	case key.Matches(msg, m.keys.HalfPageDown):
-		m.viewport.HalfViewDown()
-	case key.Matches(msg, m.keys.HalfPageUp):
-		m.viewport.HalfViewUp()
-	case key.Matches(msg, m.keys.PageDown):
-		m.viewport.ViewDown()
-	case key.Matches(msg, m.keys.PageUp):
-		m.viewport.ViewUp()
-	}
-	return m, nil
+	// Pass navigation keys to viewport
+	var cmd tea.Cmd
+	m.viewport, cmd = m.viewport.Update(msg)
+	return m, cmd
 }
 
 // handleSearchNavigation handles search navigation commands

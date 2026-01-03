@@ -1,6 +1,9 @@
 package message
 
-import "strings"
+import (
+	"path/filepath"
+	"strings"
+)
 
 type Attachment struct {
 	FilePath string
@@ -11,3 +14,12 @@ type Attachment struct {
 
 func (a Attachment) IsText() bool  { return strings.HasPrefix(a.MimeType, "text/") }
 func (a Attachment) IsImage() bool { return strings.HasPrefix(a.MimeType, "image/") }
+
+func NewTextAttachment(filePath, content string) Attachment {
+	return Attachment{
+		FilePath: filePath,
+		FileName: filepath.Base(filePath),
+		MimeType: "text/plain",
+		Content:  []byte(content),
+	}
+}

@@ -1,11 +1,11 @@
 package ui
 
 import (
-	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/spinner"
-	"github.com/charmbracelet/bubbles/viewport"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	"charm.land/bubbles/v2/key"
+	"charm.land/bubbles/v2/spinner"
+	"charm.land/bubbles/v2/viewport"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 )
 
 // returnToPreviousState returns to the previous state and updates viewport height
@@ -31,11 +31,13 @@ func (m *Model) handleWindowSize(msg tea.WindowSizeMsg) {
 
 	m.updateViewportHeight()
 	if !m.ready {
-		m.viewport = viewport.New(msg.Width, m.viewport.Height)
+		m.viewport = viewport.New()
+		m.viewport.SetWidth(msg.Width)
+		m.viewport.SetHeight(CalculateViewportHeight(msg.Height, m.state, m.yankFeedback != ""))
 		m.viewport.Style = lipgloss.NewStyle().Padding(0, 2)
 		m.ready = true
 	} else {
-		m.viewport.Width = msg.Width
+		m.viewport.SetWidth(msg.Width)
 	}
 	m.textarea.SetWidth(msg.Width - 4)
 	// Update file list dimensions

@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"path/filepath"
+
 	appcontext "github.com/trankhanh040147/revcli/internal/context"
 	"github.com/trankhanh040147/revcli/internal/message"
 	"github.com/trankhanh040147/revcli/internal/preset"
@@ -58,7 +60,12 @@ func buildReviewPrompt(reviewCtx *appcontext.ReviewContext, preset *preset.Prese
 func buildAttachments(reviewCtx *appcontext.ReviewContext) []message.Attachment {
 	var attachments []message.Attachment
 	for filePath, content := range reviewCtx.FileContents {
-		attachments = append(attachments, message.NewTextAttachment(filePath, content))
+		attachments = append(attachments, message.Attachment{
+			FilePath: filePath,
+			FileName: filepath.Base(filePath),
+			MimeType: "text/plain",
+			Content:  []byte(content),
+		})
 	}
 	return attachments
 }

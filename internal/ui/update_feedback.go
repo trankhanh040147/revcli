@@ -5,7 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "charm.land/bubbletea/v2"
+
+	"github.com/trankhanh040147/revcli/internal/agent"
 )
 
 // handleReviewMessages handles review completion and error messages

@@ -5,16 +5,16 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/charmbracelet/bubbles/list"
-	"github.com/charmbracelet/bubbles/spinner"
-	"github.com/charmbracelet/bubbles/textarea"
-	"github.com/charmbracelet/bubbles/textinput"
-	"github.com/charmbracelet/bubbles/viewport"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	"charm.land/bubbles/v2/list"
+	"charm.land/bubbles/v2/spinner"
+	"charm.land/bubbles/v2/textarea"
+	"charm.land/bubbles/v2/textinput"
+	"charm.land/bubbles/v2/viewport"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 
-	appcontext "github.com/trankhanh040147/revcli/internal/context"
 	"github.com/trankhanh040147/revcli/internal/app"
+	appcontext "github.com/trankhanh040147/revcli/internal/context"
 	"github.com/trankhanh040147/revcli/internal/preset"
 )
 
@@ -42,9 +42,9 @@ type Model struct {
 	reviewCtx *appcontext.ReviewContext
 
 	// App and session
-	app       *app.App
-	sessionID string
-	rootCtx   context.Context    // Root context for cancellation chain
+	app          *app.App
+	sessionID    string
+	rootCtx      context.Context    // Root context for cancellation chain
 	activeCancel context.CancelFunc // Cancel function for currently active command
 
 	// Review preset
@@ -116,21 +116,26 @@ func NewModel(reviewCtx *appcontext.ReviewContext, appInstance *app.App, session
 	ta.ShowLineNumbers = false
 
 	// Custom textarea styling to avoid white background and row highlighting
-	ta.FocusedStyle.Base = lipgloss.NewStyle().
-		BorderStyle(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#7C3AED"))
-	ta.BlurredStyle.Base = lipgloss.NewStyle().
-		BorderStyle(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#4B5563"))
-	// Remove cursor line highlighting
-	ta.FocusedStyle.CursorLine = lipgloss.NewStyle()
-	ta.BlurredStyle.CursorLine = lipgloss.NewStyle()
+	ta.SetStyles(textarea.Styles{
+		Focused: textarea.StyleState{
+			Base: lipgloss.NewStyle().
+				BorderStyle(lipgloss.RoundedBorder()).
+				BorderForeground(lipgloss.Color("#7C3AED")),
+			CursorLine: lipgloss.NewStyle(),
+		},
+		Blurred: textarea.StyleState{
+			Base: lipgloss.NewStyle().
+				BorderStyle(lipgloss.RoundedBorder()).
+				BorderForeground(lipgloss.Color("#4B5563")),
+			CursorLine: lipgloss.NewStyle(),
+		},
+	})
 
 	// Create search input
 	si := textinput.New()
 	si.Placeholder = "Search..."
 	si.CharLimit = 100
-	si.Width = 40
+	si.SetWidth(40)
 
 	// Create renderer (with fallback if it fails)
 	renderer, err := NewRenderer()
@@ -182,7 +187,7 @@ func (m *Model) Init() tea.Cmd {
 // Run starts the Bubbletea program
 func Run(reviewCtx *appcontext.ReviewContext, appInstance *app.App, sessionID string, p *preset.Preset) error {
 	model := NewModel(reviewCtx, appInstance, sessionID, p)
-	program := tea.NewProgram(model, tea.WithAltScreen())
+	program := tea.NewProgram(model)
 
 	// Subscribe app events to TUI
 	go appInstance.Subscribe(program)

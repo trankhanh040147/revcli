@@ -1,8 +1,8 @@
 package ui
 
 import (
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/bubbles/key"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/bubbles/v2/key"
 )
 
 // updateKeyMsgSearching handles key messages in search mode
