@@ -5,7 +5,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 
-	"github.com/trankhanh040147/revcli/internal/gemini"
+	"github.com/trankhanh040147/revcli/internal/app"
 	"github.com/trankhanh040147/revcli/internal/prompt"
 )
 
@@ -35,16 +35,17 @@ type ChatMessage struct {
 	Content string
 }
 
-// SendChatMessage sends a follow-up question
-func SendChatMessage(ctx context.Context, client *gemini.Client, question string, webSearchEnabled bool) tea.Cmd {
+// SendChatMessage sends a follow-up question using coordinator
+func SendChatMessage(ctx context.Context, appInstance *app.App, sessionID, question string) tea.Cmd {
 	return func() tea.Msg {
 		followUp := prompt.BuildFollowUpPrompt(question)
 
-		response, err := client.SendMessage(ctx, followUp, webSearchEnabled)
+		result, err := appInstance.AgentCoordinator.Run(ctx, sessionID, followUp)
 		if err != nil {
 			return ChatErrorMsg{Err: err}
 		}
 
+		response := result.Response.Content.Text()
 		return ChatResponseMsg{Response: response}
 	}
 }

@@ -21,7 +21,18 @@ func (m *Model) handleReviewMessages(msg tea.Msg) {
 
 	case ReviewErrorMsg:
 		m.state = StateError
-		m.errorMsg = msg.Err.Error()
+		// Handle agent package specific errors
+		if errors.Is(msg.Err, agent.ErrRequestCancelled) {
+			m.errorMsg = "Request cancelled"
+		} else if errors.Is(msg.Err, agent.ErrSessionBusy) {
+			m.errorMsg = "Session is busy processing another request"
+		} else if errors.Is(msg.Err, agent.ErrEmptyPrompt) {
+			m.errorMsg = "Prompt is empty"
+		} else if errors.Is(msg.Err, agent.ErrSessionMissing) {
+			m.errorMsg = "Session is missing"
+		} else {
+			m.errorMsg = msg.Err.Error()
+		}
 		m.resetStreamState()
 		// Clear active cancel (command completed/errored)
 		m.activeCancel = nil

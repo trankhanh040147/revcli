@@ -4,13 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/spf13/cobra"
 
-	"github.com/trankhanh040147/revcli/internal/config"
 	appcontext "github.com/trankhanh040147/revcli/internal/context"
+	"github.com/trankhanh040147/revcli/internal/app"
 	"github.com/trankhanh040147/revcli/internal/ui"
 )
 
@@ -68,12 +67,6 @@ func init() {
 }
 
 func runReview(cmd *cobra.Command, args []string) error {
-	// Check for API key
-	apiKey := GetAPIKey()
-	if apiKey == "" {
-		return fmt.Errorf("%s is required. Set it via environment variable or --api-key flag", config.EnvGeminiAPIKey)
-	}
-
 	// Handle --no-interactive flag
 	if cmd.Flags().Changed("no-interactive") {
 		interactive = false
@@ -85,6 +78,18 @@ func runReview(cmd *cobra.Command, args []string) error {
 	// Validate mutually exclusive flags
 	if staged && baseBranch != "" {
 		return fmt.Errorf("cannot use --staged and --base together. Choose one")
+	}
+
+	// Setup app instance
+	appInstance, err := setupApp(cmd)
+	if err != nil {
+		return fmt.Errorf("failed to setup app: %w", err)
+	}
+	defer appInstance.Shutdown()
+
+	// Check if coordinator is available
+	if appInstance.AgentCoordinator == nil {
+		return fmt.Errorf("agent configuration is missing. Please configure your API keys in ~/.config/revcli/config.yaml")
 	}
 
 	// Load preset: use specified preset or default preset
@@ -134,30 +139,26 @@ func runReview(cmd *cobra.Command, args []string) error {
 	// Print detailed summary with file list
 	printContextSummary(os.Stdout, reviewCtx)
 
-	// Step 2: Initialize Gemini client
-	fmt.Println("Connecting to Gemini API...")
-	client, err := initializeAPIClient(ctx, apiKey, model)
+	// Step 2: Create session
+	sessionTitle := "Code Review"
+	if activePreset != nil {
+		sessionTitle = fmt.Sprintf("Code Review - %s", activePreset.Name)
+	}
+	session, err := appInstance.Sessions.Create(ctx, sessionTitle)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create session: %w", err)
 	}
 
-	fmt.Println(ui.RenderSuccess(fmt.Sprintf("Connected to %s", client.GetModelID())))
-	fmt.Println()
-
-	// Initialize flash client for prune operations
-	flashClient, err := initializeFlashClient(ctx, apiKey)
-	if err != nil {
-		// Log warning but continue - pruning will fail gracefully if needed
-		log.Printf("warning: failed to create flash client: %v", err)
-		flashClient = nil
-	}
+	// Build prompt and attachments
+	prompt := buildReviewPrompt(reviewCtx, activePreset)
+	attachments := buildAttachments(reviewCtx)
 
 	// Step 3: Run the review
 	if interactive {
 		// Interactive TUI mode
-		return ui.Run(reviewCtx, client, flashClient, activePreset, apiKey)
+		return ui.Run(reviewCtx, appInstance, session.ID, activePreset)
 	}
 
-	// Non-interactive mode
-	return ui.RunSimple(ctx, os.Stdout, reviewCtx, client, activePreset)
+	// Non-interactive mode - use app.RunNonInteractive
+	return appInstance.RunNonInteractive(ctx, os.Stdout, prompt, false)
 }

@@ -14,9 +14,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 
 	appcontext "github.com/trankhanh040147/revcli/internal/context"
-	"github.com/trankhanh040147/revcli/internal/gemini"
-
-	// ""
+	"github.com/trankhanh040147/revcli/internal/app"
 	"github.com/trankhanh040147/revcli/internal/preset"
 )
 
@@ -43,12 +41,11 @@ type Model struct {
 	// Review context
 	reviewCtx *appcontext.ReviewContext
 
-	// Gemini client
-	client       *gemini.Client
-	flashClient  *gemini.Client     // Shared client for prune operations (gemini-flash)
-	rootCtx      context.Context    // Root context for cancellation chain
+	// App and session
+	app       *app.App
+	sessionID string
+	rootCtx   context.Context    // Root context for cancellation chain
 	activeCancel context.CancelFunc // Cancel function for currently active command
-	apiKey       string             // API key for prune operations
 
 	// Review preset
 	preset *preset.Preset
@@ -102,7 +99,7 @@ type Model struct {
 }
 
 // NewModel creates a new application model
-func NewModel(reviewCtx *appcontext.ReviewContext, client *gemini.Client, flashClient *gemini.Client, p *preset.Preset, apiKey string) *Model {
+func NewModel(reviewCtx *appcontext.ReviewContext, appInstance *app.App, sessionID string, p *preset.Preset) *Model {
 	// Create spinner
 	s := spinner.New()
 	s.Spinner = spinner.Dot
@@ -151,11 +148,10 @@ func NewModel(reviewCtx *appcontext.ReviewContext, client *gemini.Client, flashC
 	return &Model{
 		state:              StateLoading,
 		reviewCtx:          reviewCtx,
-		client:             client,
-		flashClient:        flashClient,
+		app:                appInstance,
+		sessionID:          sessionID,
 		rootCtx:            rootCtx,
 		activeCancel:       nil,
-		apiKey:             apiKey,
 		preset:             p,
 		spinner:            s,
 		textarea:           ta,
@@ -184,9 +180,12 @@ func (m *Model) Init() tea.Cmd {
 }
 
 // Run starts the Bubbletea program
-func Run(reviewCtx *appcontext.ReviewContext, client *gemini.Client, flashClient *gemini.Client, p *preset.Preset, apiKey string) error {
-	model := NewModel(reviewCtx, client, flashClient, p, apiKey)
+func Run(reviewCtx *appcontext.ReviewContext, appInstance *app.App, sessionID string, p *preset.Preset) error {
+	model := NewModel(reviewCtx, appInstance, sessionID, p)
 	program := tea.NewProgram(model, tea.WithAltScreen())
+
+	// Subscribe app events to TUI
+	go appInstance.Subscribe(program)
 
 	if _, err := program.Run(); err != nil {
 		return fmt.Errorf("error running UI: %w", err)

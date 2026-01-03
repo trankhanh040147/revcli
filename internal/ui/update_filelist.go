@@ -2,6 +2,7 @@ package ui
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/spinner"
@@ -51,7 +52,15 @@ func (m *Model) updateKeyMsgFileList(msg tea.KeyMsg) (*Model, tea.Cmd) {
 		// Start spinner tick and prune command
 		return m, tea.Batch(
 			fileSpinner.Tick,
-			pruneFileCmd(ctx, m.flashClient, filePath, content),
+			// Prune functionality temporarily disabled - needs migration to coordinator
+			// pruneFileCmd(ctx, m.flashClient, filePath, content),
+			tea.Cmd(func() tea.Msg {
+				return PruneFileMsg{
+					FilePath: filePath,
+					Summary:  "",
+					Err:      fmt.Errorf("prune functionality is temporarily disabled during migration"),
+				}
+			}),
 		)
 	case key.Matches(msg, m.keys.SelectFile):
 		// View selected file (for now, just go back)

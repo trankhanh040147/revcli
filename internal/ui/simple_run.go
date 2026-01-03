@@ -4,73 +4,102 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"strings"
 	"time"
 
-	appcontext "github.com/trankhanh040147/revcli/internal/context"
-	"github.com/trankhanh040147/revcli/internal/gemini"
+	"charm.land/fantasy"
 
+	appcontext "github.com/trankhanh040147/revcli/internal/context"
+	"github.com/trankhanh040147/revcli/internal/app"
+	"github.com/trankhanh040147/revcli/internal/message"
 	"github.com/trankhanh040147/revcli/internal/preset"
 )
 
-// RunSimple runs a simple non-interactive review
-func RunSimple(ctx context.Context, w io.Writer, reviewCtx *appcontext.ReviewContext, client *gemini.Client, p *preset.Preset) error {
-	// Initialize chat with system prompt (with preset and intent if specified)
-	var presetPrompt string
-	var presetReplace bool
-	if p != nil {
-		presetPrompt = p.Prompt
-		presetReplace = p.Replace
-	}
-	systemPrompt := appcontext.GetSystemPromptWithIntent(reviewCtx.Intent, presetPrompt, presetReplace)
-	client.StartChat(systemPrompt)
-
+// RunSimple runs a simple non-interactive review using coordinator
+func RunSimple(ctx context.Context, w io.Writer, reviewCtx *appcontext.ReviewContext, appInstance *app.App, sessionID string, p *preset.Preset) error {
 	fmt.Fprintln(w, RenderTitle("🔍 Code Review"))
 	fmt.Fprintln(w, RenderSubtitle(reviewCtx.Summary()))
 	fmt.Fprintln(w)
 	fmt.Fprintln(w, "Analyzing your code changes...")
 	fmt.Fprintln(w)
 
-	// Create renderer
-	renderer, err := NewRenderer()
-	if err != nil {
-		return fmt.Errorf("failed to create renderer: %w", err)
-	}
+	// Build prompt and attachments
+	prompt := reviewCtx.UserPrompt
+	attachments := buildAttachments(reviewCtx)
 
-	// Get web search setting from intent (default to true if intent is nil)
-	webSearchEnabled := true
-	if reviewCtx.Intent != nil {
-		webSearchEnabled = reviewCtx.Intent.WebSearchEnabled
-	}
-
-	// Stream the response
+	// Use app.RunNonInteractive which handles streaming
+	// Note: RunNonInteractive doesn't support attachments, so we include file contents in prompt if needed
+	// For now, we'll use the coordinator directly for better control
 	startTime := time.Now()
-	response, err := client.SendMessageStream(ctx, reviewCtx.UserPrompt, func(chunk string) {
-		fmt.Fprint(w, chunk)
-	}, webSearchEnabled)
-	if err != nil {
-		return fmt.Errorf("review failed: %w", err)
+
+	// Subscribe to messages for streaming
+	messageEvents := appInstance.Messages.Subscribe(ctx)
+	messageReadBytes := make(map[string]int)
+
+	// Run coordinator in goroutine
+	type response struct {
+		result *fantasy.AgentResult
+		err    error
 	}
+	done := make(chan response, 1)
 
-	// Render the full response with markdown
-	fmt.Fprintln(w)
-	fmt.Fprintln(w, RenderDivider(80))
-	fmt.Fprintln(w)
+	go func() {
+		result, err := appInstance.AgentCoordinator.Run(ctx, sessionID, prompt, attachments...)
+		done <- response{result: result, err: err}
+	}()
 
-	rendered, err := renderer.RenderMarkdown(response)
-	if err != nil {
-		fmt.Fprintln(w, response)
-	} else {
-		fmt.Fprintln(w, rendered)
+	// Stream messages
+	for {
+		select {
+		case result := <-done:
+			if result.err != nil {
+				return fmt.Errorf("review failed: %w", result.err)
+			}
+			// Wait a moment for final message updates
+			time.Sleep(100 * time.Millisecond)
+			
+			// Render the full response with markdown
+			fmt.Fprintln(w)
+			fmt.Fprintln(w, RenderDivider(80))
+			fmt.Fprintln(w)
+
+			// Get final content from result
+			finalContent := result.result.Response.Content.Text()
+			renderer, err := NewRenderer()
+			if err == nil {
+				rendered, err := renderer.RenderMarkdown(finalContent)
+				if err == nil {
+					fmt.Fprintln(w, rendered)
+				} else {
+					fmt.Fprintln(w, finalContent)
+				}
+			} else {
+				fmt.Fprintln(w, finalContent)
+			}
+
+			elapsed := time.Since(startTime)
+			fmt.Fprintln(w)
+			fmt.Fprintln(w, RenderSuccess(fmt.Sprintf("Review completed in %s", elapsed.Round(time.Millisecond))))
+			return nil
+
+		case event := <-messageEvents:
+			msg := event.Payload
+			if msg.SessionID == sessionID && msg.Role == message.Assistant && len(msg.Parts) > 0 {
+				content := msg.Content().String()
+				readBytes := messageReadBytes[msg.ID]
+
+				if len(content) > readBytes {
+					part := content[readBytes:]
+					if readBytes == 0 {
+						part = strings.TrimLeft(part, " \t")
+					}
+					fmt.Fprint(w, part)
+					messageReadBytes[msg.ID] = len(content)
+				}
+			}
+
+		case <-ctx.Done():
+			return ctx.Err()
+		}
 	}
-
-	elapsed := time.Since(startTime)
-	fmt.Fprintln(w)
-	fmt.Fprintln(w, RenderSuccess(fmt.Sprintf("Review completed in %s", elapsed.Round(time.Millisecond))))
-
-	// Display token usage
-	if usage := client.GetLastUsage(); usage != nil {
-		fmt.Fprintln(w, RenderTokenUsage(usage.PromptTokens, usage.CompletionTokens, usage.TotalTokens))
-	}
-
-	return nil
 }
