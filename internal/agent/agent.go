@@ -27,16 +27,17 @@ import (
 	"charm.land/fantasy/providers/google"
 	"charm.land/fantasy/providers/openai"
 	"charm.land/fantasy/providers/openrouter"
-	"charm.land/lipgloss/v2"
+
 	"github.com/charmbracelet/catwalk/pkg/catwalk"
-	"github.com/charmbracelet/crush/internal/agent/hyper"
-	"github.com/charmbracelet/crush/internal/agent/tools"
-	"github.com/charmbracelet/crush/internal/config"
-	"github.com/charmbracelet/crush/internal/csync"
-	"github.com/charmbracelet/crush/internal/message"
-	"github.com/charmbracelet/crush/internal/permission"
-	"github.com/charmbracelet/crush/internal/session"
-	"github.com/charmbracelet/crush/internal/stringext"
+	"github.com/charmbracelet/lipgloss/v2"
+	"github.com/trankhanh040147/revcli/internal/agent/hyper"
+	"github.com/trankhanh040147/revcli/internal/agent/tools"
+	"github.com/trankhanh040147/revcli/internal/config"
+	"github.com/trankhanh040147/revcli/internal/csync"
+	"github.com/trankhanh040147/revcli/internal/message"
+	"github.com/trankhanh040147/revcli/internal/permission"
+	"github.com/trankhanh040147/revcli/internal/session"
+	"github.com/trankhanh040147/revcli/internal/stringext"
 )
 
 //go:embed templates/title.md

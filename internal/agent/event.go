@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"charm.land/fantasy"
-	"github.com/charmbracelet/crush/internal/event"
+	"github.com/trankhanh040147/revcli/internal/event"
 )
 
 func (a sessionAgent) eventPromptSent(sessionID string) {
@@ -49,5 +49,5 @@ func (a sessionAgent) eventCommon(sessionID string, model Model) []any {
 		"yolo mode", a.isYolo,
 	}
 }
-// todo: explain agent package
 
+// todo: explain agent package

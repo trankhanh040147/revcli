@@ -14,9 +14,9 @@ import (
 	"time"
 
 	"charm.land/fantasy"
-	"github.com/charmbracelet/crush/internal/config"
-	"github.com/charmbracelet/crush/internal/permission"
-	"github.com/charmbracelet/crush/internal/shell"
+	"github.com/trankhanh040147/revcli/internal/config"
+	"github.com/trankhanh040147/revcli/internal/permission"
+	"github.com/trankhanh040147/revcli/internal/shell"
 )
 
 type BashParams struct {

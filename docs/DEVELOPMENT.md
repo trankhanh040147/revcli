@@ -250,7 +250,7 @@ Here is the updated **v0.4.0** plan with the completed SDK migration removed.
 
 # v0.5.0 - Agent Architecture (?)
 
-- Adapt Agent Architecture like `https://github.com/charmbracelet/crush`
+- Adapt Agent Architecture like `https://github.com/trankhanh040147/revcli`
 - Rewrite tools and refactor codes 
 
 

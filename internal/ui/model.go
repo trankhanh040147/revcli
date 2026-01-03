@@ -15,6 +15,8 @@ import (
 
 	appcontext "github.com/trankhanh040147/revcli/internal/context"
 	"github.com/trankhanh040147/revcli/internal/gemini"
+
+	// ""
 	"github.com/trankhanh040147/revcli/internal/preset"
 )
 
@@ -91,9 +93,9 @@ type Model struct {
 	promptHistoryIndex int      // Current position in history (-1 for new prompt)
 
 	// Pruning state (per-file tracking)
-	pruningFiles    map[string]bool                   // Track which files are currently being pruned
-	pruningSpinners map[string]spinner.Model          // Spinners for each file being pruned
-	pruningCancels  map[string]context.CancelFunc     // Cancel functions for each pruning operation
+	pruningFiles    map[string]bool               // Track which files are currently being pruned
+	pruningSpinners map[string]spinner.Model      // Spinners for each file being pruned
+	pruningCancels  map[string]context.CancelFunc // Cancel functions for each pruning operation
 
 	// Keybindings
 	keys KeyMap

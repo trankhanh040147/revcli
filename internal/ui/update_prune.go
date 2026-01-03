@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	tea "github.com/charmbracelet/bubbletea"
-
 	"github.com/trankhanh040147/revcli/internal/gemini"
 )
 
@@ -41,4 +40,3 @@ func pruneFileCmd(ctx context.Context, flashClient *gemini.Client, filePath, con
 		}
 	}
 }
-

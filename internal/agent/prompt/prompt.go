@@ -11,10 +11,10 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/charmbracelet/crush/internal/config"
-	"github.com/charmbracelet/crush/internal/home"
-	"github.com/charmbracelet/crush/internal/shell"
-	"github.com/charmbracelet/crush/internal/skills"
+	"github.com/trankhanh040147/revcli/internal/config"
+	"github.com/trankhanh040147/revcli/internal/home"
+	"github.com/trankhanh040147/revcli/internal/shell"
+	"github.com/trankhanh040147/revcli/internal/skills"
 )
 
 // Prompt represents a template-based prompt generator.

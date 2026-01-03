@@ -1,6 +1,6 @@
 # Migration Guide: From Gemini SDK to Crush Agent Package
 
-This guide explains how to migrate from using the direct Gemini SDK (`internal/gemini/`) to using the Crush agent package (`agent/`) from [charmbracelet/crush](https://github.com/charmbracelet/crush).
+This guide explains how to migrate from using the direct Gemini SDK (`internal/gemini/`) to using the Crush agent package (`agent/`) from [charmbracelet/crush](https://github.com/trankhanh040147/revcli).
 
 ## Overview
 
@@ -243,12 +243,12 @@ The Coordinator requires several services. Here's how to set them up:
 
 ```go
 import (
-    "github.com/charmbracelet/crush/internal/session"
-    "github.com/charmbracelet/crush/internal/message"
-    "github.com/charmbracelet/crush/internal/permission"
-    "github.com/charmbracelet/crush/internal/history"
-    "github.com/charmbracelet/crush/internal/lsp"
-    "github.com/charmbracelet/crush/internal/csync"
+    "github.com/trankhanh040147/revcli/internal/session"
+    "github.com/trankhanh040147/revcli/internal/message"
+    "github.com/trankhanh040147/revcli/internal/permission"
+    "github.com/trankhanh040147/revcli/internal/history"
+    "github.com/trankhanh040147/revcli/internal/lsp"
+    "github.com/trankhanh040147/revcli/internal/csync"
 )
 
 func setupServices(ctx context.Context, dataDir string) (
@@ -297,7 +297,7 @@ import (
     "fmt"
     
     "charm.land/fantasy"
-    "github.com/charmbracelet/crush/internal/permission"
+    "github.com/trankhanh040147/revcli/internal/permission"
 )
 
 const ReviewAnalyzeToolName = "review_analyze"
@@ -349,7 +349,7 @@ import (
     "context"
     
     "charm.land/fantasy"
-    "github.com/charmbracelet/crush/internal/permission"
+    "github.com/trankhanh040147/revcli/internal/permission"
 )
 
 const ReviewSuggestToolName = "review_suggest"
@@ -483,7 +483,7 @@ coordinator.ClearQueue(sessionID)  // Clear queue
 Send file contents and images as attachments:
 
 ```go
-import "github.com/charmbracelet/crush/internal/message"
+import "github.com/trankhanh040147/revcli/internal/message"
 
 attachments := []message.Attachment{
     message.NewTextAttachment("file.go", fileContent),
@@ -634,9 +634,9 @@ func buildAttachments(reviewCtx *appcontext.ReviewContext) []message.Attachment 
 
 ## Additional Resources
 
-- [Crush GitHub Repository](https://github.com/charmbracelet/crush)
+- [Crush GitHub Repository](https://github.com/trankhanh040147/revcli)
 - [Fantasy Package Documentation](https://pkg.go.dev/charm.land/fantasy)
-- [Crush Configuration Schema](https://charm.land/crush.json)
+- [Crush Configuration Schema](https://github.com/trankhanh040147/revcli.json)
 - Agent package source: `agent/` directory in this codebase
 ```
 

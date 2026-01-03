@@ -10,9 +10,9 @@ import (
 	"time"
 
 	"charm.land/fantasy"
-	"github.com/charmbracelet/crush/internal/csync"
-	"github.com/charmbracelet/crush/internal/lsp"
 	"github.com/charmbracelet/x/powernap/pkg/lsp/protocol"
+	"github.com/trankhanh040147/revcli/internal/csync"
+	"github.com/trankhanh040147/revcli/internal/lsp"
 )
 
 type DiagnosticsParams struct {

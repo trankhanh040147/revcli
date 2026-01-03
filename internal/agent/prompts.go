@@ -4,8 +4,8 @@ import (
 	"context"
 	_ "embed"
 
-	"github.com/charmbracelet/crush/internal/agent/prompt"
-	"github.com/charmbracelet/crush/internal/config"
+	"github.com/trankhanh040147/revcli/internal/agent/prompt"
+	"github.com/trankhanh040147/revcli/internal/config"
 )
 
 //go:embed templates/coder.md.tpl
@@ -40,5 +40,5 @@ func InitializePrompt(cfg config.Config) (string, error) {
 	}
 	return systemPrompt.Build(context.Background(), "", "", cfg)
 }
-// todo: explain agent package
 
+// todo: explain agent package

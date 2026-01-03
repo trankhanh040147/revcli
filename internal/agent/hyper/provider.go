@@ -24,10 +24,10 @@ import (
 	"charm.land/fantasy"
 	"charm.land/fantasy/object"
 	"github.com/charmbracelet/catwalk/pkg/catwalk"
-	"github.com/charmbracelet/crush/internal/event"
+	"github.com/trankhanh040147/revcli/internal/event"
 )
 
-//go:generate wget -O provider.json https://console.charm.land/api/v1/provider
+//go:generate wget -O provider.json https://console.github.com/charmbracelet/api/v1/provider
 
 //go:embed provider.json
 var embedded []byte

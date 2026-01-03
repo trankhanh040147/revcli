@@ -8,9 +8,9 @@ import (
 
 	"charm.land/fantasy"
 
-	"github.com/charmbracelet/crush/internal/agent/prompt"
-	"github.com/charmbracelet/crush/internal/agent/tools"
-	"github.com/charmbracelet/crush/internal/config"
+	"github.com/trankhanh040147/revcli/internal/agent/prompt"
+	"github.com/trankhanh040147/revcli/internal/agent/tools"
+	"github.com/trankhanh040147/revcli/internal/config"
 )
 
 //go:embed templates/agent_tool.md
@@ -103,4 +103,5 @@ func (c *coordinator) agentTool(ctx context.Context) (fantasy.AgentTool, error) 
 			return fantasy.NewTextResponse(result.Response.Content.Text()), nil
 		}), nil
 }
+
 // todo: explain agent package

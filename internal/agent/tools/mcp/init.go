@@ -17,13 +17,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/charmbracelet/crush/internal/config"
-	"github.com/charmbracelet/crush/internal/csync"
-	"github.com/charmbracelet/crush/internal/home"
-	"github.com/charmbracelet/crush/internal/permission"
-	"github.com/charmbracelet/crush/internal/pubsub"
-	"github.com/charmbracelet/crush/internal/version"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/trankhanh040147/revcli/internal/config"
+	"github.com/trankhanh040147/revcli/internal/csync"
+	"github.com/trankhanh040147/revcli/internal/home"
+	"github.com/trankhanh040147/revcli/internal/permission"
+	"github.com/trankhanh040147/revcli/internal/pubsub"
+	"github.com/trankhanh040147/revcli/internal/version"
 )
 
 var (
