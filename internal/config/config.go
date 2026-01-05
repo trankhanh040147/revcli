@@ -60,8 +60,9 @@ const (
 )
 
 const (
-	AgentCoder string = "coder"
-	AgentTask  string = "task"
+	AgentReviewer string = "reviewer" // Changed from AgentCoder
+	AgentTask     string = "task"
+	// TODO(PlanC): Add AgentBuilder, AgentAsker constants for future modes
 )
 
 type SelectedModel struct {
@@ -734,17 +735,18 @@ func (c *Config) SetupAgents() {
 	allowedTools := resolveAllowedTools(allToolNames(), c.Options.DisabledTools)
 
 	agents := map[string]Agent{
-		AgentCoder: {
-			ID:           AgentCoder,
-			Name:         "Coder",
-			Description:  "An agent that helps with executing coding tasks.",
+		AgentReviewer: {
+			ID:           AgentReviewer,
+			Name:         "Reviewer",
+			Description:  "An agent that reviews code and provides feedback.",
 			Model:        SelectedModelTypeLarge,
 			ContextPaths: c.Options.ContextPaths,
-			AllowedTools: allowedTools,
+			AllowedTools: resolveReadOnlyTools(allowedTools), // Review mode defaults to read-only
+			// TODO(PlanC): Add Mode field for mode-based tool filtering
 		},
 
 		AgentTask: {
-			ID:           AgentCoder,
+			ID:           AgentTask,
 			Name:         "Task",
 			Description:  "An agent that helps with searching for context and finding implementation details.",
 			Model:        SelectedModelTypeLarge,

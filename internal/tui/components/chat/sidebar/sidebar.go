@@ -545,7 +545,7 @@ func formatTokensAndCost(tokens, contextWindow int64, cost float64) string {
 
 func (s *sidebarCmp) currentModelBlock() string {
 	cfg := config.Get()
-	agentCfg := cfg.Agents[config.AgentCoder]
+	agentCfg := cfg.Agents[config.AgentReviewer]
 
 	selectedModel := cfg.Models[agentCfg.Model]
 

@@ -446,7 +446,7 @@ func (p *chatPage) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 				p.splash = u.(splash.Splash)
 				return p, cmd
 			}
-			agentCfg := config.Get().Agents[config.AgentCoder]
+			agentCfg := config.Get().Agents[config.AgentReviewer]
 			model := config.Get().GetModelByType(agentCfg.Model)
 			if model == nil {
 				return p, util.ReportWarn("No model configured yet")
@@ -692,7 +692,7 @@ func (p *chatPage) updateCompactConfig(compact bool) tea.Cmd {
 func (p *chatPage) toggleThinking() tea.Cmd {
 	return func() tea.Msg {
 		cfg := config.Get()
-		agentCfg := cfg.Agents[config.AgentCoder]
+		agentCfg := cfg.Agents[config.AgentReviewer]
 		currentModel := cfg.Models[agentCfg.Model]
 
 		// Toggle the thinking mode
@@ -721,7 +721,7 @@ func (p *chatPage) toggleThinking() tea.Cmd {
 func (p *chatPage) openReasoningDialog() tea.Cmd {
 	return func() tea.Msg {
 		cfg := config.Get()
-		agentCfg := cfg.Agents[config.AgentCoder]
+		agentCfg := cfg.Agents[config.AgentReviewer]
 		model := cfg.GetModelByType(agentCfg.Model)
 		providerCfg := cfg.GetProviderForModel(agentCfg.Model)
 
@@ -738,7 +738,7 @@ func (p *chatPage) openReasoningDialog() tea.Cmd {
 func (p *chatPage) handleReasoningEffortSelected(effort string) tea.Cmd {
 	return func() tea.Msg {
 		cfg := config.Get()
-		agentCfg := cfg.Agents[config.AgentCoder]
+		agentCfg := cfg.Agents[config.AgentReviewer]
 		currentModel := cfg.Models[agentCfg.Model]
 
 		// Update the model configuration

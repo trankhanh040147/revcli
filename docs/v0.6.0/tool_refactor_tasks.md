@@ -37,9 +37,9 @@ Core principle: "Review first, edit optionally"
    - Drill down to specific files
    - Show severity, category, and impact
 
-## Three execution paths
+## Three execution plans
 
-### Path 1: Minimal transformation (fastest)
+### Plan v0.6-A: Minimal transformation (fastest)
 Focus: rename and rebrand existing structure
 
 Files to update:
@@ -54,12 +54,12 @@ Files to update:
 - `internal/agent/templates/title.md`: update for review context
 - `internal/agent/templates/task.md.tpl`: make review-specific
 
-Pros: Fast, low risk, minimal changes
+Pros: Fast, low risk, minimal changes  
 Cons: Still feels like a code generator, doesn't leverage review-specific UX
 
 ---
 
-### Path 2: Mode-aware architecture (balanced)
+### Plan v0.6-B: Mode-aware architecture (balanced)
 Focus: introduce mode system now, keep tools flexible
 
 New structure:
@@ -87,12 +87,12 @@ Files to update:
   - Filter tools based on agent mode
   - Review mode: read-only + optional write (user configurable)
 
-Pros: Sets foundation for modes, clear separation, future-proof
+Pros: Sets foundation for modes, clear separation, future-proof  
 Cons: More work upfront, need to maintain multiple templates
 
 ---
 
-### Path 3: Review-native redesign (most ambitious)
+### Plan v0.6-C: Review-native redesign (most ambitious)
 Focus: rebuild templates and agent logic around review workflows
 
 New architecture:
@@ -120,18 +120,18 @@ Files to create/update:
   - Use reviewer agent with review-optimized prompt
   - Add flags: `--strict-review`, `--allow-edits`, `--interactive`
 
-Pros: Most aligned with review use case, strongest UX
+Pros: Most aligned with review use case, strongest UX  
 Cons: Most work, need to rethink workflows, may need new tool abstractions
 
 ---
 
-# Tool Refactor Tasks - Path 2: Mode-Aware Architecture
+# Tool Refactor Tasks - Plan v0.6-B: Mode-Aware Architecture
 
 ## Overview
 
-Implementing Path 2 to transform revCLI from a code generation tool (crush) to a code review tool, while establishing a foundation for future multi-mode support (review, build, ask).
+Implementing Plan v0.6-B to transform revCLI from a code generation tool (crush) to a code review tool, while establishing a foundation for future multi-mode support (review, build, ask).
 
-**Strategy**: Introduce mode-aware architecture now, keeping code flexible for future Path 3 enhancements (review-native redesign).
+**Strategy**: Introduce mode-aware architecture now, keeping code flexible for future Plan v0.6-C enhancements (review-native redesign).
 
 ---
 
@@ -149,7 +149,7 @@ Implementing Path 2 to transform revCLI from a code generation tool (crush) to a
 const (
 	AgentReviewer string = "reviewer"  // Changed from AgentCoder
 	AgentTask     string = "task"
-	// TODO(Path3): Add AgentBuilder, AgentAsker constants for future modes
+	// TODO(PlanC): Add AgentBuilder, AgentAsker constants for future modes
 )
 
 func (c *Config) SetupAgents() {
@@ -163,7 +163,7 @@ func (c *Config) SetupAgents() {
 			Model:        SelectedModelTypeLarge,
 			ContextPaths: c.Options.ContextPaths,
 			AllowedTools: resolveReadOnlyTools(allowedTools),  // Review mode defaults to read-only
-			// TODO(Path3): Add Mode field for mode-based tool filtering
+			// TODO(PlanC): Add Mode field for mode-based tool filtering
 		},
 
 		AgentTask: {
@@ -245,8 +245,8 @@ Focus on:
 </code_analysis>
 
 // ... rest of template sections adapted for review workflow ...
-// TODO(Path3): Add sections for structured review output (severity levels, categories)
-// TODO(Path3): Add comparison mode instructions (diff-based, commit-based reviews)
+// TODO(PlanC): Add sections for structured review output (severity levels, categories)
+// TODO(PlanC): Add comparison mode instructions (diff-based, commit-based reviews)
 ```
 
 **Note**: Keep the template structure similar to `coder.md.tpl` but adapt content for review workflows. Remove/edit sections about writing code, focus on analysis.
@@ -260,7 +260,7 @@ Focus on:
 **Changes**:
 1. Add reviewer template embed
 2. Create reviewerPrompt function
-3. Keep coderPrompt for future build mode (Path 3)
+3. Keep coderPrompt for future build mode (Plan v0.6-C)
 
 ```go
 package agent
@@ -293,7 +293,7 @@ func reviewerPrompt(opts ...prompt.Option) (*prompt.Prompt, error) {
 	return systemPrompt, nil
 }
 
-// TODO(Path3): Rename to builderPrompt for build mode
+// TODO(PlanC): Rename to builderPrompt for build mode
 func coderPrompt(opts ...prompt.Option) (*prompt.Prompt, error) {
 	systemPrompt, err := prompt.NewPrompt("coder", string(coderPromptTmpl), opts...)
 	if err != nil {
@@ -355,7 +355,7 @@ func NewCoordinator(
 		return nil, errors.New("reviewer agent not configured")
 	}
 
-	// TODO(Path3): Make this dynamic when we support multiple agents/modes
+	// TODO(PlanC): Make this dynamic when we support multiple agents/modes
 	// For now, use reviewer prompt for review mode
 	prompt, err := reviewerPrompt(prompt.WithWorkingDir(c.cfg.WorkingDir()))  // Changed from coderPrompt
 	if err != nil {
@@ -398,7 +398,7 @@ Platform: {{.Platform}}
 Today's date: {{.Date}}
 </env>
 
-// TODO(Path3): Add review-specific context instructions (diff analysis, pattern matching)
+// TODO(PlanC): Add review-specific context instructions (diff analysis, pattern matching)
 ```
 
 ---
@@ -479,7 +479,7 @@ You are summarizing a conversation to preserve context for continuing work later
 - Best practices noted
 
 // ... rest of template remains similar ...
-// TODO(Path3): Add structured issue tracking (severity, category, status)
+// TODO(PlanC): Add structured issue tracking (severity, category, status)
 ```
 
 ---
@@ -511,21 +511,21 @@ agentCfg, ok := cfg.Agents[config.AgentReviewer]
 
 ---
 
-## Priority 3: Future Mode Foundation (Path 3 Prep)
+## Priority 3: Future Mode Foundation (Plan v0.6-C Prep)
 
 ### Task 3.1: Add TODO comments for future mode system
 
-**Files**: Throughout codebase, add TODO comments marking future Path 3 work
+**Files**: Throughout codebase, add TODO comments marking future Plan v0.6-C work
 
 **Examples**:
 
 ```go
-// TODO(Path3): Add Mode field to Agent struct for mode-based tool filtering
-// TODO(Path3): Implement builderPrompt for build mode
-// TODO(Path3): Implement askerPrompt for ask mode
-// TODO(Path3): Add structured review output format (severity levels, categories)
-// TODO(Path3): Add comparison mode (diff-based, commit-based reviews)
-// TODO(Path3): Add ReviewMode config (strict/suggestive/interactive)
+// TODO(PlanC): Add Mode field to Agent struct for mode-based tool filtering
+// TODO(PlanC): Implement builderPrompt for build mode
+// TODO(PlanC): Implement askerPrompt for ask mode
+// TODO(PlanC): Add structured review output format (severity levels, categories)
+// TODO(PlanC): Add comparison mode (diff-based, commit-based reviews)
+// TODO(PlanC): Add ReviewMode config (strict/suggestive/interactive)
 ```
 
 ---
@@ -539,7 +539,7 @@ agentCfg, ok := cfg.Agents[config.AgentReviewer]
 // - Review mode: read-only tools by default, write tools optional (user configurable)
 // - Build mode: all tools available (full code generation capability)
 // - Ask mode: read-only tools + specific Q&A tools
-// TODO(Path3): Implement mode-based tool filtering in coordinator
+// TODO(PlanC): Implement mode-based tool filtering in coordinator
 ```
 
 ---
@@ -557,7 +557,7 @@ After implementing Priority 1 and 2 tasks:
 
 ---
 
-## Future Path 3: Review-Native Redesign (Not in This Sprint)
+## Future Plan v0.6-C: Review-Native Redesign (Not in This Sprint)
 
 **Deferred work**:
 1. Create structured review output format (severity levels, categories)
@@ -568,7 +568,7 @@ After implementing Priority 1 and 2 tasks:
 6. Implement mode-based tool filtering in coordinator
 7. Add review-specific tools (if needed)
 
-**Notes**: Path 3 will be a larger refactoring to make revCLI fully review-native. Path 2 establishes the foundation while keeping the codebase functional.
+**Notes**: Plan v0.6-C will be a larger refactoring to make revCLI fully review-native. Plan v0.6-B establishes the foundation while keeping the codebase functional.
 ```
 
-This document outlines the Path 2 implementation with code snippets showing what needs to change, organized by priority, with TODOs marking Path 3 work for later.
+This document outlines the Plan v0.6-B implementation with code snippets showing what needs to change, organized by priority, with TODOs marking Plan v0.6-C work for later.
