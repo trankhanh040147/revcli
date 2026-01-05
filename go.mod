@@ -187,5 +187,3 @@ require (
 	google.golang.org/grpc v1.76.0 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
 )
-
-replace github.com/charmbracelet/lipgloss/v2 => charm.land/lipgloss/v2 v2.0.0-beta.3.0.20251205162909-7869489d8971

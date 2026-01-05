@@ -20,6 +20,7 @@ var taskPromptTmpl []byte
 //go:embed templates/initialize.md.tpl
 var initializePromptTmpl []byte
 
+// TODO(PlanC): Add structured review output format (severity levels, categories)
 func reviewerPrompt(opts ...prompt.Option) (*prompt.Prompt, error) {
 	systemPrompt, err := prompt.NewPrompt("reviewer", string(reviewerPromptTmpl), opts...)
 	if err != nil {
@@ -37,6 +38,7 @@ func coderPrompt(opts ...prompt.Option) (*prompt.Prompt, error) {
 	return systemPrompt, nil
 }
 
+// TODO(PlanC): Add comparison mode (diff-based, commit-based reviews)
 func taskPrompt(opts ...prompt.Option) (*prompt.Prompt, error) {
 	systemPrompt, err := prompt.NewPrompt("task", string(taskPromptTmpl), opts...)
 	if err != nil {

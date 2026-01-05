@@ -96,6 +96,7 @@ func NewCoordinator(
 	}
 
 	// TODO(PlanC): Make this dynamic when we support multiple agents/modes
+	// TODO(PlanC): Add ReviewMode config (strict/suggestive/interactive)
 	// For now, use reviewer prompt for review mode
 	prompt, err := reviewerPrompt(prompt.WithWorkingDir(c.cfg.WorkingDir()))
 	if err != nil {

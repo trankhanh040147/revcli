@@ -415,7 +415,7 @@ func (p *chatPage) Update(msg tea.Msg) (util.Model, tea.Cmd) {
 			p.splashFullScreen = true
 			return p, p.SetSize(p.width, p.height)
 		}
-		err := p.app.InitCoderAgent(context.TODO())
+		err := p.app.InitReviewerAgent(context.TODO())
 		if err != nil {
 			return p, util.ReportError(err)
 		}
