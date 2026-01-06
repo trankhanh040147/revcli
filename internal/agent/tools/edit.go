@@ -41,8 +41,6 @@ type EditResponseMetadata struct {
 	NewContent string `json:"new_content,omitempty"`
 }
 
-const EditToolName = "edit"
-
 //go:embed edit.md
 var editDescription []byte
 

@@ -12,10 +12,9 @@ import (
 	"strings"
 
 	"charm.land/fantasy"
+	toolConstants "github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 	"github.com/trankhanh040147/revcli/internal/fsext"
 )
-
-const GlobToolName = "glob"
 
 //go:embed glob.md
 var globDescription []byte
@@ -32,7 +31,7 @@ type GlobResponseMetadata struct {
 
 func NewGlobTool(workingDir string) fantasy.AgentTool {
 	return fantasy.NewAgentTool(
-		GlobToolName,
+		toolConstants.GlobToolName,
 		string(globDescription),
 		func(ctx context.Context, params GlobParams, call fantasy.ToolCall) (fantasy.ToolResponse, error) {
 			if params.Pattern == "" {

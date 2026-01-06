@@ -29,8 +29,6 @@ type DownloadPermissionsParams struct {
 	Timeout  int    `json:"timeout,omitempty"`
 }
 
-const DownloadToolName = "download"
-
 //go:embed download.md
 var downloadDescription []byte
 

@@ -18,9 +18,8 @@ import (
 	"github.com/invopop/jsonschema"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
-	"github.com/trankhanh040147/revcli/internal/agent"
 	hyperp "github.com/trankhanh040147/revcli/internal/agent/hyper"
-	"github.com/trankhanh040147/revcli/internal/agent/tools"
+	toolConstants "github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 	"github.com/trankhanh040147/revcli/internal/csync"
 	"github.com/trankhanh040147/revcli/internal/env"
 	"github.com/trankhanh040147/revcli/internal/oauth"
@@ -686,24 +685,24 @@ func (c *Config) recordRecentModel(modelType SelectedModelType, model SelectedMo
 
 func allToolNames() []string {
 	return []string{
-		agent.AgentToolName,
-		tools.BashToolName,
-		tools.JobOutputToolName,
-		tools.JobKillToolName,
-		tools.DownloadToolName,
-		tools.EditToolName,
-		tools.MultiEditToolName,
-		tools.DiagnosticsToolName,
-		tools.ReferencesToolName,
-		tools.FetchToolName,
-		tools.AgenticFetchToolName,
-		tools.GlobToolName,
-		tools.GrepToolName,
-		tools.LSToolName,
-		tools.SourcegraphToolName,
-		tools.TodosToolName,
-		tools.ViewToolName,
-		tools.WriteToolName,
+		toolConstants.AgentToolName,
+		toolConstants.BashToolName,
+		toolConstants.JobOutputToolName,
+		toolConstants.JobKillToolName,
+		toolConstants.DownloadToolName,
+		toolConstants.EditToolName,
+		toolConstants.MultiEditToolName,
+		toolConstants.DiagnosticsToolName,
+		toolConstants.ReferencesToolName,
+		toolConstants.FetchToolName,
+		toolConstants.AgenticFetchToolName,
+		toolConstants.GlobToolName,
+		toolConstants.GrepToolName,
+		toolConstants.LSToolName,
+		toolConstants.SourcegraphToolName,
+		toolConstants.TodosToolName,
+		toolConstants.ViewToolName,
+		toolConstants.WriteToolName,
 	}
 }
 
@@ -717,11 +716,11 @@ func resolveAllowedTools(allTools []string, disabledTools []string) []string {
 
 func resolveReadOnlyTools(allowedTools []string) []string {
 	readOnlyTools := []string{
-		tools.GlobToolName,
-		tools.GrepToolName,
-		tools.LSToolName,
-		tools.SourcegraphToolName,
-		tools.ViewToolName,
+		toolConstants.GlobToolName,
+		toolConstants.GrepToolName,
+		toolConstants.LSToolName,
+		toolConstants.SourcegraphToolName,
+		toolConstants.ViewToolName,
 	}
 	// filter to only include tools that are in allowedtools (include mode)
 	return filterSlice(allowedTools, readOnlyTools, true)

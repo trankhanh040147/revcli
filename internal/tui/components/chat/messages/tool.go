@@ -14,6 +14,7 @@ import (
 	"github.com/charmbracelet/x/ansi"
 	"github.com/trankhanh040147/revcli/internal/agent"
 	"github.com/trankhanh040147/revcli/internal/agent/tools"
+	toolConstants "github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 	"github.com/trankhanh040147/revcli/internal/diff"
 	"github.com/trankhanh040147/revcli/internal/fsext"
 	"github.com/trankhanh040147/revcli/internal/message"
@@ -330,7 +331,7 @@ func (m *toolCallCmp) formatParametersForCopy() string {
 			}
 			return strings.Join(parts, "\n")
 		}
-	case tools.GlobToolName:
+	case toolConstants.GlobToolName:
 		var params tools.GlobParams
 		if json.Unmarshal([]byte(m.call.Input), &params) == nil {
 			var parts []string
@@ -340,7 +341,7 @@ func (m *toolCallCmp) formatParametersForCopy() string {
 			}
 			return strings.Join(parts, "\n")
 		}
-	case tools.LSToolName:
+	case toolConstants.LSToolName:
 		var params tools.LSParams
 		if json.Unmarshal([]byte(m.call.Input), &params) == nil {
 			path := params.Path
@@ -349,7 +350,7 @@ func (m *toolCallCmp) formatParametersForCopy() string {
 			}
 			return fmt.Sprintf("**Path:** %s", fsext.PrettyPath(path))
 		}
-	case tools.DownloadToolName:
+	case toolConstants.DownloadToolName:
 		var params tools.DownloadParams
 		if json.Unmarshal([]byte(m.call.Input), &params) == nil {
 			var parts []string
@@ -360,7 +361,7 @@ func (m *toolCallCmp) formatParametersForCopy() string {
 			}
 			return strings.Join(parts, "\n")
 		}
-	case tools.SourcegraphToolName:
+	case toolConstants.SourcegraphToolName:
 		var params tools.SourcegraphParams
 		if json.Unmarshal([]byte(m.call.Input), &params) == nil {
 			var parts []string
@@ -373,9 +374,9 @@ func (m *toolCallCmp) formatParametersForCopy() string {
 			}
 			return strings.Join(parts, "\n")
 		}
-	case tools.DiagnosticsToolName:
+	case toolConstants.DiagnosticsToolName:
 		return "**Project:** diagnostics"
-	case agent.AgentToolName:
+	case toolConstants.AgentToolName:
 		var params agent.AgentParams
 		if json.Unmarshal([]byte(m.call.Input), &params) == nil {
 			return fmt.Sprintf("**Task:**\n%s", params.Prompt)
@@ -425,7 +426,7 @@ func (m *toolCallCmp) formatResultForCopy() string {
 		return m.formatWebFetchResultForCopy()
 	case agent.AgentToolName:
 		return m.formatAgentResultForCopy()
-	case tools.DownloadToolName, tools.GrepToolName, tools.GlobToolName, tools.LSToolName, tools.SourcegraphToolName, tools.DiagnosticsToolName, tools.TodosToolName:
+	case tools.DownloadToolName, tools.GrepToolName, toolConstants.GlobToolName, tools.LSToolName, tools.SourcegraphToolName, tools.DiagnosticsToolName, tools.TodosToolName:
 		return fmt.Sprintf("```\n%s\n```", m.result.Content)
 	default:
 		return m.result.Content
