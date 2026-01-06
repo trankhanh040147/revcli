@@ -3,7 +3,6 @@ package config
 import (
 	"cmp"
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log/slog"
@@ -17,6 +16,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/bytedance/sonic"
 	"github.com/charmbracelet/catwalk/pkg/catwalk"
 	powernapConfig "github.com/charmbracelet/x/powernap/pkg/config"
 	"github.com/trankhanh040147/revcli/internal/agent/hyper"
@@ -37,7 +37,7 @@ func LoadReader(fd io.Reader) (*Config, error) {
 	}
 
 	var config Config
-	err = json.Unmarshal(data, &config)
+	err = sonic.Unmarshal(data, &config)
 	if err != nil {
 		return nil, err
 	}

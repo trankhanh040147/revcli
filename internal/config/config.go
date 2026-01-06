@@ -18,7 +18,9 @@ import (
 	"github.com/invopop/jsonschema"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
+	"github.com/trankhanh040147/revcli/internal/agent"
 	hyperp "github.com/trankhanh040147/revcli/internal/agent/hyper"
+	"github.com/trankhanh040147/revcli/internal/agent/tools"
 	"github.com/trankhanh040147/revcli/internal/csync"
 	"github.com/trankhanh040147/revcli/internal/env"
 	"github.com/trankhanh040147/revcli/internal/oauth"
@@ -684,24 +686,24 @@ func (c *Config) recordRecentModel(modelType SelectedModelType, model SelectedMo
 
 func allToolNames() []string {
 	return []string{
-		"agent",
-		"bash",
-		"job_output",
-		"job_kill",
-		"download",
-		"edit",
-		"multiedit",
-		"lsp_diagnostics",
-		"lsp_references",
-		"fetch",
-		"agentic_fetch",
-		"glob",
-		"grep",
-		"ls",
-		"sourcegraph",
-		"todos",
-		"view",
-		"write",
+		agent.AgentToolName,
+		tools.BashToolName,
+		tools.JobOutputToolName,
+		tools.JobKillToolName,
+		tools.DownloadToolName,
+		tools.EditToolName,
+		tools.MultiEditToolName,
+		tools.DiagnosticsToolName,
+		tools.ReferencesToolName,
+		tools.FetchToolName,
+		tools.AgenticFetchToolName,
+		tools.GlobToolName,
+		tools.GrepToolName,
+		tools.LSToolName,
+		tools.SourcegraphToolName,
+		tools.TodosToolName,
+		tools.ViewToolName,
+		tools.WriteToolName,
 	}
 }
 
@@ -713,10 +715,16 @@ func resolveAllowedTools(allTools []string, disabledTools []string) []string {
 	return filterSlice(allTools, disabledTools, false)
 }
 
-func resolveReadOnlyTools(tools []string) []string {
-	readOnlyTools := []string{"glob", "grep", "ls", "sourcegraph", "view"}
+func resolveReadOnlyTools(allowedTools []string) []string {
+	readOnlyTools := []string{
+		tools.GlobToolName,
+		tools.GrepToolName,
+		tools.LSToolName,
+		tools.SourcegraphToolName,
+		tools.ViewToolName,
+	}
 	// filter to only include tools that are in allowedtools (include mode)
-	return filterSlice(tools, readOnlyTools, true)
+	return filterSlice(allowedTools, readOnlyTools, true)
 }
 
 func filterSlice(data []string, mask []string, include bool) []string {

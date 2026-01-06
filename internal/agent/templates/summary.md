@@ -7,13 +7,13 @@ You are summarizing a conversation to preserve context for continuing work later
 ## Current State
 
 - What review task is being worked on (exact user request)
-- Current progress and what's been reviewed
-- What's being worked on right now (incomplete analysis)
+- Current progress and what's been completed
+- What's being worked on right now (incomplete work)
 - What remains to be done (specific next steps, not vague)
 
 ## Files & Changes
 
-- Files that were reviewed (with brief description of findings)
+- Files that were modified/reviewed (with brief description of findings)
 - Files that were read/analyzed (why they're relevant)
 - Key files not yet reviewed but will need analysis
 - File paths and line numbers for important code locations
