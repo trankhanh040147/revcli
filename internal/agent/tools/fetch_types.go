@@ -1,13 +1,69 @@
 package tools
 
+import "github.com/trankhanh040147/revcli/internal/agent/tools/constants"
+
+// Deprecated tool name constants for backward compatibility.
+// Use constants.* instead.
+
 // AgenticFetchToolName is the name of the agentic fetch tool.
-const AgenticFetchToolName = "agentic_fetch"
+// Deprecated: Use constants.AgenticFetchToolName instead.
+const AgenticFetchToolName = constants.AgenticFetchToolName
 
 // WebFetchToolName is the name of the web_fetch tool.
-const WebFetchToolName = "web_fetch"
+// Deprecated: Use constants.WebFetchToolName instead.
+const WebFetchToolName = constants.WebFetchToolName
 
 // WebSearchToolName is the name of the web_search tool for sub-agents.
-const WebSearchToolName = "web_search"
+// Deprecated: Use constants.WebSearchToolName instead.
+const WebSearchToolName = constants.WebSearchToolName
+
+// BashToolName is the name of the bash tool.
+// Deprecated: Use constants.BashToolName instead.
+const BashToolName = constants.BashToolName
+
+// DownloadToolName is the name of the download tool.
+// Deprecated: Use constants.DownloadToolName instead.
+const DownloadToolName = constants.DownloadToolName
+
+// EditToolName is the name of the edit tool.
+// Deprecated: Use constants.EditToolName instead.
+const EditToolName = constants.EditToolName
+
+// WriteToolName is the name of the write tool.
+// Deprecated: Use constants.WriteToolName instead.
+const WriteToolName = constants.WriteToolName
+
+// MultiEditToolName is the name of the multiedit tool.
+// Deprecated: Use constants.MultiEditToolName instead.
+const MultiEditToolName = constants.MultiEditToolName
+
+// FetchToolName is the name of the fetch tool.
+// Deprecated: Use constants.FetchToolName instead.
+const FetchToolName = constants.FetchToolName
+
+// ViewToolName is the name of the view tool.
+// Deprecated: Use constants.ViewToolName instead.
+const ViewToolName = constants.ViewToolName
+
+// GrepToolName is the name of the grep tool.
+// Deprecated: Use constants.GrepToolName instead.
+const GrepToolName = constants.GrepToolName
+
+// LSToolName is the name of the ls tool.
+// Deprecated: Use constants.LSToolName instead.
+const LSToolName = constants.LSToolName
+
+// SourcegraphToolName is the name of the sourcegraph tool.
+// Deprecated: Use constants.SourcegraphToolName instead.
+const SourcegraphToolName = constants.SourcegraphToolName
+
+// DiagnosticsToolName is the name of the diagnostics tool.
+// Deprecated: Use constants.DiagnosticsToolName instead.
+const DiagnosticsToolName = constants.DiagnosticsToolName
+
+// TodosToolName is the name of the todos tool.
+// Deprecated: Use constants.TodosToolName instead.
+const TodosToolName = constants.TodosToolName
 
 // LargeContentThreshold is the size threshold for saving content to a file.
 const LargeContentThreshold = 50000 // 50KB

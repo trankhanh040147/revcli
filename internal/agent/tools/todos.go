@@ -6,13 +6,12 @@ import (
 	"fmt"
 
 	"charm.land/fantasy"
+	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 	"github.com/trankhanh040147/revcli/internal/session"
 )
 
 //go:embed todos.md
 var todosDescription []byte
-
-const TodosToolName = "todos"
 
 type TodosParams struct {
 	Todos []TodoItem `json:"todos" description:"The updated todo list"`
@@ -35,7 +34,7 @@ type TodosResponseMetadata struct {
 
 func NewTodosTool(sessions session.Service) fantasy.AgentTool {
 	return fantasy.NewAgentTool(
-		TodosToolName,
+		constants.TodosToolName,
 		string(todosDescription),
 		func(ctx context.Context, params TodosParams, call fantasy.ToolCall) (fantasy.ToolResponse, error) {
 			sessionID := GetSessionFromContext(ctx)

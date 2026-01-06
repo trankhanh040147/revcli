@@ -11,6 +11,7 @@ import (
 
 	"charm.land/fantasy"
 	"github.com/charmbracelet/x/powernap/pkg/lsp/protocol"
+	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 	"github.com/trankhanh040147/revcli/internal/csync"
 	"github.com/trankhanh040147/revcli/internal/lsp"
 )
@@ -19,14 +20,12 @@ type DiagnosticsParams struct {
 	FilePath string `json:"file_path,omitempty" description:"The path to the file to get diagnostics for (leave w empty for project diagnostics)"`
 }
 
-const DiagnosticsToolName = "lsp_diagnostics"
-
 //go:embed diagnostics.md
 var diagnosticsDescription []byte
 
 func NewDiagnosticsTool(lspClients *csync.Map[string, *lsp.Client]) fantasy.AgentTool {
 	return fantasy.NewAgentTool(
-		DiagnosticsToolName,
+		constants.DiagnosticsToolName,
 		string(diagnosticsDescription),
 		func(ctx context.Context, params DiagnosticsParams, call fantasy.ToolCall) (fantasy.ToolResponse, error) {
 			if lspClients.Len() == 0 {

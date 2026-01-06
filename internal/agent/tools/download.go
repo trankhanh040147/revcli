@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"charm.land/fantasy"
+	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 	"github.com/trankhanh040147/revcli/internal/filepathext"
 	"github.com/trankhanh040147/revcli/internal/permission"
 )
@@ -44,7 +45,7 @@ func NewDownloadTool(permissions permission.Service, workingDir string, client *
 		}
 	}
 	return fantasy.NewParallelAgentTool(
-		DownloadToolName,
+		constants.DownloadToolName,
 		string(downloadDescription),
 		func(ctx context.Context, params DownloadParams, call fantasy.ToolCall) (fantasy.ToolResponse, error) {
 			if params.URL == "" {
@@ -72,7 +73,7 @@ func NewDownloadTool(permissions permission.Service, workingDir string, client *
 				permission.CreatePermissionRequest{
 					SessionID:   sessionID,
 					Path:        filePath,
-					ToolName:    DownloadToolName,
+					ToolName:    constants.DownloadToolName,
 					Action:      "download",
 					Description: fmt.Sprintf("Download file from URL: %s to %s", params.URL, filePath),
 					Params:      DownloadPermissionsParams(params),

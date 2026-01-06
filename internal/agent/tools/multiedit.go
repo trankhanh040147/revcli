@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"charm.land/fantasy"
+	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 	"github.com/trankhanh040147/revcli/internal/csync"
 	"github.com/trankhanh040147/revcli/internal/diff"
 	"github.com/trankhanh040147/revcli/internal/filepathext"
@@ -52,14 +53,12 @@ type MultiEditResponseMetadata struct {
 	EditsFailed  []FailedEdit `json:"edits_failed,omitempty"`
 }
 
-const MultiEditToolName = "multiedit"
-
 //go:embed multiedit.md
 var multieditDescription []byte
 
 func NewMultiEditTool(lspClients *csync.Map[string, *lsp.Client], permissions permission.Service, files history.Service, workingDir string) fantasy.AgentTool {
 	return fantasy.NewAgentTool(
-		MultiEditToolName,
+		constants.MultiEditToolName,
 		string(multieditDescription),
 		func(ctx context.Context, params MultiEditParams, call fantasy.ToolCall) (fantasy.ToolResponse, error) {
 			if params.FilePath == "" {
@@ -176,7 +175,7 @@ func processMultiEditWithCreation(edit editContext, params MultiEditParams, call
 		SessionID:   sessionID,
 		Path:        fsext.PathOrPrefix(params.FilePath, edit.workingDir),
 		ToolCallID:  call.ID,
-		ToolName:    MultiEditToolName,
+		ToolName:    constants.MultiEditToolName,
 		Action:      "write",
 		Description: description,
 		Params: MultiEditPermissionsParams{
@@ -317,7 +316,7 @@ func processMultiEditExistingFile(edit editContext, params MultiEditParams, call
 		SessionID:   sessionID,
 		Path:        fsext.PathOrPrefix(params.FilePath, edit.workingDir),
 		ToolCallID:  call.ID,
-		ToolName:    MultiEditToolName,
+		ToolName:    constants.MultiEditToolName,
 		Action:      "write",
 		Description: description,
 		Params: MultiEditPermissionsParams{

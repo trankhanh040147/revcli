@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"charm.land/fantasy"
+	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 	"github.com/trankhanh040147/revcli/internal/config"
 	"github.com/trankhanh040147/revcli/internal/permission"
 	"github.com/trankhanh040147/revcli/internal/shell"
@@ -44,8 +45,6 @@ type BashResponseMetadata struct {
 }
 
 const (
-	BashToolName = "bash"
-
 	AutoBackgroundThreshold = 1 * time.Minute // Commands taking longer automatically become background jobs
 	MaxOutputLength         = 30000
 	BashNoOutput            = "no output"
@@ -188,7 +187,7 @@ func blockFuncs() []shell.BlockFunc {
 
 func NewBashTool(permissions permission.Service, workingDir string, attribution *config.Attribution, modelName string) fantasy.AgentTool {
 	return fantasy.NewAgentTool(
-		BashToolName,
+		constants.BashToolName,
 		string(bashDescription(attribution, modelName)),
 		func(ctx context.Context, params BashParams, call fantasy.ToolCall) (fantasy.ToolResponse, error) {
 			if params.Command == "" {
@@ -220,7 +219,7 @@ func NewBashTool(permissions permission.Service, workingDir string, attribution 
 						SessionID:   sessionID,
 						Path:        execWorkingDir,
 						ToolCallID:  call.ID,
-						ToolName:    BashToolName,
+						ToolName:    constants.BashToolName,
 						Action:      "execute",
 						Description: fmt.Sprintf("Execute command: %s", params.Command),
 						Params:      BashPermissionsParams(params),

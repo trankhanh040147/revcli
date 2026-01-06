@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"charm.land/fantasy"
+	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 	"github.com/trankhanh040147/revcli/internal/fsext"
 )
 
@@ -93,7 +94,6 @@ type GrepResponseMetadata struct {
 }
 
 const (
-	GrepToolName        = "grep"
 	maxGrepContentWidth = 500
 )
 
@@ -114,7 +114,7 @@ func escapeRegexPattern(pattern string) string {
 
 func NewGrepTool(workingDir string) fantasy.AgentTool {
 	return fantasy.NewAgentTool(
-		GrepToolName,
+		constants.GrepToolName,
 		string(grepDescription),
 		func(ctx context.Context, params GrepParams, call fantasy.ToolCall) (fantasy.ToolResponse, error) {
 			if params.Pattern == "" {

@@ -13,6 +13,7 @@ import (
 	"unicode/utf8"
 
 	"charm.land/fantasy"
+	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 	"github.com/trankhanh040147/revcli/internal/csync"
 	"github.com/trankhanh040147/revcli/internal/filepathext"
 	"github.com/trankhanh040147/revcli/internal/lsp"
@@ -47,7 +48,6 @@ type ViewResponseMetadata struct {
 }
 
 const (
-	ViewToolName     = "view"
 	MaxReadSize      = 5 * 1024 * 1024 // 5MB
 	DefaultReadLimit = 2000
 	MaxLineLength    = 2000
@@ -55,7 +55,7 @@ const (
 
 func NewViewTool(lspClients *csync.Map[string, *lsp.Client], permissions permission.Service, workingDir string, skillsPaths ...string) fantasy.AgentTool {
 	return fantasy.NewAgentTool(
-		ViewToolName,
+		constants.ViewToolName,
 		string(viewDescription),
 		func(ctx context.Context, params ViewParams, call fantasy.ToolCall) (fantasy.ToolResponse, error) {
 			if params.FilePath == "" {
@@ -92,7 +92,7 @@ func NewViewTool(lspClients *csync.Map[string, *lsp.Client], permissions permiss
 						SessionID:   sessionID,
 						Path:        absFilePath,
 						ToolCallID:  call.ID,
-						ToolName:    ViewToolName,
+						ToolName:    constants.ViewToolName,
 						Action:      "read",
 						Description: fmt.Sprintf("Read file outside working directory: %s", absFilePath),
 						Params:      ViewPermissionsParams(params),

@@ -6,11 +6,8 @@ import (
 	"fmt"
 
 	"charm.land/fantasy"
+	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 	"github.com/trankhanh040147/revcli/internal/shell"
-)
-
-const (
-	JobKillToolName = "job_kill"
 )
 
 //go:embed job_kill.md
@@ -28,7 +25,7 @@ type JobKillResponseMetadata struct {
 
 func NewJobKillTool() fantasy.AgentTool {
 	return fantasy.NewAgentTool(
-		JobKillToolName,
+		constants.JobKillToolName,
 		string(jobKillDescription),
 		func(ctx context.Context, params JobKillParams, call fantasy.ToolCall) (fantasy.ToolResponse, error) {
 			if params.ShellID == "" {

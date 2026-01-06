@@ -7,11 +7,8 @@ import (
 	"strings"
 
 	"charm.land/fantasy"
+	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 	"github.com/trankhanh040147/revcli/internal/shell"
-)
-
-const (
-	JobOutputToolName = "job_output"
 )
 
 //go:embed job_output.md
@@ -31,7 +28,7 @@ type JobOutputResponseMetadata struct {
 
 func NewJobOutputTool() fantasy.AgentTool {
 	return fantasy.NewAgentTool(
-		JobOutputToolName,
+		constants.JobOutputToolName,
 		string(jobOutputDescription),
 		func(ctx context.Context, params JobOutputParams, call fantasy.ToolCall) (fantasy.ToolResponse, error) {
 			if params.ShellID == "" {

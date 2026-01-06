@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"charm.land/fantasy"
+	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 )
 
 //go:embed web_fetch.md
@@ -29,7 +30,7 @@ func NewWebFetchTool(workingDir string, client *http.Client) fantasy.AgentTool {
 	}
 
 	return fantasy.NewParallelAgentTool(
-		WebFetchToolName,
+		constants.WebFetchToolName,
 		string(webFetchToolDescription),
 		func(ctx context.Context, params WebFetchParams, call fantasy.ToolCall) (fantasy.ToolResponse, error) {
 			if params.URL == "" {

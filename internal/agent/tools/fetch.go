@@ -13,10 +13,9 @@ import (
 	"charm.land/fantasy"
 	md "github.com/JohannesKaufmann/html-to-markdown"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 	"github.com/trankhanh040147/revcli/internal/permission"
 )
-
-const FetchToolName = "fetch"
 
 //go:embed fetch.md
 var fetchDescription []byte
@@ -34,7 +33,7 @@ func NewFetchTool(permissions permission.Service, workingDir string, client *htt
 	}
 
 	return fantasy.NewParallelAgentTool(
-		FetchToolName,
+		constants.FetchToolName,
 		string(fetchDescription),
 		func(ctx context.Context, params FetchParams, call fantasy.ToolCall) (fantasy.ToolResponse, error) {
 			if params.URL == "" {
@@ -60,7 +59,7 @@ func NewFetchTool(permissions permission.Service, workingDir string, client *htt
 					SessionID:   sessionID,
 					Path:        workingDir,
 					ToolCallID:  call.ID,
-					ToolName:    FetchToolName,
+					ToolName:    constants.FetchToolName,
 					Action:      "fetch",
 					Description: fmt.Sprintf("Fetch content from URL: %s", params.URL),
 					Params:      FetchPermissionsParams(params),
