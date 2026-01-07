@@ -45,7 +45,7 @@ func Render(version string, compact bool, o Opts) string {
 	// Title.
 	const spacing = 1
 	letterforms := []letterform{
-		// letterR,
+		letterR,
 		// letterE,
 		// letterV,
 		// letterC,
