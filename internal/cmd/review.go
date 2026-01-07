@@ -25,7 +25,7 @@ var (
 // reviewCmd represents the review command
 var reviewCmd = &cobra.Command{
 	Use:   "review",
-	Short: "Review code changes using Gemini AI",
+	Short: "Review code changes using AI",
 	Long: `Analyzes your git diff and provides an intelligent code review.
 Uses Google's Gemini LLM to detect bugs, suggest optimizations,
 and ensure idiomatic Go practices.

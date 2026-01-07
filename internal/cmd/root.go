@@ -21,6 +21,7 @@ import (
 	"github.com/charmbracelet/x/exp/charmtone"
 	"github.com/charmbracelet/x/term"
 	"github.com/spf13/cobra"
+
 	"github.com/trankhanh040147/revcli/internal/app"
 	"github.com/trankhanh040147/revcli/internal/config"
 	"github.com/trankhanh040147/revcli/internal/db"
@@ -41,13 +42,13 @@ func init() {
 	rootCmd.AddCommand(
 		reviewCmd,
 		presetCmd,
-	// runCmd,
-	// dirsCmd,
-	// projectsCmd,
-	// updateProvidersCmd,
-	// logsCmd,
-	// schemaCmd,
-	// loginCmd,
+		updateProvidersCmd,
+		// runCmd,
+		// dirsCmd,
+		// projectsCmd,
+		// logsCmd,
+		// schemaCmd,
+		// loginCmd,
 	)
 }
 
@@ -57,12 +58,8 @@ var rootCmd = &cobra.Command{
 	Long: `Revcli is a powerful terminal-based AI code reviewer that helps with software development tasks.
 It provides an interactive chat interface with AI capabilities, code analysis, and LSP integration
 to assist developers in writing, debugging, and understanding code directly from the terminal.`,
-	Example: `# Review code changes using Gemini AI
-revcli review
-
-# Review code changes using a specific model
-revcli review --model gemini-2.5-pro
-  `,
+	Example: `# Review code changes 
+revcli`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		app, err := setupAppWithProgressBar(cmd)
 		if err != nil {
