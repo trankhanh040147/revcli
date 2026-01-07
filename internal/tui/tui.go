@@ -390,7 +390,7 @@ func (a *appModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		statusMsg := fmt.Sprintf("RevCLI update available: v%s → v%s.", msg.CurrentVersion, msg.LatestVersion)
 		if msg.IsDevelopment {
 			// todo: replace by the latest version
-			statusMsg = fmt.Sprintf("This is a development version of Crush. The latest version is v%s.", msg.CurrentVersion),
+			statusMsg = fmt.Sprintf("This is a development version of Crush. The latest version is v%s.", msg.CurrentVersion)
 			// statusMsg = fmt.Sprintf("This is a development version of Crush. The latest version is v%s.", msg.LatestVersion)
 		}
 		s, statusCmd := a.status.Update(util.InfoMsg{
