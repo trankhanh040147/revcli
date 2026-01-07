@@ -10,6 +10,7 @@ import (
 	"github.com/MakeNowJust/heredoc"
 	"github.com/charmbracelet/x/ansi"
 	"github.com/charmbracelet/x/exp/slice"
+
 	"github.com/trankhanh040147/revcli/internal/tui/styles"
 )
 
@@ -44,12 +45,12 @@ func Render(version string, compact bool, o Opts) string {
 	// Title.
 	const spacing = 1
 	letterforms := []letterform{
-		letterR,
-		letterE,
-		letterV,
-		letterC,
-		letterL,
-		letterI,
+		// letterR,
+		// letterE,
+		// letterV,
+		// letterC,
+		// letterL,
+		// letterI,
 	}
 	stretchIndex := -1 // -1 means no stretching.
 	if !compact {

@@ -18,6 +18,7 @@ import (
 	"github.com/invopop/jsonschema"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
+
 	hyperp "github.com/trankhanh040147/revcli/internal/agent/hyper"
 	toolConstants "github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 	"github.com/trankhanh040147/revcli/internal/csync"
@@ -716,11 +717,24 @@ func resolveAllowedTools(allTools []string, disabledTools []string) []string {
 
 func resolveReadOnlyTools(allowedTools []string) []string {
 	readOnlyTools := []string{
+		toolConstants.AgentToolName,
+		toolConstants.BashToolName,
+		toolConstants.JobOutputToolName,
+		toolConstants.DownloadToolName,
+		toolConstants.DiagnosticsToolName,
+		toolConstants.ReferencesToolName,
+		toolConstants.FetchToolName,
+		toolConstants.AgenticFetchToolName,
+		toolConstants.TodosToolName,
 		toolConstants.GlobToolName,
 		toolConstants.GrepToolName,
 		toolConstants.LSToolName,
 		toolConstants.SourcegraphToolName,
 		toolConstants.ViewToolName,
+		// toolConstants.JobKillToolName,
+		// toolConstants.WriteToolName,
+		// toolConstants.EditToolName,
+		// toolConstants.MultiEditToolName,
 	}
 	// filter to only include tools that are in allowedtools (include mode)
 	return filterSlice(allowedTools, readOnlyTools, true)
