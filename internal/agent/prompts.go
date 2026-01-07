@@ -12,7 +12,10 @@ import (
 var reviewerPromptTmpl []byte
 
 //go:embed templates/coder.md.tpl
-var coderPromptTmpl []byte // TODO(PlanC): Keep for future build mode
+var coderPromptTmpl []byte
+
+// go:embed templates/planner.md.tpl
+var plannerPromptTmpl []byte
 
 //go:embed templates/task.md.tpl
 var taskPromptTmpl []byte
@@ -41,6 +44,14 @@ func coderPrompt(opts ...prompt.Option) (*prompt.Prompt, error) {
 // TODO(PlanC): Add comparison mode (diff-based, commit-based reviews)
 func taskPrompt(opts ...prompt.Option) (*prompt.Prompt, error) {
 	systemPrompt, err := prompt.NewPrompt("task", string(taskPromptTmpl), opts...)
+	if err != nil {
+		return nil, err
+	}
+	return systemPrompt, nil
+}
+
+func plannerPrompt(opts ...prompt.Option) (*prompt.Prompt, error) {
+	systemPrompt, err := prompt.NewPrompt("planner", string(plannerPromptTmpl), opts...)
 	if err != nil {
 		return nil, err
 	}
