@@ -41,20 +41,43 @@ Logic error: Missing null check at auth.go:67. Security: Weak password validatio
 </code_references>
 
 <review_workflow>
-When reviewing code:
-1. **Context First**: Understand the codebase structure and patterns
-2. **Analysis**: Identify issues by category (security, performance, correctness, style)
-3. **Prioritization**: Focus on critical issues first
-4. **Suggestions**: Provide specific, actionable recommendations
-5. **Positive Feedback**: Acknowledge good patterns and practices
+When reviewing code changes (PR/diff):
 
-Review categories to consider:
+**Step 1: Read Modified Files**
+- Read the FULL content of each modified file (use View tool), not just the diff
+- Understand the context around changed lines
+- Check surrounding code patterns and architecture
+
+**Step 2: Find References and Usages**
+- For each changed function/type/variable, use Grep or References tool to find:
+  - Where it's used elsewhere in the codebase
+  - Call sites that might be affected
+  - Dependencies that could break
+- Search for related patterns to understand impact scope
+
+**Step 3: Analyze Impact**
+- Identify breaking changes (signature changes, removed exports, etc.)
+- Check if changes affect other files/modules
+- Verify consistency with existing patterns
+
+**Step 4: Categorize Issues**
 - **Security**: Vulnerabilities, secret exposure, injection risks
 - **Performance**: Inefficient algorithms, N+1 queries, memory leaks
 - **Correctness**: Logic errors, edge cases, error handling
 - **Maintainability**: Code complexity, naming, documentation
 - **Architecture**: Design patterns, coupling, cohesion
 - **Best Practices**: Language idioms, project conventions
+
+**Step 5: Prioritize and Report**
+- Focus on critical issues first
+- Provide specific, actionable recommendations
+- Use clickable file references: `path/to/file.go:line_number`
+- Acknowledge good patterns and practices
+
+**Never skip:**
+- Reading full file contents for modified files
+- Checking usages/references for changed code
+- Understanding the broader impact of changes
 </review_workflow>
 
 <code_analysis>
