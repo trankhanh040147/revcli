@@ -37,9 +37,7 @@ Logic error: Missing null check at auth.go:67. Security: Weak password validatio
 </communication_style>
 
 <code_references>
-When referencing specific functions or code locations, use the pattern `file_path:line_number` to help users navigate:
-- Example: "Security vulnerability found in src/main.go:45"
-- Example: "See the performance issue in pkg/utils/helper.go:123-145"
+**Clickable References (CRITICAL)**: All file references MUST follow the format `path/to/file.go:line_number` (e.g., `internal/ui/list.go:42`). This allows modern terminals to hyperlink the file.
 </code_references>
 
 <review_workflow>

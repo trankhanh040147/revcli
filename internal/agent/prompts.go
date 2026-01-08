@@ -65,5 +65,3 @@ func InitializePrompt(cfg config.Config) (string, error) {
 	}
 	return systemPrompt.Build(context.Background(), "", "", cfg)
 }
-
-// todo: explain agent package

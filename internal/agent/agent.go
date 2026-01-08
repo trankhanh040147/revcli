@@ -1075,5 +1075,3 @@ func (a *sessionAgent) workaroundProviderMediaLimitations(messages []fantasy.Mes
 
 	return convertedMessages
 }
-
-// todo: explain agent package

@@ -715,23 +715,35 @@ func resolveAllowedTools(allTools []string, disabledTools []string) []string {
 	return filterSlice(allTools, disabledTools, false)
 }
 
-func resolveReadOnlyTools(allowedTools []string) []string {
+func resolveReadOnlyTools(tools []string) []string {
 	readOnlyTools := []string{
-		toolConstants.AgentToolName,
+		toolConstants.GlobToolName,
+		toolConstants.GrepToolName,
+		toolConstants.LSToolName,
+		toolConstants.SourcegraphToolName,
+		toolConstants.ViewToolName,
+	}
+	// filter to only include tools that are in allowedtools (include mode)
+	return filterSlice(tools, readOnlyTools, true)
+}
+
+func resolveReviewTools(allowedTools []string) []string {
+	readOnlyTools := []string{
 		toolConstants.BashToolName,
-		toolConstants.JobOutputToolName,
-		toolConstants.DownloadToolName,
-		toolConstants.DiagnosticsToolName,
-		toolConstants.ReferencesToolName,
-		toolConstants.FetchToolName,
-		toolConstants.AgenticFetchToolName,
 		toolConstants.TodosToolName,
 		toolConstants.GlobToolName,
 		toolConstants.GrepToolName,
 		toolConstants.LSToolName,
 		toolConstants.SourcegraphToolName,
 		toolConstants.ViewToolName,
-		// toolConstants.JobKillToolName,
+		toolConstants.DiagnosticsToolName,
+		toolConstants.ReferencesToolName,
+		toolConstants.JobOutputToolName,
+		toolConstants.JobKillToolName,
+		toolConstants.FetchToolName,
+		toolConstants.DownloadToolName,
+		toolConstants.AgenticFetchToolName,
+		toolConstants.AgentToolName,
 		// toolConstants.WriteToolName,
 		// toolConstants.EditToolName,
 		// toolConstants.MultiEditToolName,
@@ -769,7 +781,7 @@ func (c *Config) SetupAgents() {
 			Description:  "An agent that reviews code and provides feedback.",
 			Model:        SelectedModelTypeLarge,
 			ContextPaths: c.Options.ContextPaths,
-			AllowedTools: resolveReadOnlyTools(allowedTools), // Review mode defaults to read-only
+			AllowedTools: resolveReviewTools(allowedTools),
 			// TODO(PlanC): Add Mode field for mode-based tool filtering
 		},
 

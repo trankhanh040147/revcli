@@ -858,5 +858,3 @@ func (c *coordinator) refreshApiKeyTemplate(ctx context.Context, providerCfg con
 	}
 	return nil
 }
-
-// todo: explain agent package
