@@ -18,7 +18,9 @@ import (
 	"github.com/invopop/jsonschema"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
+
 	hyperp "github.com/trankhanh040147/revcli/internal/agent/hyper"
+	toolConstants "github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 	"github.com/trankhanh040147/revcli/internal/csync"
 	"github.com/trankhanh040147/revcli/internal/env"
 	"github.com/trankhanh040147/revcli/internal/oauth"
@@ -60,8 +62,9 @@ const (
 )
 
 const (
-	AgentCoder string = "coder"
-	AgentTask  string = "task"
+	AgentReviewer string = "reviewer" // Changed from AgentCoder
+	AgentTask     string = "task"
+	// TODO(PlanC): Add AgentBuilder, AgentAsker constants for future modes
 )
 
 type SelectedModel struct {
@@ -242,7 +245,7 @@ const (
 type Attribution struct {
 	TrailerStyle  TrailerStyle `json:"trailer_style,omitempty" jsonschema:"description=Style of attribution trailer to add to commits,enum=none,enum=co-authored-by,enum=assisted-by,default=assisted-by"`
 	CoAuthoredBy  *bool        `json:"co_authored_by,omitempty" jsonschema:"description=Deprecated: use trailer_style instead"`
-	GeneratedWith bool         `json:"generated_with,omitempty" jsonschema:"description=Add Generated with Crush line to commit messages and issues and PRs,default=true"`
+	GeneratedWith bool         `json:"generated_with,omitempty" jsonschema:"description=Add Generated with revCLI line to commit messages and issues and PRs,default=true"`
 }
 
 // JSONSchemaExtend marks the co_authored_by field as deprecated in the schema.
@@ -255,18 +258,18 @@ func (Attribution) JSONSchemaExtend(schema *jsonschema.Schema) {
 }
 
 type Options struct {
-	ContextPaths              []string     `json:"context_paths,omitempty" jsonschema:"description=Paths to files containing context information for the AI,example=.cursorrules,example=CRUSH.md"`
-	SkillsPaths               []string     `json:"skills_paths,omitempty" jsonschema:"description=Paths to directories containing Agent Skills (folders with SKILL.md files),example=~/.config/crush/skills,example=./skills"`
+	ContextPaths              []string     `json:"context_paths,omitempty" jsonschema:"description=Paths to files containing context information for the AI,example=.cursorrules,example=AGENTS.md"`
+	SkillsPaths               []string     `json:"skills_paths,omitempty" jsonschema:"description=Paths to directories containing Agent Skills (folders with SKILL.md files),example=~/.config/revcli/skills,example=./skills"`
 	TUI                       *TUIOptions  `json:"tui,omitempty" jsonschema:"description=Terminal user interface options"`
 	Debug                     bool         `json:"debug,omitempty" jsonschema:"description=Enable debug logging,default=false"`
 	DebugLSP                  bool         `json:"debug_lsp,omitempty" jsonschema:"description=Enable debug logging for LSP servers,default=false"`
 	DisableAutoSummarize      bool         `json:"disable_auto_summarize,omitempty" jsonschema:"description=Disable automatic conversation summarization,default=false"`
-	DataDirectory             string       `json:"data_directory,omitempty" jsonschema:"description=Directory for storing application data (relative to working directory),default=.crush,example=.crush"` // Relative to the cwd
+	DataDirectory             string       `json:"data_directory,omitempty" jsonschema:"description=Directory for storing application data (relative to working directory),default=.revcli,example=.revcli"` // Relative to the cwd
 	DisabledTools             []string     `json:"disabled_tools,omitempty" jsonschema:"description=List of built-in tools to disable and hide from the agent,example=bash,example=sourcegraph"`
 	DisableProviderAutoUpdate bool         `json:"disable_provider_auto_update,omitempty" jsonschema:"description=Disable providers auto-update,default=false"`
 	Attribution               *Attribution `json:"attribution,omitempty" jsonschema:"description=Attribution settings for generated content"`
 	DisableMetrics            bool         `json:"disable_metrics,omitempty" jsonschema:"description=Disable sending metrics,default=false"`
-	InitializeAs              string       `json:"initialize_as,omitempty" jsonschema:"description=Name of the context file to create/update during project initialization,default=AGENTS.md,example=AGENTS.md,example=CRUSH.md,example=CLAUDE.md,example=docs/LLMs.md"`
+	InitializeAs              string       `json:"initialize_as,omitempty" jsonschema:"description=Name of the context file to create/update during project initialization,default=AGENTS.md,example=AGENTS.md,example=CLAUDE.md,example=docs/LLMs.md"`
 }
 
 type MCPs map[string]MCPConfig
@@ -368,7 +371,7 @@ func (t ToolLs) Limits() (depth, items int) {
 	return ptrValOr(t.MaxDepth, 0), ptrValOr(t.MaxItems, 0)
 }
 
-// Config holds the configuration for crush.
+// Config holds the configuration for revCLI.
 type Config struct {
 	Schema string `json:"$schema,omitempty"`
 
@@ -683,24 +686,24 @@ func (c *Config) recordRecentModel(modelType SelectedModelType, model SelectedMo
 
 func allToolNames() []string {
 	return []string{
-		"agent",
-		"bash",
-		"job_output",
-		"job_kill",
-		"download",
-		"edit",
-		"multiedit",
-		"lsp_diagnostics",
-		"lsp_references",
-		"fetch",
-		"agentic_fetch",
-		"glob",
-		"grep",
-		"ls",
-		"sourcegraph",
-		"todos",
-		"view",
-		"write",
+		toolConstants.AgentToolName,
+		toolConstants.BashToolName,
+		toolConstants.JobOutputToolName,
+		toolConstants.JobKillToolName,
+		toolConstants.DownloadToolName,
+		toolConstants.EditToolName,
+		toolConstants.MultiEditToolName,
+		toolConstants.DiagnosticsToolName,
+		toolConstants.ReferencesToolName,
+		toolConstants.FetchToolName,
+		toolConstants.AgenticFetchToolName,
+		toolConstants.GlobToolName,
+		toolConstants.GrepToolName,
+		toolConstants.LSToolName,
+		toolConstants.SourcegraphToolName,
+		toolConstants.TodosToolName,
+		toolConstants.ViewToolName,
+		toolConstants.WriteToolName,
 	}
 }
 
@@ -713,9 +716,40 @@ func resolveAllowedTools(allTools []string, disabledTools []string) []string {
 }
 
 func resolveReadOnlyTools(tools []string) []string {
-	readOnlyTools := []string{"glob", "grep", "ls", "sourcegraph", "view"}
+	readOnlyTools := []string{
+		toolConstants.GlobToolName,
+		toolConstants.GrepToolName,
+		toolConstants.LSToolName,
+		toolConstants.SourcegraphToolName,
+		toolConstants.ViewToolName,
+	}
 	// filter to only include tools that are in allowedtools (include mode)
 	return filterSlice(tools, readOnlyTools, true)
+}
+
+func resolveReviewTools(allowedTools []string) []string {
+	readOnlyTools := []string{
+		toolConstants.BashToolName,
+		toolConstants.TodosToolName,
+		toolConstants.GlobToolName,
+		toolConstants.GrepToolName,
+		toolConstants.LSToolName,
+		toolConstants.SourcegraphToolName,
+		toolConstants.ViewToolName,
+		toolConstants.DiagnosticsToolName,
+		toolConstants.ReferencesToolName,
+		toolConstants.JobOutputToolName,
+		toolConstants.JobKillToolName,
+		toolConstants.FetchToolName,
+		toolConstants.DownloadToolName,
+		toolConstants.AgenticFetchToolName,
+		toolConstants.AgentToolName,
+		// toolConstants.WriteToolName,
+		// toolConstants.EditToolName,
+		// toolConstants.MultiEditToolName,
+	}
+	// filter to only include tools that are in allowedtools (include mode)
+	return filterSlice(allowedTools, readOnlyTools, true)
 }
 
 func filterSlice(data []string, mask []string, include bool) []string {
@@ -730,21 +764,29 @@ func filterSlice(data []string, mask []string, include bool) []string {
 	return filtered
 }
 
+// Tool filtering strategy for future modes:
+// - Review mode: read-only tools by default, write tools optional (user configurable)
+// - Build mode: all tools available (full code generation capability)
+// - Ask mode: read-only tools + specific Q&A tools
+// TODO(PlanC): Implement mode-based tool filtering in coordinator
+// TODO(PlanC): Implement builderPrompt for build mode
+// TODO(PlanC): Implement askerPrompt for ask mode
 func (c *Config) SetupAgents() {
 	allowedTools := resolveAllowedTools(allToolNames(), c.Options.DisabledTools)
 
 	agents := map[string]Agent{
-		AgentCoder: {
-			ID:           AgentCoder,
-			Name:         "Coder",
-			Description:  "An agent that helps with executing coding tasks.",
+		AgentReviewer: {
+			ID:           AgentReviewer,
+			Name:         "Reviewer",
+			Description:  "An agent that reviews code and provides feedback.",
 			Model:        SelectedModelTypeLarge,
 			ContextPaths: c.Options.ContextPaths,
-			AllowedTools: allowedTools,
+			AllowedTools: resolveReviewTools(allowedTools),
+			// TODO(PlanC): Add Mode field for mode-based tool filtering
 		},
 
 		AgentTask: {
-			ID:           AgentCoder,
+			ID:           AgentTask,
 			Name:         "Task",
 			Description:  "An agent that helps with searching for context and finding implementation details.",
 			Model:        SelectedModelTypeLarge,

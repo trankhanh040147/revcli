@@ -8,5 +8,3 @@ var (
 	ErrEmptyPrompt      = errors.New("prompt is empty")
 	ErrSessionMissing   = errors.New("session id is missing")
 )
-// todo: explain agent package
-

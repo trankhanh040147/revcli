@@ -2,7 +2,7 @@ you will generate a short title based on the first message a user begins a conve
 
 <rules>
 - ensure it is not more than 50 characters long
-- the title should be a summary of the user's message
+- the title should be a summary of the user's message or review request
 - it should be one line long
 - do not use quotes or colons
 - the entire text you return will be used as the title

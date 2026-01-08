@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"charm.land/fantasy"
+	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 	"github.com/trankhanh040147/revcli/internal/csync"
 	"github.com/trankhanh040147/revcli/internal/diff"
 	"github.com/trankhanh040147/revcli/internal/filepathext"
@@ -41,8 +42,6 @@ type EditResponseMetadata struct {
 	NewContent string `json:"new_content,omitempty"`
 }
 
-const EditToolName = "edit"
-
 //go:embed edit.md
 var editDescription []byte
 
@@ -55,7 +54,7 @@ type editContext struct {
 
 func NewEditTool(lspClients *csync.Map[string, *lsp.Client], permissions permission.Service, files history.Service, workingDir string) fantasy.AgentTool {
 	return fantasy.NewAgentTool(
-		EditToolName,
+		constants.EditToolName,
 		string(editDescription),
 		func(ctx context.Context, params EditParams, call fantasy.ToolCall) (fantasy.ToolResponse, error) {
 			if params.FilePath == "" {
@@ -126,7 +125,7 @@ func createNewFile(edit editContext, filePath, content string, call fantasy.Tool
 			SessionID:   sessionID,
 			Path:        fsext.PathOrPrefix(filePath, edit.workingDir),
 			ToolCallID:  call.ID,
-			ToolName:    EditToolName,
+			ToolName:    constants.EditToolName,
 			Action:      "write",
 			Description: fmt.Sprintf("Create file %s", filePath),
 			Params: EditPermissionsParams{
@@ -247,7 +246,7 @@ func deleteContent(edit editContext, filePath, oldString string, replaceAll bool
 			SessionID:   sessionID,
 			Path:        fsext.PathOrPrefix(filePath, edit.workingDir),
 			ToolCallID:  call.ID,
-			ToolName:    EditToolName,
+			ToolName:    constants.EditToolName,
 			Action:      "write",
 			Description: fmt.Sprintf("Delete content from file %s", filePath),
 			Params: EditPermissionsParams{
@@ -382,7 +381,7 @@ func replaceContent(edit editContext, filePath, oldString, newString string, rep
 			SessionID:   sessionID,
 			Path:        fsext.PathOrPrefix(filePath, edit.workingDir),
 			ToolCallID:  call.ID,
-			ToolName:    EditToolName,
+			ToolName:    constants.EditToolName,
 			Action:      "write",
 			Description: fmt.Sprintf("Replace content in file %s", filePath),
 			Params: EditPermissionsParams{

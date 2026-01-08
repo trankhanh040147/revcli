@@ -1,7 +1,3 @@
----
-feature: 5_projects/revcli/docs/sample-presets/attachments/Pasted image 20260103165452.png
-thumbnail: thumbnails/resized/5dcb47760f32efcd8446401eb8b69f95_86cf658e.webp
----
 # Configuration Variables
 - **Framework**: [e.g., React/Next.js]
 - **State Management**: [e.g., TanStack Query, Zustand]

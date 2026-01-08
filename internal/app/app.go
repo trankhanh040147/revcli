@@ -111,8 +111,8 @@ func New(ctx context.Context, conn *sql.DB, cfg *config.Config) (*App, error) {
 		slog.Warn("No agent configuration found")
 		return app, nil
 	}
-	if err := app.InitCoderAgent(ctx); err != nil {
-		return nil, fmt.Errorf("failed to initialize coder agent: %w", err)
+	if err := app.InitReviewerAgent(ctx); err != nil {
+		return nil, fmt.Errorf("failed to initialize reviewer agent: %w", err)
 	}
 	return app, nil
 }
@@ -334,10 +334,10 @@ func setupSubscriber[T any](
 	})
 }
 
-func (app *App) InitCoderAgent(ctx context.Context) error {
-	coderAgentCfg := app.config.Agents[config.AgentCoder]
-	if coderAgentCfg.ID == "" {
-		return fmt.Errorf("coder agent configuration is missing")
+func (app *App) InitReviewerAgent(ctx context.Context) error {
+	reviewerAgentCfg := app.config.Agents[config.AgentReviewer]
+	if reviewerAgentCfg.ID == "" {
+		return fmt.Errorf("reviewer agent configuration is missing")
 	}
 	var err error
 	app.AgentCoordinator, err = agent.NewCoordinator(
@@ -350,7 +350,7 @@ func (app *App) InitCoderAgent(ctx context.Context) error {
 		app.LSPClients,
 	)
 	if err != nil {
-		slog.Error("Failed to create coder agent", "err", err)
+		slog.Error("Failed to create reviewer agent", "err", err)
 		return err
 	}
 	return nil

@@ -16,6 +16,7 @@ import (
 
 	"charm.land/fantasy"
 	"github.com/charmbracelet/x/powernap/pkg/lsp/protocol"
+	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 	"github.com/trankhanh040147/revcli/internal/csync"
 	"github.com/trankhanh040147/revcli/internal/lsp"
 )
@@ -29,14 +30,12 @@ type referencesTool struct {
 	lspClients *csync.Map[string, *lsp.Client]
 }
 
-const ReferencesToolName = "lsp_references"
-
 //go:embed references.md
 var referencesDescription []byte
 
 func NewReferencesTool(lspClients *csync.Map[string, *lsp.Client]) fantasy.AgentTool {
 	return fantasy.NewAgentTool(
-		ReferencesToolName,
+		constants.ReferencesToolName,
 		string(referencesDescription),
 		func(ctx context.Context, params ReferencesParams, call fantasy.ToolCall) (fantasy.ToolResponse, error) {
 			if params.Symbol == "" {
@@ -88,7 +87,7 @@ func NewReferencesTool(lspClients *csync.Map[string, *lsp.Client]) fantasy.Agent
 }
 
 func (r *referencesTool) Name() string {
-	return ReferencesToolName
+	return constants.ReferencesToolName
 }
 
 func find(ctx context.Context, lspClients *csync.Map[string, *lsp.Client], symbol string, match grepMatch) ([]protocol.Location, error) {

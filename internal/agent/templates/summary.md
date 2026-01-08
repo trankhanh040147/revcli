@@ -6,30 +6,29 @@ You are summarizing a conversation to preserve context for continuing work later
 
 ## Current State
 
-- What task is being worked on (exact user request)
+- What review task is being worked on (exact user request)
 - Current progress and what's been completed
 - What's being worked on right now (incomplete work)
 - What remains to be done (specific next steps, not vague)
 
 ## Files & Changes
 
-- Files that were modified (with brief description of changes)
+- Files that were modified/reviewed (with brief description of findings)
 - Files that were read/analyzed (why they're relevant)
-- Key files not yet touched but will need changes
+- Key files not yet reviewed but will need analysis
 - File paths and line numbers for important code locations
 
-## Technical Context
+## Review Context
 
-- Architecture decisions made and why
-- Patterns being followed (with examples)
-- Libraries/frameworks being used
-- Commands that worked (exact commands with context)
-- Commands that failed (what was tried and why it didn't work)
-- Environment details (language versions, dependencies, etc.)
+- Code patterns identified
+- Issues found (by category: security, performance, correctness, etc.)
+- Architectural observations
+- Best practices noted
+{{/* TODO(PlanC): Add structured issue tracking (severity, category, status) */}}
 
 ## Strategy & Approach
 
-- Overall approach being taken
+- Overall review approach being taken
 - Why this approach was chosen over alternatives
 - Key insights or gotchas discovered
 - Assumptions made

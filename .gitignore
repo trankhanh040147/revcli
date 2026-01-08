@@ -1,5 +1,6 @@
 # Binaries
 revcli
+.revcli
 *.exe
 *.exe~
 *.dll

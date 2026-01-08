@@ -103,5 +103,3 @@ func (c *coordinator) agentTool(ctx context.Context) (fantasy.AgentTool, error) 
 			return fantasy.NewTextResponse(result.Response.Content.Text()), nil
 		}), nil
 }
-
-// todo: explain agent package

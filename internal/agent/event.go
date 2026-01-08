@@ -49,5 +49,3 @@ func (a sessionAgent) eventCommon(sessionID string, model Model) []any {
 		"yolo mode", a.isYolo,
 	}
 }
-
-// todo: explain agent package

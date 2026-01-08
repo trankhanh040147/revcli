@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"charm.land/fantasy"
+	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 	"github.com/trankhanh040147/revcli/internal/config"
 	"github.com/trankhanh040147/revcli/internal/filepathext"
 	"github.com/trankhanh040147/revcli/internal/fsext"
@@ -41,7 +42,6 @@ type LSResponseMetadata struct {
 }
 
 const (
-	LSToolName = "ls"
 	maxLSFiles = 1000
 )
 
@@ -50,7 +50,7 @@ var lsDescription []byte
 
 func NewLsTool(permissions permission.Service, workingDir string, lsConfig config.ToolLs) fantasy.AgentTool {
 	return fantasy.NewAgentTool(
-		LSToolName,
+		constants.LSToolName,
 		string(lsDescription),
 		func(ctx context.Context, params LSParams, call fantasy.ToolCall) (fantasy.ToolResponse, error) {
 			searchPath, err := fsext.Expand(cmp.Or(params.Path, workingDir))
@@ -84,7 +84,7 @@ func NewLsTool(permissions permission.Service, workingDir string, lsConfig confi
 						SessionID:   sessionID,
 						Path:        absSearchPath,
 						ToolCallID:  call.ID,
-						ToolName:    LSToolName,
+						ToolName:    constants.LSToolName,
 						Action:      "list",
 						Description: fmt.Sprintf("List directory outside working directory: %s", absSearchPath),
 						Params:      LSPermissionsParams(params),

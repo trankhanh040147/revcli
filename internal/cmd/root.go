@@ -3,6 +3,7 @@ package cmd
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -11,19 +12,23 @@ import (
 	"strconv"
 	"strings"
 
+	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/colorprofile"
 	"github.com/charmbracelet/fang"
 	uv "github.com/charmbracelet/ultraviolet"
+	"github.com/charmbracelet/x/ansi"
 	"github.com/charmbracelet/x/exp/charmtone"
 	"github.com/charmbracelet/x/term"
 	"github.com/spf13/cobra"
+
 	"github.com/trankhanh040147/revcli/internal/app"
 	"github.com/trankhanh040147/revcli/internal/config"
 	"github.com/trankhanh040147/revcli/internal/db"
 	"github.com/trankhanh040147/revcli/internal/event"
 	"github.com/trankhanh040147/revcli/internal/projects"
 	"github.com/trankhanh040147/revcli/internal/stringext"
+	"github.com/trankhanh040147/revcli/internal/tui"
 	"github.com/trankhanh040147/revcli/internal/version"
 )
 
@@ -37,13 +42,13 @@ func init() {
 	rootCmd.AddCommand(
 		reviewCmd,
 		presetCmd,
-	// runCmd,
-	// dirsCmd,
-	// projectsCmd,
-	// updateProvidersCmd,
-	// logsCmd,
-	// schemaCmd,
-	// loginCmd,
+		updateProvidersCmd,
+		// runCmd,
+		// dirsCmd,
+		// projectsCmd,
+		// logsCmd,
+		// schemaCmd,
+		// loginCmd,
 	)
 }
 
@@ -53,44 +58,39 @@ var rootCmd = &cobra.Command{
 	Long: `Revcli is a powerful terminal-based AI code reviewer that helps with software development tasks.
 It provides an interactive chat interface with AI capabilities, code analysis, and LSP integration
 to assist developers in writing, debugging, and understanding code directly from the terminal.`,
-	Example: `# Review code changes using Gemini AI
-revcli review
+	Example: `# Review code changes 
+revcli`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		app, err := setupAppWithProgressBar(cmd)
+		if err != nil {
+			return err
+		}
+		defer app.Shutdown()
 
-# Review code changes using a specific model
-revcli review --model gemini-2.5-pro
-  `,
-	// TODO: implement this later in [TUI Migration]
-	// RunE: func(cmd *cobra.Command, args []string) error {
-	// 	app, err := setupAppWithProgressBar(cmd)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// 	defer app.Shutdown()
+		event.AppInitialized()
 
-	// 	event.AppInitialized()
+		// Set up the TUI.
+		var env uv.Environ = os.Environ()
+		ui := tui.New(app)
+		ui.QueryVersion = shouldQueryTerminalVersion(env)
 
-	// 	// Set up the TUI.
-	// 	var env uv.Environ = os.Environ()
-	// 	ui := tui.New(app)
-	// 	ui.QueryVersion = shouldQueryTerminalVersion(env)
+		program := tea.NewProgram(
+			ui,
+			tea.WithEnvironment(env),
+			tea.WithContext(cmd.Context()),
+			tea.WithFilter(tui.MouseEventFilter)) // Filter mouse events based on focus state
+		go app.Subscribe(program)
 
-	// 	program := tea.NewProgram(
-	// 		ui,
-	// 		tea.WithEnvironment(env),
-	// 		tea.WithContext(cmd.Context()),
-	// 		tea.WithFilter(tui.MouseEventFilter)) // Filter mouse events based on focus state
-	// 	go app.Subscribe(program)
-
-	// 	if _, err := program.Run(); err != nil {
-	// 		event.Error(err)
-	// 		slog.Error("TUI run error", "error", err)
-	// 		return errors.New("Revcli crashed. If metrics are enabled, we were notified about it. If you'd like to report it, please copy the stacktrace above and open an issue at https://github.com/charmbracelet/revcli/issues/new?template=bug.yml") //nolint:staticcheck
-	// 	}
-	// 	return nil
-	// },
-	// PostRun: func(cmd *cobra.Command, args []string) {
-	// 	event.AppExited()
-	// },
+		if _, err := program.Run(); err != nil {
+			event.Error(err)
+			slog.Error("TUI run error", "error", err)
+			return errors.New("Revcli crashed. If metrics are enabled, we were notified about it. If you'd like to report it, please copy the stacktrace above and open an issue at https://github.com/charmbracelet/revcli/issues/new?template=bug.yml") //nolint:staticcheck
+		}
+		return nil
+	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		event.AppExited()
+	},
 }
 
 var heartbit = lipgloss.NewStyle().Foreground(charmtone.Dolly).SetString(`
@@ -143,14 +143,14 @@ func supportsProgressBar() bool {
 	return isWindowsTerminal || strings.Contains(strings.ToLower(termProg), "ghostty")
 }
 
-// func setupAppWithProgressBar(cmd *cobra.Command) (*app.App, error) {
-// 	if supportsProgressBar() {
-// 		_, _ = fmt.Fprintf(os.Stderr, ansi.SetIndeterminateProgressBar)
-// 		defer func() { _, _ = fmt.Fprintf(os.Stderr, ansi.ResetProgressBar) }()
-// 	}
+func setupAppWithProgressBar(cmd *cobra.Command) (*app.App, error) {
+	if supportsProgressBar() {
+		_, _ = fmt.Fprintf(os.Stderr, ansi.SetIndeterminateProgressBar)
+		defer func() { _, _ = fmt.Fprintf(os.Stderr, ansi.ResetProgressBar) }()
+	}
 
-// 	return setupApp(cmd)
-// }
+	return setupApp(cmd)
+}
 
 // setupApp handles the common setup logic for both interactive and non-interactive modes.
 // It returns the app instance, config, cleanup function, and any error.

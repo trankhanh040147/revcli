@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"charm.land/fantasy"
+	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 )
 
 //go:embed web_search.md
@@ -26,7 +27,7 @@ func NewWebSearchTool(client *http.Client) fantasy.AgentTool {
 	}
 
 	return fantasy.NewParallelAgentTool(
-		WebSearchToolName,
+		constants.WebSearchToolName,
 		string(webSearchToolDescription),
 		func(ctx context.Context, params WebSearchParams, call fantasy.ToolCall) (fantasy.ToolResponse, error) {
 			if params.Query == "" {

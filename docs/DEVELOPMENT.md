@@ -27,9 +27,9 @@ frontmatter, which ensures:
 
 > **Reference:** Bug Fix Protocol are defined in [`.cursor/rules/rules.mdc`](../.cursor/rules/rules.mdc).
 
-# v0.1 - MVP Release ✅
+# v0.1 - MVP Release 
 
-**Status:** Completed
+**Status:** Completed ✅
 
 **Features Implemented:**
 
@@ -50,9 +50,9 @@ frontmatter, which ensures:
 
 ---
 
-# v0.2 - Enhanced Diff & Context ✅
+# v0.2 - Enhanced Diff & Context 
 
-**Status:** Completed
+**Status:** Completed ✅
 
 **Features Implemented:**
 
@@ -77,9 +77,9 @@ frontmatter, which ensures:
 
 ---
 
-# v0.3.0 - Short Flags & Preset Management ✅
+# v0.3.0 - Short Flags & Preset Management 
 
-**Status:** Completed
+**Status:** Completed ✅
 
 **Features Implemented:**
 
@@ -123,9 +123,9 @@ frontmatter, which ensures:
 
 ---
 
-# v0.3.1 - TUI Refactor & Code Block Removal ✅
+# v0.3.1 - TUI Refactor & Code Block Removal 
 
-**Status:** Completed
+**Status:** Completed ✅
 
 **Features:**
 
@@ -155,9 +155,9 @@ frontmatter, which ensures:
 
 ---
 
-# v0.3.2 - Context & Intent ✅
+# v0.3.2 - Context & Intent 
 
-**Status**: Completed
+**Status**: Completed ✅
 
 ## Features
 
@@ -220,9 +220,9 @@ frontmatter, which ensures:
 
 Here is the updated **v0.4.0** plan with the completed SDK migration removed.
 
-# v0.4.0 - Responsive control ✅
+# v0.4.0 - Responsive control 
 
-**Status:** Completed
+**Status:** Completed ✅
 
 ### 1. Interaction & Feedback ✅
 
@@ -248,9 +248,9 @@ Here is the updated **v0.4.0** plan with the completed SDK migration removed.
 - [ ] **Secure Release Automation:** Configure GoReleaser (`.goreleaser.yaml`) for multi-platform builds, Homebrew tap, and integrate Cosign for artifact signing.
 - [ ] **Fast & Comprehensive CI Pipeline:** Add `golangci-lint` (strict config) and `go test -race`; optimize for speed and provide local pre-commit targets.
 
-# v0.4.1 - Code Quality Refactoring ✅
+# v0.4.1 - Code Quality Refactoring 
 
-**Status:** Completed
+**Status:** Completed ✅
 
 ## Refactoring Completed
 
@@ -271,9 +271,9 @@ Here is the updated **v0.4.0** plan with the completed SDK migration removed.
 - Added anti-pattern guidance: Prefer optional parameters over "With*" function variants to avoid duplication
 
 
-## v0.5.0 - Agent Architecture ✅
+## v0.5.0 - Agent Architecture 
 
-**Status:** Completed
+**Status:** Completed ✅
 
 **Features Implemented:**
 
@@ -315,7 +315,40 @@ sequenceDiagram
 	Coordinator-->>Client: *fantasy.AgentResult
 ```
 
-# v0.6.0 - Config Providers
+# v0.6.0 - Review Tool Implementation 
+
+**Status:** Completed ✅
+
+**Overview:** Implemented code review tool functionality, establishing foundation for future multi-mode support (review, build, ask).
+
+## Priority 1: Critical Changes ✅
+
+- [x] Implemented `AgentReviewer` agent for code review workflows
+- [x] Created `reviewer.md.tpl` template with review-focused workflows
+- [x] Updated `prompts.go` to use `reviewerPrompt` function
+- [x] Updated `coordinator.go` to use `AgentReviewer` constant
+- [x] Updated `task.md.tpl` for review context
+
+## Priority 2: Important Updates ✅
+
+- [x] Updated `title.md` to mention review requests
+- [x] Updated `summary.md` with review-specific sections (Current State, Files & Changes, Review Context)
+- [x] Implemented `InitReviewerAgent` in `app.go` and `chat.go`
+- [x] Updated error messages to use "reviewer agent" terminology
+- [x] Updated templates and config to use revCLI branding
+- [x] Updated JSON schema descriptions in `config.go` to use revCLI branding
+
+## Priority 3: Future Mode Foundation ✅
+
+- [x] Added TODO comments throughout codebase for future mode system (Plan v0.6-C)
+- [x] Documented tool filtering strategy in `config.go` before `SetupAgents()`
+- [x] Marked `coder.md.tpl` and `coderPrompt` for future build mode
+
+**Note:** Plan v0.6-C (Review-Native Redesign) deferred to future release. Current implementation establishes foundation while keeping codebase functional.
+
+---
+
+# v0.6.1 - Config Providers
 
 **Status:** Planned
 
@@ -329,9 +362,6 @@ sequenceDiagram
 - [ ] `config` command to manually change default settings
 - [ ] `config`: handle refactor func `LoadConfig`
 - [ ] Support for multiple config providers/sources
-
-### Refactoring
-- [ ] Rename `crush` --> `revcli` (residual references)
 
 # v0.7.0 - Functional Calling
 

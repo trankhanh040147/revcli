@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"charm.land/fantasy"
+	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 )
 
 type SourcegraphParams struct {
@@ -25,8 +26,6 @@ type SourcegraphResponseMetadata struct {
 	NumberOfMatches int  `json:"number_of_matches"`
 	Truncated       bool `json:"truncated"`
 }
-
-const SourcegraphToolName = "sourcegraph"
 
 //go:embed sourcegraph.md
 var sourcegraphDescription []byte
@@ -43,7 +42,7 @@ func NewSourcegraphTool(client *http.Client) fantasy.AgentTool {
 		}
 	}
 	return fantasy.NewParallelAgentTool(
-		SourcegraphToolName,
+		constants.SourcegraphToolName,
 		string(sourcegraphDescription),
 		func(ctx context.Context, params SourcegraphParams, call fantasy.ToolCall) (fantasy.ToolResponse, error) {
 			if params.Query == "" {

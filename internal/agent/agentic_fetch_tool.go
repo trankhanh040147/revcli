@@ -229,5 +229,3 @@ func (c *coordinator) agenticFetchTool(_ context.Context, client *http.Client) (
 			return fantasy.NewTextResponse(result.Response.Content.Text()), nil
 		}), nil
 }
-
-// todo: explain agent package

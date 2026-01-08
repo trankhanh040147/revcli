@@ -17,6 +17,7 @@ import (
 	"github.com/trankhanh040147/revcli/internal/fsext"
 	"github.com/trankhanh040147/revcli/internal/history"
 
+	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 	"github.com/trankhanh040147/revcli/internal/lsp"
 	"github.com/trankhanh040147/revcli/internal/permission"
 )
@@ -48,11 +49,10 @@ type WriteResponseMetadata struct {
 	Removals  int    `json:"removals"`
 }
 
-const WriteToolName = "write"
 
 func NewWriteTool(lspClients *csync.Map[string, *lsp.Client], permissions permission.Service, files history.Service, workingDir string) fantasy.AgentTool {
 	return fantasy.NewAgentTool(
-		WriteToolName,
+		constants.WriteToolName,
 		string(writeDescription),
 		func(ctx context.Context, params WriteParams, call fantasy.ToolCall) (fantasy.ToolResponse, error) {
 			if params.FilePath == "" {
@@ -115,7 +115,7 @@ func NewWriteTool(lspClients *csync.Map[string, *lsp.Client], permissions permis
 					SessionID:   sessionID,
 					Path:        fsext.PathOrPrefix(filePath, workingDir),
 					ToolCallID:  call.ID,
-					ToolName:    WriteToolName,
+					ToolName:    constants.WriteToolName,
 					Action:      "write",
 					Description: fmt.Sprintf("Create file %s", filePath),
 					Params: WritePermissionsParams{

@@ -12,6 +12,7 @@ import (
 	"github.com/charmbracelet/x/ansi"
 	"github.com/trankhanh040147/revcli/internal/agent"
 	"github.com/trankhanh040147/revcli/internal/agent/tools"
+	toolConstants "github.com/trankhanh040147/revcli/internal/agent/tools/constants"
 	"github.com/trankhanh040147/revcli/internal/ansiext"
 	"github.com/trankhanh040147/revcli/internal/fsext"
 	"github.com/trankhanh040147/revcli/internal/tui/components/chat/todos"
@@ -181,25 +182,25 @@ func (br baseRenderer) renderError(v *toolCallCmp, message string) string {
 
 // Register tool renderers
 func init() {
-	registry.register(tools.BashToolName, func() renderer { return bashRenderer{} })
-	registry.register(tools.JobOutputToolName, func() renderer { return bashOutputRenderer{} })
-	registry.register(tools.JobKillToolName, func() renderer { return bashKillRenderer{} })
-	registry.register(tools.DownloadToolName, func() renderer { return downloadRenderer{} })
-	registry.register(tools.ViewToolName, func() renderer { return viewRenderer{} })
-	registry.register(tools.EditToolName, func() renderer { return editRenderer{} })
-	registry.register(tools.MultiEditToolName, func() renderer { return multiEditRenderer{} })
-	registry.register(tools.WriteToolName, func() renderer { return writeRenderer{} })
-	registry.register(tools.FetchToolName, func() renderer { return simpleFetchRenderer{} })
-	registry.register(tools.AgenticFetchToolName, func() renderer { return agenticFetchRenderer{} })
-	registry.register(tools.WebFetchToolName, func() renderer { return webFetchRenderer{} })
-	registry.register(tools.WebSearchToolName, func() renderer { return webSearchRenderer{} })
-	registry.register(tools.GlobToolName, func() renderer { return globRenderer{} })
-	registry.register(tools.GrepToolName, func() renderer { return grepRenderer{} })
-	registry.register(tools.LSToolName, func() renderer { return lsRenderer{} })
-	registry.register(tools.SourcegraphToolName, func() renderer { return sourcegraphRenderer{} })
-	registry.register(tools.DiagnosticsToolName, func() renderer { return diagnosticsRenderer{} })
-	registry.register(tools.TodosToolName, func() renderer { return todosRenderer{} })
-	registry.register(agent.AgentToolName, func() renderer { return agentRenderer{} })
+	registry.register(toolConstants.BashToolName, func() renderer { return bashRenderer{} })
+	registry.register(toolConstants.JobOutputToolName, func() renderer { return bashOutputRenderer{} })
+	registry.register(toolConstants.JobKillToolName, func() renderer { return bashKillRenderer{} })
+	registry.register(toolConstants.DownloadToolName, func() renderer { return downloadRenderer{} })
+	registry.register(toolConstants.ViewToolName, func() renderer { return viewRenderer{} })
+	registry.register(toolConstants.EditToolName, func() renderer { return editRenderer{} })
+	registry.register(toolConstants.MultiEditToolName, func() renderer { return multiEditRenderer{} })
+	registry.register(toolConstants.WriteToolName, func() renderer { return writeRenderer{} })
+	registry.register(toolConstants.FetchToolName, func() renderer { return simpleFetchRenderer{} })
+	registry.register(toolConstants.AgenticFetchToolName, func() renderer { return agenticFetchRenderer{} })
+	registry.register(toolConstants.WebFetchToolName, func() renderer { return webFetchRenderer{} })
+	registry.register(toolConstants.WebSearchToolName, func() renderer { return webSearchRenderer{} })
+	registry.register(toolConstants.GlobToolName, func() renderer { return globRenderer{} })
+	registry.register(toolConstants.GrepToolName, func() renderer { return grepRenderer{} })
+	registry.register(toolConstants.LSToolName, func() renderer { return lsRenderer{} })
+	registry.register(toolConstants.SourcegraphToolName, func() renderer { return sourcegraphRenderer{} })
+	registry.register(toolConstants.DiagnosticsToolName, func() renderer { return diagnosticsRenderer{} })
+	registry.register(toolConstants.TodosToolName, func() renderer { return todosRenderer{} })
+	registry.register(toolConstants.AgentToolName, func() renderer { return agentRenderer{} })
 }
 
 // -----------------------------------------------------------------------------
@@ -1270,41 +1271,41 @@ func truncateHeight(s string, h int) string {
 
 func prettifyToolName(name string) string {
 	switch name {
-	case agent.AgentToolName:
+	case toolConstants.AgentToolName:
 		return "Agent"
-	case tools.BashToolName:
+	case toolConstants.BashToolName:
 		return "Bash"
-	case tools.JobOutputToolName:
+	case toolConstants.JobOutputToolName:
 		return "Job: Output"
-	case tools.JobKillToolName:
+	case toolConstants.JobKillToolName:
 		return "Job: Kill"
-	case tools.DownloadToolName:
+	case toolConstants.DownloadToolName:
 		return "Download"
-	case tools.EditToolName:
+	case toolConstants.EditToolName:
 		return "Edit"
-	case tools.MultiEditToolName:
+	case toolConstants.MultiEditToolName:
 		return "Multi-Edit"
-	case tools.FetchToolName:
+	case toolConstants.FetchToolName:
 		return "Fetch"
-	case tools.AgenticFetchToolName:
+	case toolConstants.AgenticFetchToolName:
 		return "Agentic Fetch"
-	case tools.WebFetchToolName:
+	case toolConstants.WebFetchToolName:
 		return "Fetch"
-	case tools.WebSearchToolName:
+	case toolConstants.WebSearchToolName:
 		return "Search"
-	case tools.GlobToolName:
+	case toolConstants.GlobToolName:
 		return "Glob"
-	case tools.GrepToolName:
+	case toolConstants.GrepToolName:
 		return "Grep"
-	case tools.LSToolName:
+	case toolConstants.LSToolName:
 		return "List"
-	case tools.SourcegraphToolName:
+	case toolConstants.SourcegraphToolName:
 		return "Sourcegraph"
-	case tools.TodosToolName:
+	case toolConstants.TodosToolName:
 		return "To-Do"
-	case tools.ViewToolName:
+	case toolConstants.ViewToolName:
 		return "View"
-	case tools.WriteToolName:
+	case toolConstants.WriteToolName:
 		return "Write"
 	default:
 		return name
