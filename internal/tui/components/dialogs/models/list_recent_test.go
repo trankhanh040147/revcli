@@ -11,9 +11,9 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"github.com/charmbracelet/catwalk/pkg/catwalk"
 	"github.com/stretchr/testify/require"
-	"github.com/trankhanh040147/revcli/internal/config"
-	"github.com/trankhanh040147/revcli/internal/log"
-	"github.com/trankhanh040147/revcli/internal/tui/exp/list"
+	"github.com/trankhanh040147/plancli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/log"
+	"github.com/trankhanh040147/plancli/internal/tui/exp/list"
 )
 
 // execCmdML runs a tea.Cmd through the ModelListComponent's Update loop.

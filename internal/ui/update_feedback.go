@@ -7,7 +7,7 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/trankhanh040147/revcli/internal/agent"
+	"github.com/trankhanh040147/plancli/internal/agent"
 )
 
 // handleReviewMessages handles review completion and error messages

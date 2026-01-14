@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/trankhanh040147/revcli/internal/prompt"
+	"github.com/trankhanh040147/plancli/internal/prompt"
 )
 
 // Summary returns a summary of what will be reviewed

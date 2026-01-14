@@ -1,4 +1,4 @@
-// Package logo renders a RevCLI wordmark in a stylized way.
+// Package logo renders a PlanCLI wordmark in a stylized way.
 package logo
 
 import (
@@ -11,7 +11,7 @@ import (
 	"github.com/charmbracelet/x/ansi"
 	"github.com/charmbracelet/x/exp/slice"
 
-	"github.com/trankhanh040147/revcli/internal/tui/styles"
+	"github.com/trankhanh040147/plancli/internal/tui/styles"
 )
 
 // letterform represents a letterform. It can be stretched horizontally by
@@ -20,7 +20,7 @@ type letterform func(bool) string
 
 const diag = `╱`
 
-// Opts are the options for rendering the RevCLI title art.
+// Opts are the options for rendering the PlanCLI title art.
 type Opts struct {
 	FieldColor   color.Color // diagonal lines
 	TitleColorA  color.Color // left gradient ramp point
@@ -30,7 +30,7 @@ type Opts struct {
 	Width        int         // width of the rendered logo, used for truncation
 }
 
-// Render renders the RevCLI logo. Set the argument to true to render the narrow
+// Render renders the PlanCLI logo. Set the argument to true to render the narrow
 // version, intended for use in a sidebar.
 //
 // The compact argument determines whether it renders compact for the sidebar
@@ -57,31 +57,31 @@ func Render(version string, compact bool, o Opts) string {
 		stretchIndex = cachedRandN(len(letterforms))
 	}
 
-	revcliWord := renderWord(spacing, stretchIndex, letterforms...)
-	revcliWidth := lipgloss.Width(revcliWord)
+	plancliWord := renderWord(spacing, stretchIndex, letterforms...)
+	plancliWidth := lipgloss.Width(plancliWord)
 	b := new(strings.Builder)
-	for r := range strings.SplitSeq(revcliWord, "\n") {
+	for r := range strings.SplitSeq(plancliWord, "\n") {
 		fmt.Fprintln(b, styles.ApplyForegroundGrad(r, o.TitleColorA, o.TitleColorB))
 	}
-	revcliWord = b.String()
+	plancliWord = b.String()
 
-	// RevCLI and version.
+	// PlanCLI and version.
 	metaRowGap := 1
-	maxVersionWidth := revcliWidth - lipgloss.Width(charm) - metaRowGap
+	maxVersionWidth := plancliWidth - lipgloss.Width(charm) - metaRowGap
 	version = ansi.Truncate(version, maxVersionWidth, "…") // truncate version if too long.
-	gap := max(0, revcliWidth-lipgloss.Width(charm)-lipgloss.Width(version))
+	gap := max(0, plancliWidth-lipgloss.Width(charm)-lipgloss.Width(version))
 	metaRow := fg(o.CharmColor, charm) + strings.Repeat(" ", gap) + fg(o.VersionColor, version)
 
-	// Join the RevCLI and big RevCLI title.
-	revcliWord = strings.TrimSpace(metaRow + "\n" + revcliWord)
+	// Join the PlanCLI and big PlanCLI title.
+	plancliWord = strings.TrimSpace(metaRow + "\n" + plancliWord)
 
 	// Narrow version.
 	if compact {
-		field := fg(o.FieldColor, strings.Repeat(diag, revcliWidth))
-		return strings.Join([]string{field, field, revcliWord, field, ""}, "\n")
+		field := fg(o.FieldColor, strings.Repeat(diag, plancliWidth))
+		return strings.Join([]string{field, field, plancliWord, field, ""}, "\n")
 	}
 
-	fieldHeight := lipgloss.Height(revcliWord)
+	fieldHeight := lipgloss.Height(plancliWord)
 
 	// Left field.
 	const leftWidth = 6
@@ -92,7 +92,7 @@ func Render(version string, compact bool, o Opts) string {
 	}
 
 	// Right field.
-	rightWidth := max(15, o.Width-revcliWidth-leftWidth-2) // 2 for the gap.
+	rightWidth := max(15, o.Width-plancliWidth-leftWidth-2) // 2 for the gap.
 	const stepDownAt = 0
 	rightField := new(strings.Builder)
 	for i := range fieldHeight {
@@ -105,7 +105,7 @@ func Render(version string, compact bool, o Opts) string {
 
 	// Return the wide version.
 	const hGap = " "
-	logo := lipgloss.JoinHorizontal(lipgloss.Top, leftField.String(), hGap, revcliWord, hGap, rightField.String())
+	logo := lipgloss.JoinHorizontal(lipgloss.Top, leftField.String(), hGap, plancliWord, hGap, rightField.String())
 	if o.Width > 0 {
 		// Truncate the logo to the specified width.
 		lines := strings.Split(logo, "\n")
@@ -117,13 +117,13 @@ func Render(version string, compact bool, o Opts) string {
 	return logo
 }
 
-// SmallRender renders a smaller version of the RevCLI logo, suitable for
+// SmallRender renders a smaller version of the PlanCLI logo, suitable for
 // smaller windows or sidebar usage.
 func SmallRender(width int) string {
 	t := styles.CurrentTheme()
-	title := t.S().Base.Foreground(t.Secondary).Render("RevCLI™")
-	title = fmt.Sprintf("%s %s", title, styles.ApplyBoldForegroundGrad("RevCLI", t.Secondary, t.Primary))
-	remainingWidth := width - lipgloss.Width(title) - 1 // 1 for the space after "RevCLI"
+	title := t.S().Base.Foreground(t.Secondary).Render("PlanCLI™")
+	title = fmt.Sprintf("%s %s", title, styles.ApplyBoldForegroundGrad("PlanCLI", t.Secondary, t.Primary))
+	remainingWidth := width - lipgloss.Width(title) - 1 // 1 for the space after "PlanCLI"
 	if remainingWidth > 0 {
 		lines := strings.Repeat("╱", remainingWidth)
 		title = fmt.Sprintf("%s %s", title, t.S().Base.Foreground(t.Primary).Render(lines))

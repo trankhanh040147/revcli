@@ -9,7 +9,7 @@ import (
 	"github.com/alecthomas/chroma/v2/styles"
 	"github.com/charmbracelet/x/ansi"
 	"github.com/charmbracelet/x/exp/golden"
-	"github.com/trankhanh040147/revcli/internal/tui/exp/diffview"
+	"github.com/trankhanh040147/plancli/internal/tui/exp/diffview"
 )
 
 //go:embed testdata/TestDefault.before

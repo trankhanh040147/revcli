@@ -13,9 +13,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/trankhanh040147/revcli/internal/agent/hyper"
-	"github.com/trankhanh040147/revcli/internal/event"
-	"github.com/trankhanh040147/revcli/internal/oauth"
+	"github.com/trankhanh040147/plancli/internal/agent/hyper"
+	"github.com/trankhanh040147/plancli/internal/event"
+	"github.com/trankhanh040147/plancli/internal/oauth"
 )
 
 // DeviceAuthResponse contains the response from the device authorization endpoint.

@@ -13,8 +13,8 @@ import (
 	"charm.land/fantasy"
 	md "github.com/JohannesKaufmann/html-to-markdown"
 	"github.com/PuerkitoBio/goquery"
-	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
-	"github.com/trankhanh040147/revcli/internal/permission"
+	"github.com/trankhanh040147/plancli/internal/agent/tools/constants"
+	"github.com/trankhanh040147/plancli/internal/permission"
 )
 
 //go:embed fetch.md

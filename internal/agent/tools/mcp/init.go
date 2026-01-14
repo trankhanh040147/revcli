@@ -18,12 +18,12 @@ import (
 	"time"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/trankhanh040147/revcli/internal/config"
-	"github.com/trankhanh040147/revcli/internal/csync"
-	"github.com/trankhanh040147/revcli/internal/home"
-	"github.com/trankhanh040147/revcli/internal/permission"
-	"github.com/trankhanh040147/revcli/internal/pubsub"
-	"github.com/trankhanh040147/revcli/internal/version"
+	"github.com/trankhanh040147/plancli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/csync"
+	"github.com/trankhanh040147/plancli/internal/home"
+	"github.com/trankhanh040147/plancli/internal/permission"
+	"github.com/trankhanh040147/plancli/internal/pubsub"
+	"github.com/trankhanh040147/plancli/internal/version"
 )
 
 var (

@@ -8,8 +8,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	appcontext "github.com/trankhanh040147/revcli/internal/context"
-	"github.com/trankhanh040147/revcli/internal/ui"
+	appcontext "github.com/trankhanh040147/plancli/internal/context"
+	"github.com/trankhanh040147/plancli/internal/ui"
 )
 
 var (
@@ -32,23 +32,23 @@ and ensure idiomatic Go practices.
 
 Examples:
   # Review staged changes with interactive chat
-  revcli review --staged
+  plancli review --staged
 
   # Review changes against main branch
-  revcli review --base main
+  plancli review --base main
 
   # Review all uncommitted changes with a specific model
-  revcli review --model gemini-2.5-pro
+  plancli review --model gemini-2.5-pro
 
   # Non-interactive mode (just print the review)
-  revcli review --no-interactive
+  plancli review --no-interactive
 
   # Skip secret detection check
-  revcli review --force
+  plancli review --force
 
   # Use preset with replace mode (replaces base prompt)
-  revcli review --preset quick --preset-replace
-  revcli review -p quick -R`,
+  plancli review --preset quick --preset-replace
+  plancli review -p quick -R`,
 	RunE: runReview,
 }
 
@@ -88,7 +88,7 @@ func runReview(cmd *cobra.Command, args []string) error {
 
 	// Check if coordinator is available
 	if appInstance.AgentCoordinator == nil {
-		return fmt.Errorf("agent configuration is missing. Please configure your API keys in ~/.config/revcli/config.yaml")
+		return fmt.Errorf("agent configuration is missing. Please configure your API keys in ~/.config/plancli/config.yaml")
 	}
 
 	// Load preset: use specified preset or default preset

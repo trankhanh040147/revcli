@@ -19,8 +19,8 @@ import (
 	"time"
 
 	"charm.land/fantasy"
-	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
-	"github.com/trankhanh040147/revcli/internal/fsext"
+	"github.com/trankhanh040147/plancli/internal/agent/tools/constants"
+	"github.com/trankhanh040147/plancli/internal/fsext"
 )
 
 // regexCache provides thread-safe caching of compiled regex patterns

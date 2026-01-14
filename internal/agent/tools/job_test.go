@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/require"
-	"github.com/trankhanh040147/revcli/internal/shell"
+	"github.com/trankhanh040147/plancli/internal/shell"
 )
 
 func TestBackgroundShell_Integration(t *testing.T) {

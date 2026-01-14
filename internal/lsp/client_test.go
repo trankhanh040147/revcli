@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/trankhanh040147/revcli/internal/config"
-	"github.com/trankhanh040147/revcli/internal/env"
+	"github.com/trankhanh040147/plancli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/env"
 )
 
 func TestClient(t *testing.T) {

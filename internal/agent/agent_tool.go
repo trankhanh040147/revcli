@@ -8,9 +8,9 @@ import (
 
 	"charm.land/fantasy"
 
-	"github.com/trankhanh040147/revcli/internal/agent/prompt"
-	"github.com/trankhanh040147/revcli/internal/agent/tools"
-	"github.com/trankhanh040147/revcli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/agent/prompt"
+	"github.com/trankhanh040147/plancli/internal/agent/tools"
+	"github.com/trankhanh040147/plancli/internal/config"
 )
 
 //go:embed templates/agent_tool.md

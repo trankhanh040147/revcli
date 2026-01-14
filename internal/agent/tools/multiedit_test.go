@@ -7,11 +7,11 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/trankhanh040147/revcli/internal/csync"
-	"github.com/trankhanh040147/revcli/internal/history"
-	"github.com/trankhanh040147/revcli/internal/lsp"
-	"github.com/trankhanh040147/revcli/internal/permission"
-	"github.com/trankhanh040147/revcli/internal/pubsub"
+	"github.com/trankhanh040147/plancli/internal/csync"
+	"github.com/trankhanh040147/plancli/internal/history"
+	"github.com/trankhanh040147/plancli/internal/lsp"
+	"github.com/trankhanh040147/plancli/internal/permission"
+	"github.com/trankhanh040147/plancli/internal/pubsub"
 )
 
 type mockPermissionService struct {

@@ -1,4 +1,4 @@
-module github.com/trankhanh040147/revcli
+module github.com/trankhanh040147/plancli
 
 go 1.25.5
 

@@ -2,7 +2,7 @@ package util
 
 import (
 	tea "charm.land/bubbletea/v2"
-	"github.com/trankhanh040147/revcli/internal/uiutil"
+	"github.com/trankhanh040147/plancli/internal/uiutil"
 )
 
 type Cursor = uiutil.Cursor

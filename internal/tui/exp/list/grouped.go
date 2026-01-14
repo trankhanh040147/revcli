@@ -2,8 +2,8 @@ package list
 
 import (
 	tea "charm.land/bubbletea/v2"
-	"github.com/trankhanh040147/revcli/internal/tui/components/core/layout"
-	"github.com/trankhanh040147/revcli/internal/tui/util"
+	"github.com/trankhanh040147/plancli/internal/tui/components/core/layout"
+	"github.com/trankhanh040147/plancli/internal/tui/util"
 )
 
 type Group[T Item] struct {

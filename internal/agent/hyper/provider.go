@@ -24,7 +24,7 @@ import (
 	"charm.land/fantasy"
 	"charm.land/fantasy/object"
 	"github.com/charmbracelet/catwalk/pkg/catwalk"
-	"github.com/trankhanh040147/revcli/internal/event"
+	"github.com/trankhanh040147/plancli/internal/event"
 )
 
 //go:generate wget -O provider.json https://console.github.com/charmbracelet/api/v1/provider

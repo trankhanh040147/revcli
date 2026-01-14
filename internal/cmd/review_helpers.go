@@ -3,9 +3,9 @@ package cmd
 import (
 	"path/filepath"
 
-	appcontext "github.com/trankhanh040147/revcli/internal/context"
-	"github.com/trankhanh040147/revcli/internal/message"
-	"github.com/trankhanh040147/revcli/internal/preset"
+	appcontext "github.com/trankhanh040147/plancli/internal/context"
+	"github.com/trankhanh040147/plancli/internal/message"
+	"github.com/trankhanh040147/plancli/internal/preset"
 )
 
 // loadActivePreset loads the active preset based on presetName or default preset

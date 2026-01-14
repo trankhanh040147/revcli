@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sync/atomic"
 
-	"github.com/trankhanh040147/revcli/internal/fsext"
+	"github.com/trankhanh040147/plancli/internal/fsext"
 )
 
 const (

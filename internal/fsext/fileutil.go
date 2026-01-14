@@ -11,8 +11,8 @@ import (
 
 	"github.com/bmatcuk/doublestar/v4"
 	"github.com/charlievieth/fastwalk"
-	"github.com/trankhanh040147/revcli/internal/csync"
-	"github.com/trankhanh040147/revcli/internal/home"
+	"github.com/trankhanh040147/plancli/internal/csync"
+	"github.com/trankhanh040147/plancli/internal/home"
 )
 
 type FileInfo struct {

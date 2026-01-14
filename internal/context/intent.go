@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/trankhanh040147/revcli/internal/preset"
+	"github.com/trankhanh040147/plancli/internal/preset"
 )
 
 // Intent represents user's review intent and focus areas

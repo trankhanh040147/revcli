@@ -1,14 +1,14 @@
-# revcli
+# plancli
 
-[![Latest Release](https://img.shields.io/github/v/release/trankhanh040147/revcli.svg)](https://github.com/trankhanh040147/revcli/releases)
-[![Go Report Card](https://goreportcard.com/badge/github.com/trankhanh040147/revcli)](https://goreportcard.com/report/github.com/trankhanh040147/revcli)
-[![Go Reference](https://pkg.go.dev/badge/github.com/trankhanh040147/revcli.svg)](https://pkg.go.dev/github.com/trankhanh040147/revcli)
-[![OpenSSF](https://img.shields.io/badge/OpenSSF-deps.dev-purple)](https://deps.dev/go/github.com%2Ftrankhanh040147%2Frevcli)
+[![Latest Release](https://img.shields.io/github/v/release/trankhanh040147/plancli.svg)](https://github.com/trankhanh040147/plancli/releases)
+[![Go Report Card](https://goreportcard.com/badge/github.com/trankhanh040147/plancli)](https://goreportcard.com/report/github.com/trankhanh040147/plancli)
+[![Go Reference](https://pkg.go.dev/badge/github.com/trankhanh040147/plancli.svg)](https://pkg.go.dev/github.com/trankhanh040147/plancli)
+[![OpenSSF](https://img.shields.io/badge/OpenSSF-deps.dev-purple)](https://deps.dev/go/github.com%2Ftrankhanh040147%2Fplancli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > **LLM-powered code reviewer CLI.**
 
-**revcli** is a local command-line tool that acts as an intelligent peer reviewer. It reads your local git changes and uses Google's Gemini LLM to analyze your code for bugs, optimization opportunities, and best practices—all before you push a single commit.
+**plancli** is a local command-line tool that acts as an intelligent peer reviewer. It reads your local git changes and uses Google's Gemini LLM to analyze your code for bugs, optimization opportunities, and best practices—all before you push a single commit.
 
 ## Features
 
@@ -33,19 +33,19 @@ Before using the tool, ensure you have the following installed:
 You can install the tool directly using `go install`:
 
 ```bash
-go install github.com/trankhanh040147/revcli@latest
+go install github.com/trankhanh040147/plancli@latest
 ```
 
 Or build from source:
 
 ```bash
-git clone https://github.com/trankhanh040147/revcli.git
-cd revcli
+git clone https://github.com/trankhanh040147/plancli.git
+cd plancli
 make build
 ```
 
 # Install new version
-go install github.com/trankhanh040147/revcli@latest
+go install github.com/trankhanh040147/plancli@latest
 ```
 
 ## Configuration
@@ -65,7 +65,7 @@ Or pass it directly via the `--api-key` flag.
 Review all uncommitted changes in your repository:
 
 ```bash
-revcli review
+plancli review
 ```
 
 ### Review Against a Branch (MR/PR Style)
@@ -74,13 +74,13 @@ Compare your current changes against a base branch - perfect for merge request r
 
 ```bash
 # Compare against main branch
-revcli review --base main
+plancli review --base main
 
 # Compare against develop branch
-revcli review --base develop
+plancli review --base develop
 
 # Compare against a specific commit
-revcli review --base abc1234
+plancli review --base abc1234
 ```
 
 ### Review Staged Changes Only
@@ -88,7 +88,7 @@ revcli review --base abc1234
 Review only the changes you've staged for commit:
 
 ```bash
-revcli review --staged
+plancli review --staged
 ```
 
 ### Use a Specific Model
@@ -96,7 +96,7 @@ revcli review --staged
 The default model is `gemini-2.5-pro`. You can also use other models:
 
 ```bash
-revcli review --model gemini-2.5-flash
+plancli review --model gemini-2.5-flash
 ```
 
 ### Non-Interactive Mode
@@ -104,7 +104,7 @@ revcli review --model gemini-2.5-flash
 Get the review output without the interactive chat interface:
 
 ```bash
-revcli review --no-interactive
+plancli review --no-interactive
 ```
 
 ### Skip Secret Detection
@@ -112,7 +112,7 @@ revcli review --no-interactive
 If you're confident there are no secrets in your code (use with caution):
 
 ```bash
-revcli review --force
+plancli review --force
 ```
 
 ### Use Review Presets
@@ -121,21 +121,21 @@ Apply predefined review styles for focused analysis:
 
 ```bash
 # Quick, high-level review
-revcli review --preset quick
+plancli review --preset quick
 
 # Comprehensive, detailed review
-revcli review --preset strict
+plancli review --preset strict
 
 # Security-focused review
-revcli review --preset security
+plancli review --preset security
 
 # Performance optimization focus
-revcli review --preset performance
+plancli review --preset performance
 ```
 
 Available presets: `quick`, `strict`, `security`, `performance`, `logic`, `style`, `typo`, `naming`
 
-You can also create custom presets in `~/.config/revcli/presets/*.yaml`. See [Development Roadmap](docs/DEVELOPMENT.md) for details.
+You can also create custom presets in `~/.config/plancli/presets/*.yaml`. See [Development Roadmap](docs/DEVELOPMENT.md) for details.
 
 ### Manage Presets
 
@@ -143,16 +143,16 @@ Manage your custom presets with dedicated commands:
 
 ```bash
 # List all presets (built-in and custom)
-revcli preset list
+plancli preset list
 
 # Create a new custom preset
-revcli preset create my-preset
+plancli preset create my-preset
 
 # Show preset details
-revcli preset show my-preset
+plancli preset show my-preset
 
 # Delete a custom preset
-revcli preset delete my-preset
+plancli preset delete my-preset
 ```
 
 ## Interactive Mode
@@ -173,7 +173,7 @@ See the [help overlay](docs/DEVELOPMENT.md#vim-style-keybindings) for the comple
 
 ## Context Preview
 
-Before sending to the API, revcli shows you exactly what will be reviewed:
+Before sending to the API, plancli shows you exactly what will be reviewed:
 
 ```
 📋 Review Context

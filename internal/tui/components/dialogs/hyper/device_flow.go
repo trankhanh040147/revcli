@@ -10,10 +10,10 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
 	"github.com/pkg/browser"
-	"github.com/trankhanh040147/revcli/internal/oauth"
-	"github.com/trankhanh040147/revcli/internal/oauth/hyper"
-	"github.com/trankhanh040147/revcli/internal/tui/styles"
-	"github.com/trankhanh040147/revcli/internal/tui/util"
+	"github.com/trankhanh040147/plancli/internal/oauth"
+	"github.com/trankhanh040147/plancli/internal/oauth/hyper"
+	"github.com/trankhanh040147/plancli/internal/tui/styles"
+	"github.com/trankhanh040147/plancli/internal/tui/util"
 )
 
 // DeviceFlowState represents the current state of the device flow.

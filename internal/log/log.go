@@ -9,7 +9,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/trankhanh040147/revcli/internal/event"
+	"github.com/trankhanh040147/plancli/internal/event"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 

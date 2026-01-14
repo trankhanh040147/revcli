@@ -22,19 +22,19 @@ import (
 	"github.com/charmbracelet/x/term"
 	"github.com/spf13/cobra"
 
-	"github.com/trankhanh040147/revcli/internal/app"
-	"github.com/trankhanh040147/revcli/internal/config"
-	"github.com/trankhanh040147/revcli/internal/db"
-	"github.com/trankhanh040147/revcli/internal/event"
-	"github.com/trankhanh040147/revcli/internal/projects"
-	"github.com/trankhanh040147/revcli/internal/stringext"
-	"github.com/trankhanh040147/revcli/internal/tui"
-	"github.com/trankhanh040147/revcli/internal/version"
+	"github.com/trankhanh040147/plancli/internal/app"
+	"github.com/trankhanh040147/plancli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/db"
+	"github.com/trankhanh040147/plancli/internal/event"
+	"github.com/trankhanh040147/plancli/internal/projects"
+	"github.com/trankhanh040147/plancli/internal/stringext"
+	"github.com/trankhanh040147/plancli/internal/tui"
+	"github.com/trankhanh040147/plancli/internal/version"
 )
 
 func init() {
 	rootCmd.PersistentFlags().StringP("cwd", "c", "", "Current working directory")
-	rootCmd.PersistentFlags().StringP("data-dir", "D", "", "Custom revcli data directory")
+	rootCmd.PersistentFlags().StringP("data-dir", "D", "", "Custom plancli data directory")
 	rootCmd.PersistentFlags().BoolP("debug", "d", false, "Debug")
 	rootCmd.Flags().BoolP("help", "h", false, "Help")
 	rootCmd.Flags().BoolP("yolo", "y", false, "Automatically accept all permissions (dangerous mode)")
@@ -53,13 +53,13 @@ func init() {
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "revcli",
+	Use:   "plancli",
 	Short: "Terminal-based AI code reviewer for software development",
-	Long: `Revcli is a powerful terminal-based AI code reviewer that helps with software development tasks.
+	Long: `Plancli is a powerful terminal-based AI code reviewer that helps with software development tasks.
 It provides an interactive chat interface with AI capabilities, code analysis, and LSP integration
 to assist developers in writing, debugging, and understanding code directly from the terminal.`,
 	Example: `# Review code changes 
-revcli`,
+plancli`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		app, err := setupAppWithProgressBar(cmd)
 		if err != nil {
@@ -84,7 +84,7 @@ revcli`,
 		if _, err := program.Run(); err != nil {
 			event.Error(err)
 			slog.Error("TUI run error", "error", err)
-			return errors.New("Revcli crashed. If metrics are enabled, we were notified about it. If you'd like to report it, please copy the stacktrace above and open an issue at https://github.com/charmbracelet/revcli/issues/new?template=bug.yml") //nolint:staticcheck
+			return errors.New("Plancli crashed. If metrics are enabled, we were notified about it. If you'd like to report it, please copy the stacktrace above and open an issue at https://github.com/trankhanh040147/plancli/issues/new?template=bug.yml") //nolint:staticcheck
 		}
 		return nil
 	},
@@ -175,7 +175,7 @@ func setupApp(cmd *cobra.Command) (*app.App, error) {
 	}
 	cfg.Permissions.SkipRequests = yolo
 
-	if err := createDotRevcliDir(cfg.Options.DataDirectory); err != nil {
+	if err := createDotPlancliDir(cfg.Options.DataDirectory); err != nil {
 		return nil, err
 	}
 
@@ -205,7 +205,7 @@ func setupApp(cmd *cobra.Command) (*app.App, error) {
 }
 
 func shouldEnableMetrics() bool {
-	if v, _ := strconv.ParseBool(os.Getenv("REVCLI_DISABLE_METRICS")); v {
+	if v, _ := strconv.ParseBool(os.Getenv("PLANCLI_DISABLE_METRICS")); v {
 		return false
 	}
 	if v, _ := strconv.ParseBool(os.Getenv("DO_NOT_TRACK")); v {
@@ -217,7 +217,7 @@ func shouldEnableMetrics() bool {
 	return true
 }
 
-func MaybeRevcliPrependStdin(prompt string) (string, error) {
+func MaybePlancliPrependStdin(prompt string) (string, error) {
 	if term.IsTerminal(os.Stdin.Fd()) {
 		return prompt, nil
 	}
@@ -252,7 +252,7 @@ func ResolveCwd(cmd *cobra.Command) (string, error) {
 	return cwd, nil
 }
 
-func createDotRevcliDir(dir string) error {
+func createDotPlancliDir(dir string) error {
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		return fmt.Errorf("failed to create data directory: %q %w", dir, err)
 	}

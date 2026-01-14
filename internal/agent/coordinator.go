@@ -17,17 +17,17 @@ import (
 	"charm.land/fantasy"
 	"github.com/bytedance/sonic"
 	"github.com/charmbracelet/catwalk/pkg/catwalk"
-	"github.com/trankhanh040147/revcli/internal/agent/hyper"
-	"github.com/trankhanh040147/revcli/internal/agent/prompt"
-	"github.com/trankhanh040147/revcli/internal/agent/tools"
-	"github.com/trankhanh040147/revcli/internal/config"
-	"github.com/trankhanh040147/revcli/internal/csync"
-	"github.com/trankhanh040147/revcli/internal/history"
-	"github.com/trankhanh040147/revcli/internal/log"
-	"github.com/trankhanh040147/revcli/internal/lsp"
-	"github.com/trankhanh040147/revcli/internal/message"
-	"github.com/trankhanh040147/revcli/internal/permission"
-	"github.com/trankhanh040147/revcli/internal/session"
+	"github.com/trankhanh040147/plancli/internal/agent/hyper"
+	"github.com/trankhanh040147/plancli/internal/agent/prompt"
+	"github.com/trankhanh040147/plancli/internal/agent/tools"
+	"github.com/trankhanh040147/plancli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/csync"
+	"github.com/trankhanh040147/plancli/internal/history"
+	"github.com/trankhanh040147/plancli/internal/log"
+	"github.com/trankhanh040147/plancli/internal/lsp"
+	"github.com/trankhanh040147/plancli/internal/message"
+	"github.com/trankhanh040147/plancli/internal/permission"
+	"github.com/trankhanh040147/plancli/internal/session"
 	"golang.org/x/sync/errgroup"
 
 	"charm.land/fantasy/providers/anthropic"
@@ -98,7 +98,7 @@ func NewCoordinator(
 	// TODO(PlanC): Make this dynamic when we support multiple agents/modes
 	// TODO(PlanC): Add ReviewMode config (strict/suggestive/interactive)
 	// For now, use reviewer prompt for review mode
-	prompt, err := reviewerPrompt(prompt.WithWorkingDir(c.cfg.WorkingDir()))
+	prompt, err := plannerPrompt(prompt.WithWorkingDir(c.cfg.WorkingDir()))
 	if err != nil {
 		return nil, err
 	}

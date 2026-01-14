@@ -6,12 +6,12 @@ import (
 
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/powernap/pkg/lsp/protocol"
-	"github.com/trankhanh040147/revcli/internal/app"
-	"github.com/trankhanh040147/revcli/internal/config"
-	"github.com/trankhanh040147/revcli/internal/csync"
-	"github.com/trankhanh040147/revcli/internal/lsp"
-	"github.com/trankhanh040147/revcli/internal/tui/components/core"
-	"github.com/trankhanh040147/revcli/internal/tui/styles"
+	"github.com/trankhanh040147/plancli/internal/app"
+	"github.com/trankhanh040147/plancli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/csync"
+	"github.com/trankhanh040147/plancli/internal/lsp"
+	"github.com/trankhanh040147/plancli/internal/tui/components/core"
+	"github.com/trankhanh040147/plancli/internal/tui/styles"
 )
 
 // RenderOptions contains options for rendering LSP lists.

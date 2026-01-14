@@ -6,8 +6,8 @@ import (
 	"log/slog"
 
 	"github.com/charmbracelet/x/powernap/pkg/lsp/protocol"
-	"github.com/trankhanh040147/revcli/internal/config"
-	"github.com/trankhanh040147/revcli/internal/lsp/util"
+	"github.com/trankhanh040147/plancli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/lsp/util"
 )
 
 // HandleWorkspaceConfiguration handles workspace configuration requests

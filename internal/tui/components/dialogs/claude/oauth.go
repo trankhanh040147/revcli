@@ -10,10 +10,10 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
 	"github.com/pkg/browser"
-	"github.com/trankhanh040147/revcli/internal/oauth"
-	"github.com/trankhanh040147/revcli/internal/oauth/claude"
-	"github.com/trankhanh040147/revcli/internal/tui/styles"
-	"github.com/trankhanh040147/revcli/internal/tui/util"
+	"github.com/trankhanh040147/plancli/internal/oauth"
+	"github.com/trankhanh040147/plancli/internal/oauth/claude"
+	"github.com/trankhanh040147/plancli/internal/tui/styles"
+	"github.com/trankhanh040147/plancli/internal/tui/util"
 	"github.com/zeebo/xxh3"
 )
 

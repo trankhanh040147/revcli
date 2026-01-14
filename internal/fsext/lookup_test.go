@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/trankhanh040147/revcli/internal/home"
+	"github.com/trankhanh040147/plancli/internal/home"
 )
 
 func TestLookupClosest(t *testing.T) {

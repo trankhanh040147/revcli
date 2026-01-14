@@ -10,11 +10,11 @@ import (
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/ansi"
 
-	"github.com/trankhanh040147/revcli/internal/config"
-	"github.com/trankhanh040147/revcli/internal/fsext"
-	"github.com/trankhanh040147/revcli/internal/history"
-	"github.com/trankhanh040147/revcli/internal/tui/components/core"
-	"github.com/trankhanh040147/revcli/internal/tui/styles"
+	"github.com/trankhanh040147/plancli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/fsext"
+	"github.com/trankhanh040147/plancli/internal/history"
+	"github.com/trankhanh040147/plancli/internal/tui/components/core"
+	"github.com/trankhanh040147/plancli/internal/tui/styles"
 )
 
 // FileHistory represents a file history with initial and latest versions.

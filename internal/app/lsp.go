@@ -5,8 +5,8 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/trankhanh040147/revcli/internal/config"
-	"github.com/trankhanh040147/revcli/internal/lsp"
+	"github.com/trankhanh040147/plancli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/lsp"
 )
 
 // initLSPClients initializes LSP clients.

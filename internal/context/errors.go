@@ -1,6 +1,6 @@
 package context
 
-import "github.com/trankhanh040147/revcli/internal/filter"
+import "github.com/trankhanh040147/plancli/internal/filter"
 
 // SecretsError represents an error when secrets are detected in code
 type SecretsError struct {

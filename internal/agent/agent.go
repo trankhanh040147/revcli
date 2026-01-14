@@ -1,4 +1,4 @@
-// Package agent is the core orchestration layer for Revcli AI agents.
+// Package agent is the core orchestration layer for Plancli AI agents.
 //
 // It provides session-based AI agent functionality for managing
 // conversations, tool execution, and message handling. It coordinates
@@ -30,14 +30,14 @@ import (
 
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/catwalk/pkg/catwalk"
-	"github.com/trankhanh040147/revcli/internal/agent/hyper"
-	"github.com/trankhanh040147/revcli/internal/agent/tools"
-	"github.com/trankhanh040147/revcli/internal/config"
-	"github.com/trankhanh040147/revcli/internal/csync"
-	"github.com/trankhanh040147/revcli/internal/message"
-	"github.com/trankhanh040147/revcli/internal/permission"
-	"github.com/trankhanh040147/revcli/internal/session"
-	"github.com/trankhanh040147/revcli/internal/stringext"
+	"github.com/trankhanh040147/plancli/internal/agent/hyper"
+	"github.com/trankhanh040147/plancli/internal/agent/tools"
+	"github.com/trankhanh040147/plancli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/csync"
+	"github.com/trankhanh040147/plancli/internal/message"
+	"github.com/trankhanh040147/plancli/internal/permission"
+	"github.com/trankhanh040147/plancli/internal/session"
+	"github.com/trankhanh040147/plancli/internal/stringext"
 )
 
 //go:embed templates/title.md
@@ -636,7 +636,7 @@ func (a *sessionAgent) Summarize(ctx context.Context, sessionID string, opts fan
 }
 
 func (a *sessionAgent) getCacheControlOptions() fantasy.ProviderOptions {
-	if t, _ := strconv.ParseBool(os.Getenv("REVCLI_DISABLE_ANTHROPIC_CACHE")); t {
+	if t, _ := strconv.ParseBool(os.Getenv("PLANCLI_DISABLE_ANTHROPIC_CACHE")); t {
 		return fantasy.ProviderOptions{}
 	}
 	return fantasy.ProviderOptions{

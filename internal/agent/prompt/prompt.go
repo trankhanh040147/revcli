@@ -11,10 +11,10 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/trankhanh040147/revcli/internal/config"
-	"github.com/trankhanh040147/revcli/internal/home"
-	"github.com/trankhanh040147/revcli/internal/shell"
-	"github.com/trankhanh040147/revcli/internal/skills"
+	"github.com/trankhanh040147/plancli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/home"
+	"github.com/trankhanh040147/plancli/internal/shell"
+	"github.com/trankhanh040147/plancli/internal/skills"
 )
 
 // Prompt represents a template-based prompt generator.

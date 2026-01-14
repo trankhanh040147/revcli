@@ -10,10 +10,10 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/trankhanh040147/revcli/internal/app"
-	appcontext "github.com/trankhanh040147/revcli/internal/context"
-	"github.com/trankhanh040147/revcli/internal/message"
-	"github.com/trankhanh040147/revcli/internal/prompt"
+	"github.com/trankhanh040147/plancli/internal/app"
+	appcontext "github.com/trankhanh040147/plancli/internal/context"
+	"github.com/trankhanh040147/plancli/internal/message"
+	"github.com/trankhanh040147/plancli/internal/prompt"
 )
 
 // buildAttachments converts review context files to message attachments

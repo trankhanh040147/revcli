@@ -4,8 +4,8 @@ import (
 	"context"
 	_ "embed"
 
-	"github.com/trankhanh040147/revcli/internal/agent/prompt"
-	"github.com/trankhanh040147/revcli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/agent/prompt"
+	"github.com/trankhanh040147/plancli/internal/config"
 )
 
 //go:embed templates/reviewer.md.tpl

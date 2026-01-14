@@ -18,9 +18,9 @@ import (
 	"github.com/charmbracelet/catwalk/pkg/catwalk"
 	"github.com/charmbracelet/catwalk/pkg/embedded"
 	"github.com/charmbracelet/x/etag"
-	"github.com/trankhanh040147/revcli/internal/agent/hyper"
-	"github.com/trankhanh040147/revcli/internal/csync"
-	"github.com/trankhanh040147/revcli/internal/home"
+	"github.com/trankhanh040147/plancli/internal/agent/hyper"
+	"github.com/trankhanh040147/plancli/internal/csync"
+	"github.com/trankhanh040147/plancli/internal/home"
 )
 
 type syncer[T any] interface {

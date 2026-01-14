@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/trankhanh040147/revcli/internal/filter"
-	appcontext "github.com/trankhanh040147/revcli/internal/context"
-	"github.com/trankhanh040147/revcli/internal/preset"
-	"github.com/trankhanh040147/revcli/internal/ui"
+	"github.com/trankhanh040147/plancli/internal/filter"
+	appcontext "github.com/trankhanh040147/plancli/internal/context"
+	"github.com/trankhanh040147/plancli/internal/preset"
+	"github.com/trankhanh040147/plancli/internal/ui"
 )
 
 // ErrSecretsDetected is returned when secrets are detected in the code

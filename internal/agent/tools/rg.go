@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/trankhanh040147/revcli/internal/log"
+	"github.com/trankhanh040147/plancli/internal/log"
 )
 
 var getRg = sync.OnceValue(func() string {

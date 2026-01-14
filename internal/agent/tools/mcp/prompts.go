@@ -6,7 +6,7 @@ import (
 	"log/slog"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/trankhanh040147/revcli/internal/csync"
+	"github.com/trankhanh040147/plancli/internal/csync"
 )
 
 type Prompt = mcp.Prompt

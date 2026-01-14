@@ -13,9 +13,9 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
 
-	"github.com/trankhanh040147/revcli/internal/app"
-	appcontext "github.com/trankhanh040147/revcli/internal/context"
-	"github.com/trankhanh040147/revcli/internal/preset"
+	"github.com/trankhanh040147/plancli/internal/app"
+	appcontext "github.com/trankhanh040147/plancli/internal/context"
+	"github.com/trankhanh040147/plancli/internal/preset"
 )
 
 // State represents the current state of the application

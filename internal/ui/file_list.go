@@ -5,7 +5,7 @@ import (
 
 	"charm.land/bubbles/v2/list"
 	"charm.land/lipgloss/v2"
-	appcontext "github.com/trankhanh040147/revcli/internal/context"
+	appcontext "github.com/trankhanh040147/plancli/internal/context"
 )
 
 // FileListItem represents an item in the file list

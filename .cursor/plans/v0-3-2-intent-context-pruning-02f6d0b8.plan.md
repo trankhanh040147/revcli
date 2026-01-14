@@ -107,7 +107,7 @@ Add Intent-Driven Review (pre-review form) and Context Pruning (file list + summ
 ## Integration Flow
 
 ```
-1. User runs `revcli review`
+1. User runs `plancli review`
 2. If interactive: Show intent form (huh)
 3. Build ReviewContext with intent
 4. Start TUI (StateLoading → StateReviewing)

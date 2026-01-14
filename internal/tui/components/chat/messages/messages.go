@@ -16,14 +16,14 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/atotto/clipboard"
-	"github.com/trankhanh040147/revcli/internal/config"
-	"github.com/trankhanh040147/revcli/internal/message"
-	"github.com/trankhanh040147/revcli/internal/tui/components/anim"
-	"github.com/trankhanh040147/revcli/internal/tui/components/core"
-	"github.com/trankhanh040147/revcli/internal/tui/components/core/layout"
-	"github.com/trankhanh040147/revcli/internal/tui/exp/list"
-	"github.com/trankhanh040147/revcli/internal/tui/styles"
-	"github.com/trankhanh040147/revcli/internal/tui/util"
+	"github.com/trankhanh040147/plancli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/message"
+	"github.com/trankhanh040147/plancli/internal/tui/components/anim"
+	"github.com/trankhanh040147/plancli/internal/tui/components/core"
+	"github.com/trankhanh040147/plancli/internal/tui/components/core/layout"
+	"github.com/trankhanh040147/plancli/internal/tui/exp/list"
+	"github.com/trankhanh040147/plancli/internal/tui/styles"
+	"github.com/trankhanh040147/plancli/internal/tui/util"
 )
 
 // CopyKey is the key binding for copying message content to the clipboard.

@@ -8,14 +8,14 @@ import (
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/ansi"
 	"github.com/charmbracelet/x/powernap/pkg/lsp/protocol"
-	"github.com/trankhanh040147/revcli/internal/config"
-	"github.com/trankhanh040147/revcli/internal/csync"
-	"github.com/trankhanh040147/revcli/internal/fsext"
-	"github.com/trankhanh040147/revcli/internal/lsp"
-	"github.com/trankhanh040147/revcli/internal/pubsub"
-	"github.com/trankhanh040147/revcli/internal/session"
-	"github.com/trankhanh040147/revcli/internal/tui/styles"
-	"github.com/trankhanh040147/revcli/internal/tui/util"
+	"github.com/trankhanh040147/plancli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/csync"
+	"github.com/trankhanh040147/plancli/internal/fsext"
+	"github.com/trankhanh040147/plancli/internal/lsp"
+	"github.com/trankhanh040147/plancli/internal/pubsub"
+	"github.com/trankhanh040147/plancli/internal/session"
+	"github.com/trankhanh040147/plancli/internal/tui/styles"
+	"github.com/trankhanh040147/plancli/internal/tui/util"
 )
 
 type Header interface {
@@ -75,7 +75,7 @@ func (h *header) View() string {
 
 	b.WriteString(t.S().Base.Foreground(t.Secondary).Render("Charm™"))
 	b.WriteString(gap)
-	b.WriteString(styles.ApplyBoldForegroundGrad("RevCLI", t.Secondary, t.Primary))
+	b.WriteString(styles.ApplyBoldForegroundGrad("PlanCLI", t.Secondary, t.Primary))
 	b.WriteString(gap)
 
 	availDetailWidth := h.width - leftPadding - rightPadding - lipgloss.Width(b.String()) - minDiags

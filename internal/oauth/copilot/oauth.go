@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/trankhanh040147/revcli/internal/oauth"
+	"github.com/trankhanh040147/plancli/internal/oauth"
 )
 
 const (

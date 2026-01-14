@@ -14,11 +14,11 @@ import (
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/trankhanh040147/revcli/internal/agent/tools/mcp"
-	"github.com/trankhanh040147/revcli/internal/config"
-	"github.com/trankhanh040147/revcli/internal/home"
-	"github.com/trankhanh040147/revcli/internal/tui/components/chat"
-	"github.com/trankhanh040147/revcli/internal/tui/util"
+	"github.com/trankhanh040147/plancli/internal/agent/tools/mcp"
+	"github.com/trankhanh040147/plancli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/home"
+	"github.com/trankhanh040147/plancli/internal/tui/components/chat"
+	"github.com/trankhanh040147/plancli/internal/tui/util"
 )
 
 type CommandType uint

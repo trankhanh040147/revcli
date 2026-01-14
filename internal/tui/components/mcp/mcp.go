@@ -6,10 +6,10 @@ import (
 
 	"charm.land/lipgloss/v2"
 
-	"github.com/trankhanh040147/revcli/internal/agent/tools/mcp"
-	"github.com/trankhanh040147/revcli/internal/config"
-	"github.com/trankhanh040147/revcli/internal/tui/components/core"
-	"github.com/trankhanh040147/revcli/internal/tui/styles"
+	"github.com/trankhanh040147/plancli/internal/agent/tools/mcp"
+	"github.com/trankhanh040147/plancli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/tui/components/core"
+	"github.com/trankhanh040147/plancli/internal/tui/styles"
 )
 
 // RenderOptions contains options for rendering MCP lists.

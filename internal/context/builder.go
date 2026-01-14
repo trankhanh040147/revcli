@@ -3,10 +3,10 @@ package context
 import (
 	"fmt"
 
-	"github.com/trankhanh040147/revcli/internal/filter"
-	"github.com/trankhanh040147/revcli/internal/git"
-	"github.com/trankhanh040147/revcli/internal/preset"
-	"github.com/trankhanh040147/revcli/internal/prompt"
+	"github.com/trankhanh040147/plancli/internal/filter"
+	"github.com/trankhanh040147/plancli/internal/git"
+	"github.com/trankhanh040147/plancli/internal/preset"
+	"github.com/trankhanh040147/plancli/internal/prompt"
 )
 
 // ReviewContext contains all the data needed for a code review

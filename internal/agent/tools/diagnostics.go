@@ -11,9 +11,9 @@ import (
 
 	"charm.land/fantasy"
 	"github.com/charmbracelet/x/powernap/pkg/lsp/protocol"
-	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
-	"github.com/trankhanh040147/revcli/internal/csync"
-	"github.com/trankhanh040147/revcli/internal/lsp"
+	"github.com/trankhanh040147/plancli/internal/agent/tools/constants"
+	"github.com/trankhanh040147/plancli/internal/csync"
+	"github.com/trankhanh040147/plancli/internal/lsp"
 )
 
 type DiagnosticsParams struct {

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/trankhanh040147/revcli/internal/uiutil"
+	"github.com/trankhanh040147/plancli/internal/uiutil"
 )
 
 // ExecShell parses a shell command string and executes it with exec.Command.

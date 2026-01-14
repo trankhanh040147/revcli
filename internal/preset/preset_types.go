@@ -53,7 +53,7 @@ func (p *Preset) MarshalYAML() (interface{}, error) {
 	return root, nil
 }
 
-// Config defines the revcli configuration
+// Config defines the plancli configuration
 type Config struct {
 	DefaultPreset string        `yaml:"default_preset,omitempty"`
 	Gemini        *GeminiConfig `yaml:"gemini,omitempty"`

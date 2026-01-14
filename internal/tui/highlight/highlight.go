@@ -8,7 +8,7 @@ import (
 	"github.com/alecthomas/chroma/v2/formatters"
 	"github.com/alecthomas/chroma/v2/lexers"
 	chromaStyles "github.com/alecthomas/chroma/v2/styles"
-	"github.com/trankhanh040147/revcli/internal/tui/styles"
+	"github.com/trankhanh040147/plancli/internal/tui/styles"
 )
 
 func SyntaxHighlight(source, fileName string, bg color.Color) (string, error) {

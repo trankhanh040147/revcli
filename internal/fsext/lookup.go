@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/trankhanh040147/revcli/internal/home"
+	"github.com/trankhanh040147/plancli/internal/home"
 )
 
 // Lookup searches for a target files or directories starting from dir

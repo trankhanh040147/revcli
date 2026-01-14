@@ -1,6 +1,6 @@
 package tools
 
-import "github.com/trankhanh040147/revcli/internal/agent/tools/constants"
+import "github.com/trankhanh040147/plancli/internal/agent/tools/constants"
 
 // Deprecated tool name constants for backward compatibility.
 // Use constants.* instead.

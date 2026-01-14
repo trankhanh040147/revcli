@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/huh"
-	appcontext "github.com/trankhanh040147/revcli/internal/context"
+	appcontext "github.com/trankhanh040147/plancli/internal/context"
 )
 
 // CollectIntent collects user intent using a huh form

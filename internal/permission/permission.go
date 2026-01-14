@@ -9,8 +9,8 @@ import (
 	"sync"
 
 	"github.com/google/uuid"
-	"github.com/trankhanh040147/revcli/internal/csync"
-	"github.com/trankhanh040147/revcli/internal/pubsub"
+	"github.com/trankhanh040147/plancli/internal/csync"
+	"github.com/trankhanh040147/plancli/internal/pubsub"
 )
 
 var ErrorPermissionDenied = errors.New("user denied permission")

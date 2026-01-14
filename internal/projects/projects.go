@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/trankhanh040147/revcli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/config"
 )
 
 const projectsFileName = "projects.json"

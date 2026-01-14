@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"charm.land/fantasy"
-	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
-	"github.com/trankhanh040147/revcli/internal/shell"
+	"github.com/trankhanh040147/plancli/internal/agent/tools/constants"
+	"github.com/trankhanh040147/plancli/internal/shell"
 )
 
 //go:embed job_output.md

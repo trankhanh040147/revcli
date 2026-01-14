@@ -9,7 +9,7 @@ import (
 	"runtime"
 
 	"github.com/posthog/posthog-go"
-	"github.com/trankhanh040147/revcli/internal/version"
+	"github.com/trankhanh040147/plancli/internal/version"
 )
 
 const (

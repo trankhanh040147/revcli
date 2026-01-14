@@ -19,12 +19,12 @@ import (
 	"github.com/bytedance/sonic"
 	"github.com/charmbracelet/catwalk/pkg/catwalk"
 	powernapConfig "github.com/charmbracelet/x/powernap/pkg/config"
-	"github.com/trankhanh040147/revcli/internal/agent/hyper"
-	"github.com/trankhanh040147/revcli/internal/csync"
-	"github.com/trankhanh040147/revcli/internal/env"
-	"github.com/trankhanh040147/revcli/internal/fsext"
-	"github.com/trankhanh040147/revcli/internal/home"
-	"github.com/trankhanh040147/revcli/internal/log"
+	"github.com/trankhanh040147/plancli/internal/agent/hyper"
+	"github.com/trankhanh040147/plancli/internal/csync"
+	"github.com/trankhanh040147/plancli/internal/env"
+	"github.com/trankhanh040147/plancli/internal/fsext"
+	"github.com/trankhanh040147/plancli/internal/home"
+	"github.com/trankhanh040147/plancli/internal/log"
 )
 
 const defaultCatwalkURL = "https://catwalk.charm.sh"

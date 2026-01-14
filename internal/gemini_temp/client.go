@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 
 	"github.com/bytedance/sonic"
-	"github.com/trankhanh040147/revcli/internal/config"
-	"github.com/trankhanh040147/revcli/internal/preset"
+	"github.com/trankhanh040147/plancli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/preset"
 	"google.golang.org/genai"
 )
 

@@ -11,8 +11,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/trankhanh040147/revcli/internal/tui/components/core/layout"
-	"github.com/trankhanh040147/revcli/internal/tui/util"
+	"github.com/trankhanh040147/plancli/internal/tui/components/core/layout"
+	"github.com/trankhanh040147/plancli/internal/tui/util"
 )
 
 func TestList(t *testing.T) {

@@ -8,7 +8,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/trankhanh040147/revcli/internal/csync"
+	"github.com/trankhanh040147/plancli/internal/csync"
 )
 
 const (

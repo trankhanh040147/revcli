@@ -11,13 +11,13 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/ansi"
-	"github.com/trankhanh040147/revcli/internal/agent/tools"
-	"github.com/trankhanh040147/revcli/internal/fsext"
-	"github.com/trankhanh040147/revcli/internal/permission"
-	"github.com/trankhanh040147/revcli/internal/tui/components/core"
-	"github.com/trankhanh040147/revcli/internal/tui/components/dialogs"
-	"github.com/trankhanh040147/revcli/internal/tui/styles"
-	"github.com/trankhanh040147/revcli/internal/tui/util"
+	"github.com/trankhanh040147/plancli/internal/agent/tools"
+	"github.com/trankhanh040147/plancli/internal/fsext"
+	"github.com/trankhanh040147/plancli/internal/permission"
+	"github.com/trankhanh040147/plancli/internal/tui/components/core"
+	"github.com/trankhanh040147/plancli/internal/tui/components/dialogs"
+	"github.com/trankhanh040147/plancli/internal/tui/styles"
+	"github.com/trankhanh040147/plancli/internal/tui/util"
 )
 
 type PermissionAction string

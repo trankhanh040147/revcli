@@ -13,7 +13,7 @@ import (
 
 	"github.com/charmbracelet/catwalk/pkg/catwalk"
 	xetag "github.com/charmbracelet/x/etag"
-	"github.com/trankhanh040147/revcli/internal/agent/hyper"
+	"github.com/trankhanh040147/plancli/internal/agent/hyper"
 )
 
 type hyperClient interface {

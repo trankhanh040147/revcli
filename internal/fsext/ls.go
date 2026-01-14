@@ -11,8 +11,8 @@ import (
 
 	"github.com/charlievieth/fastwalk"
 	ignore "github.com/sabhiram/go-gitignore"
-	"github.com/trankhanh040147/revcli/internal/csync"
-	"github.com/trankhanh040147/revcli/internal/home"
+	"github.com/trankhanh040147/plancli/internal/csync"
+	"github.com/trankhanh040147/plancli/internal/home"
 )
 
 // commonIgnorePatterns contains commonly ignored files and directories

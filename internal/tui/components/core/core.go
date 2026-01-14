@@ -9,8 +9,8 @@ import (
 	"charm.land/lipgloss/v2"
 	"github.com/alecthomas/chroma/v2"
 	"github.com/charmbracelet/x/ansi"
-	"github.com/trankhanh040147/revcli/internal/tui/exp/diffview"
-	"github.com/trankhanh040147/revcli/internal/tui/styles"
+	"github.com/trankhanh040147/plancli/internal/tui/exp/diffview"
+	"github.com/trankhanh040147/plancli/internal/tui/styles"
 )
 
 type KeyMapHelp interface {

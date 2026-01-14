@@ -5,9 +5,9 @@ import (
 	"maps"
 	"time"
 
-	"github.com/trankhanh040147/revcli/internal/csync"
-	"github.com/trankhanh040147/revcli/internal/lsp"
-	"github.com/trankhanh040147/revcli/internal/pubsub"
+	"github.com/trankhanh040147/plancli/internal/csync"
+	"github.com/trankhanh040147/plancli/internal/lsp"
+	"github.com/trankhanh040147/plancli/internal/pubsub"
 )
 
 // LSPEventType represents the type of LSP event

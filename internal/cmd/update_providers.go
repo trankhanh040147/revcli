@@ -8,7 +8,7 @@ import (
 	"github.com/charmbracelet/x/exp/charmtone"
 	"github.com/spf13/cobra"
 
-	"github.com/trankhanh040147/revcli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/config"
 )
 
 var updateProvidersSource string
@@ -19,22 +19,22 @@ var updateProvidersCmd = &cobra.Command{
 	Long:  `Update provider information from a specified local path or remote URL.`,
 	Example: `
 # Update Catwalk providers remotely (default)
-revcli update-providers
+plancli update-providers
 
 # Update Catwalk providers from a custom URL
-revcli update-providers https://example.com/providers.json
+plancli update-providers https://example.com/providers.json
 
 # Update Catwalk providers from a local file
-revcli update-providers /path/to/local-providers.json
+plancli update-providers /path/to/local-providers.json
 
 # Update Catwalk providers from embedded version
-revcli update-providers embedded
+plancli update-providers embedded
 
 # Update Hyper provider information
-revcli update-providers --source=hyper
+plancli update-providers --source=hyper
 
 # Update Hyper from a custom URL
-revcli update-providers --source=hyper https://hyper.example.com
+plancli update-providers --source=hyper https://hyper.example.com
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// NOTE(@andreynering): We want to skip logging output do stdout here.

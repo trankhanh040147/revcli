@@ -1,5 +1,5 @@
 # Go parameters
-BINARY_NAME=revcli
+BINARY_NAME=plancli
 MAIN_PACKAGE=.
 GO=go
 

@@ -14,10 +14,10 @@ import (
 	"time"
 
 	"charm.land/fantasy"
-	"github.com/trankhanh040147/revcli/internal/agent/tools/constants"
-	"github.com/trankhanh040147/revcli/internal/config"
-	"github.com/trankhanh040147/revcli/internal/permission"
-	"github.com/trankhanh040147/revcli/internal/shell"
+	"github.com/trankhanh040147/plancli/internal/agent/tools/constants"
+	"github.com/trankhanh040147/plancli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/permission"
+	"github.com/trankhanh040147/plancli/internal/shell"
 )
 
 type BashParams struct {

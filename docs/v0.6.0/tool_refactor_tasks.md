@@ -44,7 +44,7 @@ Focus: rename and rebrand existing structure
 
 Files to update:
 - `internal/agent/templates/coder.md.tpl` → rename to `reviewer.md.tpl`
-  - Replace "Crush" with "revCLI"
+  - Replace "Crush" with "planCLI"
   - Shift focus from "writing code" to "reviewing code"
   - Keep same structure, change wording
 - `internal/config/config.go`:
@@ -129,7 +129,7 @@ Cons: Most work, need to rethink workflows, may need new tool abstractions
 
 ## Overview
 
-Implementing Plan v0.6-B to transform revCLI from a code generation tool (crush) to a code review tool, while establishing a foundation for future multi-mode support (review, build, ask).
+Implementing Plan v0.6-B to transform planCLI from a code generation tool (crush) to a code review tool, while establishing a foundation for future multi-mode support (review, build, ask).
 
 **Strategy**: Introduce mode-aware architecture now, keeping code flexible for future Plan v0.6-C enhancements (review-native redesign).
 
@@ -191,7 +191,7 @@ func (c *Config) SetupAgents() {
 **Key changes needed**:
 
 ```markdown
-You are revCLI, a powerful AI Code Reviewer that runs in the CLI.
+You are planCLI, a powerful AI Code Reviewer that runs in the CLI.
 
 <critical_rules>
 These rules override everything else. Follow them strictly:
@@ -269,8 +269,8 @@ import (
 	"context"
 	_ "embed"
 
-	"github.com/trankhanh040147/revcli/internal/agent/prompt"
-	"github.com/trankhanh040147/revcli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/agent/prompt"
+	"github.com/trankhanh040147/plancli/internal/config"
 )
 
 //go:embed templates/reviewer.md.tpl
@@ -381,7 +381,7 @@ func NewCoordinator(
 **Changes**: Make it review-specific while keeping it general for search/context tasks
 
 ```markdown
-You are an agent for revCLI. Given the user's prompt, you should use the tools available to you to answer the user's question.
+You are an agent for planCLI. Given the user's prompt, you should use the tools available to you to answer the user's question.
 
 <rules>
 1. You should be concise, direct, and to the point, since your responses will be displayed on a command line interface. Answer the user's question directly, without elaboration, explanation, or details. One word answers are best. Avoid introductions, conclusions, and explanations. You MUST avoid text before/after your response, such as "The answer is <answer>.", "Here is the content of the file..." or "Based on the information provided, the answer is..." or "Here is what I will do next...".
@@ -430,7 +430,7 @@ you will generate a short title based on the first message a user begins a conve
 
 **File**: `internal/agent/templates/initialize.md.tpl`
 
-**Changes**: Replace references to crush/coder with revCLI/reviewer
+**Changes**: Replace references to crush/coder with planCLI/reviewer
 
 ```markdown
 Analyze this codebase and create/update **{{.Config.Options.InitializeAs}}** to help future agents work effectively in this repository.
@@ -548,12 +548,12 @@ agentCfg, ok := cfg.Agents[config.AgentReviewer]
 
 After implementing Priority 1 and 2 tasks:
 
-- [ ] `revcli review` command works with new AgentReviewer
+- [ ] `plancli review` command works with new AgentReviewer
 - [ ] Agent uses reviewer.md.tpl template (verify no "Crush" references in output)
 - [ ] Review mode defaults to read-only tools
 - [ ] All tests pass (update test files with AgentReviewer constant)
 - [ ] No references to "Crush" or "AgentCoder" in codebase
-- [ ] Template files properly reference revCLI
+- [ ] Template files properly reference planCLI
 
 ---
 
@@ -568,7 +568,7 @@ After implementing Priority 1 and 2 tasks:
 6. Implement mode-based tool filtering in coordinator
 7. Add review-specific tools (if needed)
 
-**Notes**: Plan v0.6-C will be a larger refactoring to make revCLI fully review-native. Plan v0.6-B establishes the foundation while keeping the codebase functional.
+**Notes**: Plan v0.6-C will be a larger refactoring to make planCLI fully review-native. Plan v0.6-B establishes the foundation while keeping the codebase functional.
 ```
 
 This document outlines the Plan v0.6-B implementation with code snippets showing what needs to change, organized by priority, with TODOs marking Plan v0.6-C work for later.

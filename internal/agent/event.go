@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"charm.land/fantasy"
-	"github.com/trankhanh040147/revcli/internal/event"
+	"github.com/trankhanh040147/plancli/internal/event"
 )
 
 func (a sessionAgent) eventPromptSent(sessionID string) {

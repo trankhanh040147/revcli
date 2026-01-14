@@ -6,8 +6,8 @@ import (
 
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/ansi"
-	"github.com/trankhanh040147/revcli/internal/session"
-	"github.com/trankhanh040147/revcli/internal/tui/styles"
+	"github.com/trankhanh040147/plancli/internal/session"
+	"github.com/trankhanh040147/plancli/internal/tui/styles"
 )
 
 func sortTodos(todos []session.Todo) {

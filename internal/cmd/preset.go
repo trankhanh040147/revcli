@@ -13,9 +13,9 @@ import (
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 
-	"github.com/trankhanh040147/revcli/internal/preset"
-	"github.com/trankhanh040147/revcli/internal/prompt"
-	"github.com/trankhanh040147/revcli/internal/ui"
+	"github.com/trankhanh040147/plancli/internal/preset"
+	"github.com/trankhanh040147/plancli/internal/prompt"
+	"github.com/trankhanh040147/plancli/internal/ui"
 )
 
 var (
@@ -32,7 +32,7 @@ var presetCmd = &cobra.Command{
 	Long: `Manage custom review presets for code reviews.
 
 Presets allow you to customize the review style and focus. Built-in presets
-cannot be modified, but you can create custom presets in ~/.config/revcli/presets/`,
+cannot be modified, but you can create custom presets in ~/.config/plancli/presets/`,
 }
 
 // presetListCmd lists all available presets
@@ -114,9 +114,9 @@ var presetDefaultCmd = &cobra.Command{
 	Long: `Set the default preset to use when --preset flag is not provided, or show the current default preset.
 	
 Examples:
-  revcli preset default quick          # Set 'quick' as default
-  revcli preset default                # Show current default
-  revcli preset default --unset        # Clear default preset`,
+  plancli preset default quick          # Set 'quick' as default
+  plancli preset default                # Show current default
+  plancli preset default --unset        # Clear default preset`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: runPresetDefault,
 }
@@ -183,7 +183,7 @@ func init() {
 // editMultilineText opens the current text in an external editor and returns the edited content
 func editMultilineText(prompt string, currentValue string) (string, error) {
 	// Create temporary file
-	tmpFile, err := os.CreateTemp("", "revcli-edit-*.txt")
+	tmpFile, err := os.CreateTemp("", "plancli-edit-*.txt")
 	if err != nil {
 		return "", fmt.Errorf("failed to create temp file: %w", err)
 	}
@@ -270,7 +270,7 @@ func runPresetList(cmd *cobra.Command, args []string) error {
 		}
 	} else {
 		fmt.Println(ui.RenderSubtitle("No custom presets found."))
-		fmt.Println("Use 'revcli preset create' to create one.")
+		fmt.Println("Use 'plancli preset create' to create one.")
 	}
 
 	return nil
@@ -342,7 +342,7 @@ func runPresetCreate(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to get home directory: %w", err)
 	}
 
-	presetDir := filepath.Join(homeDir, ".config", "revcli", "presets")
+	presetDir := filepath.Join(homeDir, ".config", "plancli", "presets")
 	if err := os.MkdirAll(presetDir, 0755); err != nil {
 		return fmt.Errorf("failed to create preset directory: %w", err)
 	}
@@ -388,7 +388,7 @@ func runPresetDelete(cmd *cobra.Command, args []string) error {
 
 	// Normalize preset name to lowercase for consistency with Get() function
 	normalizedName := strings.ToLower(name)
-	presetPath := filepath.Join(homeDir, ".config", "revcli", "presets", normalizedName+".yaml")
+	presetPath := filepath.Join(homeDir, ".config", "plancli", "presets", normalizedName+".yaml")
 
 	// Confirm deletion
 	fmt.Printf("Are you sure you want to delete preset '%s'? (y/N): ", name)
@@ -438,7 +438,7 @@ func runPresetEdit(cmd *cobra.Command, args []string) error {
 
 	// Check if it's a built-in preset
 	if _, ok := preset.BuiltInPresets[strings.ToLower(name)]; ok {
-		return fmt.Errorf("cannot edit built-in preset '%s'. Use 'revcli preset create' to create a custom preset", name)
+		return fmt.Errorf("cannot edit built-in preset '%s'. Use 'plancli preset create' to create a custom preset", name)
 	}
 
 	// Load existing preset
@@ -454,7 +454,7 @@ func runPresetEdit(cmd *cobra.Command, args []string) error {
 	}
 
 	normalizedName := strings.ToLower(name)
-	presetPath := filepath.Join(homeDir, ".config", "revcli", "presets", normalizedName+".yaml")
+	presetPath := filepath.Join(homeDir, ".config", "plancli", "presets", normalizedName+".yaml")
 	if _, err := os.Stat(presetPath); os.IsNotExist(err) {
 		return fmt.Errorf("preset '%s' is not a custom preset and cannot be edited", name)
 	}
@@ -501,7 +501,7 @@ func runPresetEdit(cmd *cobra.Command, args []string) error {
 	p.Prompt = newPrompt
 
 	// Save to file (using original path since name doesn't change)
-	presetDir := filepath.Join(homeDir, ".config", "revcli", "presets")
+	presetDir := filepath.Join(homeDir, ".config", "plancli", "presets")
 	if err := os.MkdirAll(presetDir, 0755); err != nil {
 		return fmt.Errorf("failed to create preset directory: %w", err)
 	}
@@ -529,7 +529,7 @@ func listCustomPresets() ([]string, error) {
 		return nil, err
 	}
 
-	presetDir := filepath.Join(homeDir, ".config", "revcli", "presets")
+	presetDir := filepath.Join(homeDir, ".config", "plancli", "presets")
 
 	// Check if directory exists
 	if _, err := os.Stat(presetDir); os.IsNotExist(err) {
@@ -558,7 +558,7 @@ func runPresetOpen(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to get home directory: %w", err)
 	}
 
-	presetDir := filepath.Join(homeDir, ".config", "revcli", "presets")
+	presetDir := filepath.Join(homeDir, ".config", "plancli", "presets")
 
 	if len(args) > 0 {
 		// Open specific preset file in editor
@@ -635,7 +635,7 @@ func runPresetPath(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to get home directory: %w", err)
 	}
 
-	presetDir := filepath.Join(homeDir, ".config", "revcli", "presets")
+	presetDir := filepath.Join(homeDir, ".config", "plancli", "presets")
 
 	if len(args) > 0 {
 		// Show path to specific preset file
@@ -700,7 +700,7 @@ func runPresetDefault(cmd *cobra.Command, args []string) error {
 
 	if defaultPreset == "" {
 		fmt.Println("No default preset is set.")
-		fmt.Println("Use 'revcli preset default <name>' to set one.")
+		fmt.Println("Use 'plancli preset default <name>' to set one.")
 	} else {
 		fmt.Printf("Default preset: %s\n", ui.RenderSuccess(defaultPreset))
 	}
@@ -729,7 +729,7 @@ func runPresetSystemShow(cmd *cobra.Command, args []string) error {
 		fmt.Println(ui.RenderSubtitle("Current system prompt (default):"))
 		fmt.Println(prompt.SystemPrompt)
 		fmt.Println()
-		fmt.Println("No custom system prompt found. Use 'revcli preset system edit' to create one.")
+		fmt.Println("No custom system prompt found. Use 'plancli preset system edit' to create one.")
 	}
 
 	return nil
@@ -780,7 +780,7 @@ func runPresetSystemEdit(cmd *cobra.Command, args []string) error {
 	fmt.Printf("Location: %s\n", systemPromptPath)
 	fmt.Println()
 	fmt.Println("The custom system prompt will be used in all future reviews.")
-	fmt.Println("Use 'revcli preset system reset' to restore the default.")
+	fmt.Println("Use 'plancli preset system reset' to restore the default.")
 
 	return nil
 }

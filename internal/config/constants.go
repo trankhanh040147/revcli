@@ -15,6 +15,6 @@ const (
 // Config directory names
 const (
 	ConfigDirName   = ".config"
-	AppDirName      = "revcli"
+	AppDirName      = "plancli"
 	SessionsDirName = "sessions"
 )

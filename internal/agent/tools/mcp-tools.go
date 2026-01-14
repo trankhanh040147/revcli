@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"charm.land/fantasy"
-	"github.com/trankhanh040147/revcli/internal/agent/tools/mcp"
-	"github.com/trankhanh040147/revcli/internal/permission"
+	"github.com/trankhanh040147/plancli/internal/agent/tools/mcp"
+	"github.com/trankhanh040147/plancli/internal/permission"
 )
 
 // GetMCPTools gets all the currently available MCP tools.

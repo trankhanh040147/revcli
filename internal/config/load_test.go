@@ -11,8 +11,8 @@ import (
 	"github.com/charmbracelet/catwalk/pkg/catwalk"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/trankhanh040147/revcli/internal/csync"
-	"github.com/trankhanh040147/revcli/internal/env"
+	"github.com/trankhanh040147/plancli/internal/csync"
+	"github.com/trankhanh040147/plancli/internal/env"
 )
 
 func TestMain(m *testing.M) {

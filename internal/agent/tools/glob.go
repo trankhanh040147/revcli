@@ -12,8 +12,8 @@ import (
 	"strings"
 
 	"charm.land/fantasy"
-	toolConstants "github.com/trankhanh040147/revcli/internal/agent/tools/constants"
-	"github.com/trankhanh040147/revcli/internal/fsext"
+	toolConstants "github.com/trankhanh040147/plancli/internal/agent/tools/constants"
+	"github.com/trankhanh040147/plancli/internal/fsext"
 )
 
 //go:embed glob.md

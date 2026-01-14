@@ -5,8 +5,8 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/trankhanh040147/revcli/internal/app"
-	"github.com/trankhanh040147/revcli/internal/prompt"
+	"github.com/trankhanh040147/plancli/internal/app"
+	"github.com/trankhanh040147/plancli/internal/prompt"
 )
 
 // ChatRole represents the role of a chat message

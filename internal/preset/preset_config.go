@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/trankhanh040147/revcli/internal/config"
+	"github.com/trankhanh040147/plancli/internal/config"
 	"gopkg.in/yaml.v3"
 )
 
@@ -18,7 +18,7 @@ func getConfigPath() (string, error) {
 	return filepath.Join(homeDir, config.ConfigDirName, config.AppDirName, "config.yaml"), nil
 }
 
-// LoadConfig loads the configuration from ~/.config/revcli/config.yaml
+// LoadConfig loads the configuration from ~/.config/plancli/config.yaml
 func LoadConfig() (*Config, error) {
 	configPath, err := getConfigPath()
 	if err != nil {
@@ -46,7 +46,7 @@ func LoadConfig() (*Config, error) {
 	return &config, nil
 }
 
-// SaveConfig saves the configuration to ~/.config/revcli/config.yaml
+// SaveConfig saves the configuration to ~/.config/plancli/config.yaml
 func SaveConfig(config *Config) error {
 	configPath, err := getConfigPath()
 	if err != nil {

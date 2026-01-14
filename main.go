@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/trankhanh040147/revcli/internal/cmd"
+	"github.com/trankhanh040147/plancli/internal/cmd"
 )
 
 func main() {

@@ -104,7 +104,7 @@ frontmatter, which ensures:
 
 - [x] `--preset <name>` / `-p` flag
 - [x] Built-in presets: `quick`, `strict`, `security`, `performance`, `logic`, `style`, `typo`, `naming`
-- [x] Custom presets in `~/.config/revcli/presets/*.yaml`
+- [x] Custom presets in `~/.config/plancli/presets/*.yaml`
 - [x] Default preset support via config
 - [x] Preset replace mode (`--preset-replace` / `-R`)
 
@@ -243,7 +243,7 @@ Here is the updated **v0.4.0** plan with the completed SDK migration removed.
 
 ### 2. DevOps & CI/CD
 
-- [ ] **Actionable Security Workflow:** Integrate OpenSSF Scorecard (`scorecard.yaml`) in CI; explore `revcli` consumption for in-terminal insights.
+- [ ] **Actionable Security Workflow:** Integrate OpenSSF Scorecard (`scorecard.yaml`) in CI; explore `plancli` consumption for in-terminal insights.
 - [ ] **Secure Release Automation:** Configure GoReleaser (`.goreleaser.yaml`) for multi-platform builds, Homebrew tap, and integrate Cosign for artifact signing.
 - [ ] **Fast & Comprehensive CI Pipeline:** Add `golangci-lint` (strict config) and `go test -race`; optimize for speed and provide local pre-commit targets.
 
@@ -334,8 +334,8 @@ sequenceDiagram
 - [x] Updated `summary.md` with review-specific sections (Current State, Files & Changes, Review Context)
 - [x] Implemented `InitReviewerAgent` in `app.go` and `chat.go`
 - [x] Updated error messages to use "reviewer agent" terminology
-- [x] Updated templates and config to use revCLI branding
-- [x] Updated JSON schema descriptions in `config.go` to use revCLI branding
+- [x] Updated templates and config to use planCLI branding
+- [x] Updated JSON schema descriptions in `config.go` to use planCLI branding
 
 ## Priority 3: Future Mode Foundation ✅
 
@@ -472,12 +472,12 @@ sequenceDiagram
 
 - [ ] `e` - Export current review to file
 - [ ] `E` - Export entire conversation
-- [ ] Auto-save conversations to `~/.local/share/revcli/`
+- [ ] Auto-save conversations to `~/.local/share/plancli/`
 - [ ] `--format json|markdown` output formats
 
 ### Config Management
 
-- [ ] `~/.config/revcli/config.yaml` support
+- [ ] `~/.config/plancli/config.yaml` support
 - [ ] Settings: default model, base branch, ignore patterns
 - [ ] In-app config editing via config pane
 
@@ -550,8 +550,8 @@ sequenceDiagram
 
 ### Build Mode
 
-- [ ] `revcli build docs` - Generate documentation
-- [ ] `revcli build postman` - Generate Postman collections
+- [ ] `plancli build docs` - Generate documentation
+- [ ] `plancli build postman` - Generate Postman collections
 - [ ] Interactive file/folder selection with Vim navigation
 - [ ] Read from controller, serializers, routers
 - [ ] After implemented `build mode`, bring file/folder selection feature in `review mode`: add option to include other
@@ -559,7 +559,7 @@ sequenceDiagram
 
 ### Team Features
 
-- [ ] Shared config via `.revcli.yaml` in repo
+- [ ] Shared config via `.plancli.yaml` in repo
 - [ ] Team-specific prompts and rules
 - [ ] Pre-commit hook integration
 
@@ -579,7 +579,7 @@ sequenceDiagram
 
 ### Interview Mode
 
-- [ ] `revcli interview` - Practice coding interviews
+- [ ] `plancli interview` - Practice coding interviews
 - [ ] Algorithm questions with hints
 - [ ] Code review practice
 
@@ -625,8 +625,8 @@ sequenceDiagram
 
 - Ask user for MR intention/Summary MR intention based on diff change to verify business logic
 - Make the base prompt more generic/neutral (Not just Go reviewer)
-- Compare two branches directly (`revcli diff main feature-branch`)
-- Review specific files only (`revcli review src/api.go`)
+- Compare two branches directly (`plancli diff main feature-branch`)
+- Review specific files only (`plancli review src/api.go`)
 - Ignore patterns via `.revignore` file
 - Statistics dashboard (reviews done, issues found)
 - Multi-language support (i18n for prompts)

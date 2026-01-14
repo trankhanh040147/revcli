@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/trankhanh040147/revcli/internal/env"
-	"github.com/trankhanh040147/revcli/internal/shell"
+	"github.com/trankhanh040147/plancli/internal/env"
+	"github.com/trankhanh040147/plancli/internal/shell"
 )
 
 type VariableResolver interface {

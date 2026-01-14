@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/trankhanh040147/revcli/internal/db"
-	"github.com/trankhanh040147/revcli/internal/pubsub"
+	"github.com/trankhanh040147/plancli/internal/db"
+	"github.com/trankhanh040147/plancli/internal/pubsub"
 )
 
 type CreateMessageParams struct {

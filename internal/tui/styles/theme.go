@@ -17,7 +17,7 @@ import (
 	"github.com/charmbracelet/x/exp/charmtone"
 	"github.com/lucasb-eyer/go-colorful"
 	"github.com/rivo/uniseg"
-	"github.com/trankhanh040147/revcli/internal/tui/exp/diffview"
+	"github.com/trankhanh040147/plancli/internal/tui/exp/diffview"
 )
 
 const (

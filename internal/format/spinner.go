@@ -8,7 +8,7 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 	"github.com/charmbracelet/x/ansi"
-	"github.com/trankhanh040147/revcli/internal/tui/components/anim"
+	"github.com/trankhanh040147/plancli/internal/tui/components/anim"
 )
 
 // Spinner wraps the bubbles spinner for non-interactive mode

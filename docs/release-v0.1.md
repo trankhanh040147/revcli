@@ -1,6 +1,6 @@
 # v0.1.0 - MVP Release
 
-**revcli** is a Gemini-powered code reviewer CLI that analyzes your git changes before you commit. This is the first public release, providing the core functionality for intelligent code review.
+**plancli** is a Gemini-powered code reviewer CLI that analyzes your git changes before you commit. This is the first public release, providing the core functionality for intelligent code review.
 
 ## What's New
 
@@ -46,14 +46,14 @@
 ## Installation
 
 ```bash
-go install github.com/trankhanh040147/revcli@v0.1.0
+go install github.com/trankhanh040147/plancli@v0.1.0
 ```
 
 Or build from source:
 
 ```bash
-git clone https://github.com/trankhanh040147/revcli.git
-cd revcli
+git clone https://github.com/trankhanh040147/plancli.git
+cd plancli
 git checkout v0.1.0
 make build
 ```
@@ -74,28 +74,28 @@ Get your API key from [Google AI Studio](https://aistudio.google.com/).
 Review all uncommitted changes:
 
 ```bash
-revcli review
+plancli review
 ```
 
 ### Review Staged Changes
 Review only what you've staged:
 
 ```bash
-revcli review --staged
+plancli review --staged
 ```
 
 ### Non-Interactive Mode
 Perfect for CI/CD pipelines:
 
 ```bash
-revcli review --no-interactive > review.txt
+plancli review --no-interactive > review.txt
 ```
 
 ### Use Different Model
 Try a different Gemini model:
 
 ```bash
-revcli review --model gemini-1.5-pro
+plancli review --model gemini-1.5-pro
 ```
 
 ## What's Next
@@ -108,7 +108,7 @@ Future releases will include:
 - Enhanced Vim-style navigation
 - And much more!
 
-See the [Development Roadmap](https://github.com/trankhanh040147/revcli/blob/main/docs/DEVELOPMENT.md) for details.
+See the [Development Roadmap](https://github.com/trankhanh040147/plancli/blob/main/docs/DEVELOPMENT.md) for details.
 
 ## Feedback
 

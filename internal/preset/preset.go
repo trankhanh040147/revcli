@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/samber/lo"
-	"github.com/trankhanh040147/revcli/internal/util"
+	"github.com/trankhanh040147/plancli/internal/util"
 	"gopkg.in/yaml.v3"
 )
 
@@ -202,14 +202,14 @@ func Get(name string) (*Preset, error) {
 	return preset, nil
 }
 
-// loadCustomPreset attempts to load a preset from ~/.config/revcli/presets/
+// loadCustomPreset attempts to load a preset from ~/.config/plancli/presets/
 func loadCustomPreset(name string) (*Preset, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return nil, err
 	}
 
-	presetPath := filepath.Join(homeDir, ".config", "revcli", "presets", name+".yaml")
+	presetPath := filepath.Join(homeDir, ".config", "plancli", "presets", name+".yaml")
 
 	data, err := os.ReadFile(presetPath)
 	if err != nil {
@@ -259,7 +259,7 @@ func listCustomPresetNames() ([]string, error) {
 		return nil, err
 	}
 
-	presetDir := filepath.Join(homeDir, ".config", "revcli", "presets")
+	presetDir := filepath.Join(homeDir, ".config", "plancli", "presets")
 
 	// Check if directory exists
 	if _, err := os.Stat(presetDir); os.IsNotExist(err) {
@@ -302,7 +302,7 @@ func GetSystemPromptPath() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return filepath.Join(homeDir, ".config", "revcli", "presets", "system.yaml"), nil
+	return filepath.Join(homeDir, ".config", "plancli", "presets", "system.yaml"), nil
 }
 
 // LoadSystemPrompt loads the system prompt from custom file or returns empty string to use default
