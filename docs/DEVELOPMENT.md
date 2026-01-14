@@ -2,8 +2,7 @@
 
 ## Design Principles & Coding Standards
 
-> **Reference:** All design principles, coding standards, and implementation guidelines are defined in [
-> `.cursor/rules/rules.mdc`](../.cursor/rules/rules.mdc).
+> **Reference:** All design principles, coding standards, and implementation guidelines are defined in [`.cursor/rules/rules.mdc`](../.cursor/rules/rules.mdc) and [`AGENTS.md`](../AGENTS.md)
 
 ### How To Apply These Rules
 
@@ -362,6 +361,9 @@ sequenceDiagram
 - [ ] `config` command to manually change default settings
 - [ ] `config`: handle refactor func `LoadConfig`
 - [ ] Support for multiple config providers/sources
+
+### Prompt Caching
+- [ ] Implement Claude's prompt caching to optimize token usages 
 
 # v0.7.0 - Functional Calling
 
