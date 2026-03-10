@@ -65,6 +65,8 @@ cd revcli
 make build
 ```
 
+Then run **`revcli`** to start the interactive TUI (see [Usage](#usage) below).
+
 ## Configuration
 
 Configure your provider(s) in `~/.config/revcli/config.yaml`. The app can also prompt you to pick a provider and model when you run `revcli` (no args).
@@ -79,6 +81,18 @@ revcli update-providers
 ```
 
 ## Usage
+
+### Getting started — run revcli
+
+The main way to use revcli is to run:
+
+```bash
+revcli
+```
+
+This launches the **interactive TUI**: you choose a provider and model (or set one up if needed), then you can start a code review or chat with the AI from the same interface. Use this when you want the full experience (sessions, follow-up chat, file list, presets).
+
+To review code directly from the command line (e.g. in scripts or CI), use `revcli review` instead (see below).
 
 ### Basic Review
 
