@@ -8,7 +8,7 @@
 
 > **LLM-powered code reviewer CLI.**
 
-**revcli** is a local command-line tool that acts as an intelligent peer reviewer. It reads your local git changes and uses Google's Gemini LLM to analyze your code for bugs, optimization opportunities, and best practices—all before you push a single commit.
+**revcli** is a local command-line tool that acts as an intelligent peer reviewer. It reads your local git changes and uses your chosen LLM provider to analyze your code for bugs, optimization opportunities, and best practices—all before you push a single commit.
 
 ## Features
 
@@ -18,7 +18,24 @@
 - **Token Usage Display:** Track actual token usage after each review.
 - **Privacy-First:** Runs locally with built-in secret detection to prevent accidentally sending credentials to the LLM.
 - **Interactive Chat:** Ask follow-up questions about the review in an interactive TUI.
-- **Gemini Integration:** Leverages the large context window and reasoning of Gemini 2.5 Pro.
+- **Multi-Provider:** Use cloud APIs (Gemini, Claude, GPT, etc.) or local LLMs (Ollama, LM Studio, vLLM) via a single config.
+
+## Supported providers
+
+revcli supports many LLM providers. The list is supplied by [Catwalk](https://github.com/charmbracelet/catwalk) (Charm’s provider registry) and can be updated with `revcli update-providers`. Supported **provider types** include:
+
+| Type | Description |
+|------|-------------|
+| **Google (Gemini)** | Google AI Studio – e.g. `gemini-2.5-pro`, `gemini-2.5-flash` |
+| **Google Vertex AI** | Google Cloud Vertex AI |
+| **OpenAI** | OpenAI API – e.g. `gpt-4o`, `gpt-4o-mini` |
+| **Anthropic** | Claude models – e.g. `claude-3-5-sonnet`, `claude-3-opus` |
+| **Azure OpenAI** | Azure-hosted OpenAI-compatible endpoints |
+| **AWS Bedrock** | Amazon Bedrock (e.g. Claude on Bedrock) |
+| **OpenRouter** | [OpenRouter](https://openrouter.ai) – many models behind one API |
+| **OpenAI-compatible (local)** | Any server that speaks the OpenAI API: **Ollama**, **LM Studio**, **vLLM**, **LocalAI**, etc. |
+
+You choose a provider and model in `~/.config/revcli/config.yaml` or via the TUI when you run `revcli` without arguments. Code review uses your configured **large** model.
 
 ## Prerequisites
 
@@ -26,7 +43,11 @@ Before using the tool, ensure you have the following installed:
 
 - **Go** (version 1.21 or higher)
 - **Git** installed and initialized in your project.
-- A **Google Gemini API Key** (Get one [here](https://aistudio.google.com/)).
+- At least one **LLM provider** configured (API key or local endpoint). Examples:
+  - **Google Gemini:** Get an API key [here](https://aistudio.google.com/).
+  - **OpenAI:** API key from [platform.openai.com](https://platform.openai.com/).
+  - **Anthropic:** API key from [console.anthropic.com](https://console.anthropic.com/).
+  - **Local (Ollama, LM Studio, etc.):** No key needed; set `base_url` in config (e.g. `http://localhost:11434/v1` for Ollama).
 
 ## Installation
 
@@ -44,19 +65,18 @@ cd revcli
 make build
 ```
 
-# Install new version
-go install github.com/trankhanh040147/revcli@latest
-```
-
 ## Configuration
 
-Set your Gemini API key as an environment variable:
+Configure your provider(s) in `~/.config/revcli/config.yaml`. The app can also prompt you to pick a provider and model when you run `revcli` (no args).
+
+- **Cloud providers:** Set the provider’s API key in the config or via the relevant env var (e.g. `GEMINI_API_KEY`, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`). Keys are not overridable via a review command flag; use the config or env.
+- **Local LLMs (Ollama, LM Studio, vLLM, etc.):** Add a provider with `type: openai-compat` and `base_url` pointing to your server (e.g. `http://localhost:11434/v1` for Ollama). No API key required for most local setups.
+
+To refresh the list of available providers and models from the Catwalk registry:
 
 ```bash
-export GEMINI_API_KEY="your-api-key-here"
+revcli update-providers
 ```
-
-Or pass it directly via the `--api-key` flag.
 
 ## Usage
 
@@ -93,7 +113,7 @@ revcli review --staged
 
 ### Use a Specific Model
 
-The default model is `gemini-2.5-pro`. You can also use other models:
+The model used for review is your configured **large** model in `~/.config/revcli`. You can change it via the TUI (run `revcli` and pick a provider/model) or by editing the config. The `--model` flag lets you request a specific model name for the current provider (e.g. `gemini-2.5-flash`, `gpt-4o`, `claude-3-5-sonnet`):
 
 ```bash
 revcli review --model gemini-2.5-flash
@@ -161,10 +181,12 @@ When running in interactive mode (default), you can:
 
 - **View the review:** The AI analysis is displayed in a scrollable viewport
 - **Ask follow-up questions:** Press `Enter` to enter chat mode, then `Alt+Enter` to send
-- **Navigate:** Use Vim-style keys (`j/k` for up/down, `g/G` for top/bottom) or arrow keys
-- **Search:** Press `/` to search within the review, `n/N` for next/previous match
+- **Navigate:** Use Vim-style keys (`j/k` for up/down, `g/G` for top/bottom) or arrow keys; half/full page: `Ctrl+d` / `Ctrl+u`, `Ctrl+f` / `Ctrl+b`
+- **Search:** Press `/` to search within the review, `n/N` for next/previous match, `Tab` to toggle highlight/filter mode, `Esc` to exit search
+- **File list:** Press `i` to enter file list (prune files from context), `j/k` to navigate, `Enter` to view selected file, `Esc` to back to review
 - **Yank to clipboard:** Press `y` (or `yy`) to copy entire review, `Y` for last response only
 - **Prompt history:** In chat mode, use `Ctrl+P` (previous) and `Ctrl+N` (next) to navigate prompt history
+- **Web search:** In chat, press `Ctrl+W` to toggle web search for the model
 - **Cancel requests:** Press `Ctrl+X` to cancel a streaming request
 - **Help:** Press `?` to see all available keybindings
 - **Exit:** Press `q` to quit, `Esc` to exit chat mode
@@ -266,17 +288,48 @@ The changes implement a new user authentication handler...
 
 ## Command Reference
 
+### `revcli review` flags
+
 | Flag | Short | Description |
 |------|------|-------------|
 | `--base <ref>` | `-b` | Base branch/commit to compare against |
 | `--staged` | `-s` | Review only staged changes |
-| `--model <name>` | `-m` | Gemini model (default: gemini-2.5-pro) |
+| `--model <name>` | `-m` | Model to use (e.g. gemini-2.5-pro, gpt-4o); depends on configured provider |
 | `--force` | `-f` | Skip secret detection |
 | `--no-interactive` | `-I` | Disable interactive TUI |
 | `--interactive` | `-i` | Enable interactive TUI (default) |
-| `--api-key <key>` | `-k` | Override GEMINI_API_KEY |
 | `--preset <name>` | `-p` | Use predefined review preset (quick, strict, security, etc.) |
+| `--preset-replace` | `-R` | Replace base prompt with preset prompt instead of appending |
+
+API keys are configured in `~/.config/revcli/config.yaml` (or via env vars); there is no `--api-key` flag on the review command.
+
+### Global flags (all commands)
+
+| Flag | Short | Description |
+|------|------|-------------|
+| `--cwd <dir>` | `-c` | Current working directory |
+| `--data-dir <dir>` | `-D` | Custom revcli data directory |
+| `--debug` | `-d` | Enable debug logging |
+| `--yolo` | `-y` | Auto-accept all permission prompts (dangerous) |
 | `--version` | `-v` | Show version information |
+
+## Architecture & design
+
+revcli is built around clear separation of concerns and patterns suited to AI-powered applications:
+
+- **Coordinator pattern** — A single orchestration layer owns the agent lifecycle: it receives a review request, resolves which model and provider to use, runs the agent, and delegates persistence (sessions, messages) to dedicated services. That keeps orchestration (retries, token refresh, provider-specific options) in one place and leaves storage and UI to their own layers.
+
+- **Streaming-first, non-blocking UI** — The AI response is streamed to the user as it's generated. The UI subscribes to updates (text chunks, tool calls, token usage) over an event bus instead of polling or blocking on I/O, so the interface stays responsive and in sync with backend state.
+
+- **Rich tool ecosystem** — The reviewer can run shell commands; read, edit, and search files; fetch URLs and use agentic web fetch; and query LSP (diagnostics, references) when configured. Tools from [Model Context Protocol](https://modelcontextprotocol.io) (MCP) servers are exposed the same way. Which tools an agent can use is configurable, and permission prompts (e.g. "Allow bash?") are sent through the same event system so the TUI can show allow/deny dialogs without blocking.
+
+- **Template-driven personas** — Review style and behavior are defined in **templates** (rules, communication style, review workflow, output format), not hardcoded. Context such as working directory, git status, and platform is injected at runtime. Changing "Senior Engineer" behavior or adding a new review mode is a matter of editing templates, not application code.
+
+- **Event-driven sync** — Sessions, messages, permissions, file history, MCP, and LSP all emit create/update/delete events. The app funnels these into one stream the TUI consumes, so list views, chat, and dialogs stay in sync with no polling.
+
+- **Multi-provider, registry-based** — Supported LLM providers and models come from a **registry** ([Catwalk](https://github.com/charmbracelet/catwalk)), not a fixed list in code. Users pick a model in config (or via the TUI); the app resolves the right backend (cloud or local OpenAI-compatible). The registry can be refreshed with `revcli update-providers`, so new providers and models appear without shipping a new binary.
+
+For sequence diagrams and more detail, see the [Development Roadmap](docs/DEVELOPMENT.md#coordinator-architecture).
 
 ## Development
 

@@ -27,8 +27,8 @@ var reviewCmd = &cobra.Command{
 	Use:   "review",
 	Short: "Review code changes using AI",
 	Long: `Analyzes your git diff and provides an intelligent code review.
-Uses Google's Gemini LLM to detect bugs, suggest optimizations,
-and ensure idiomatic Go practices.
+Uses your configured LLM provider to detect bugs, suggest optimizations,
+and ensure idiomatic practices.
 
 Examples:
   # Review staged changes with interactive chat
@@ -57,7 +57,7 @@ func init() {
 
 	reviewCmd.Flags().BoolVarP(&staged, "staged", "s", false, "Review only staged changes (git diff --staged)")
 	reviewCmd.Flags().StringVarP(&baseBranch, "base", "b", "", "Base branch/commit to compare against (e.g., main, develop, abc123)")
-	reviewCmd.Flags().StringVarP(&model, "model", "m", "gemini-2.5-pro", "Gemini model to use (gemini-2.5-pro, gemini-2.5-flash, etc.)")
+	reviewCmd.Flags().StringVarP(&model, "model", "m", "gemini-2.5-pro", "Model to use (e.g. gemini-2.5-pro, gpt-4o); depends on configured provider")
 	reviewCmd.Flags().BoolVarP(&force, "force", "f", false, "Skip secret detection and proceed anyway")
 	reviewCmd.Flags().BoolVarP(&interactive, "interactive", "i", true, "Enable interactive chat mode")
 	reviewCmd.Flags().BoolP("no-interactive", "I", false, "Disable interactive chat mode")
