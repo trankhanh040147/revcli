@@ -350,7 +350,6 @@ For sequence diagrams and more detail, see the [Development Roadmap](docs/DEVELO
 For development information, roadmap, and version-specific context:
 
 - **[Development Roadmap](docs/DEVELOPMENT.md)** - Complete roadmap with all versions, features, and known bugs
-- **[v0.3 Development Context](docs/v0.3.md)** - Detailed context for current version development
 
 The development documentation includes:
 - Design principles and coding standards
