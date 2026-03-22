@@ -26,10 +26,10 @@ revcli supports many LLM providers. The list is supplied by [Catwalk](https://gi
 
 | Type | Description |
 |------|-------------|
-| **Google (Gemini)** | Google AI Studio – e.g. `gemini-2.5-pro`, `gemini-2.5-flash` |
+| **Google (Gemini)** | Google AI Studio – e.g. `gemini-3.0-pro`, `gemini-3.0-flash` |
 | **Google Vertex AI** | Google Cloud Vertex AI |
-| **OpenAI** | OpenAI API – e.g. `gpt-4o`, `gpt-4o-mini` |
-| **Anthropic** | Claude models – e.g. `claude-3-5-sonnet`, `claude-3-opus` |
+| **OpenAI** | OpenAI API – e.g. `gpt-5.4`, `gpt-5.4-mini` |
+| **Anthropic** | Claude models – e.g. `claude-opus-4.6`, `claude-sonnet-4-6` |
 | **Azure OpenAI** | Azure-hosted OpenAI-compatible endpoints |
 | **AWS Bedrock** | Amazon Bedrock (e.g. Claude on Bedrock) |
 | **OpenRouter** | [OpenRouter](https://openrouter.ai) – many models behind one API |
@@ -41,7 +41,7 @@ You choose a provider and model in `~/.config/revcli/config.yaml` or via the TUI
 
 Before using the tool, ensure you have the following installed:
 
-- **Go** (version 1.21 or higher)
+- **Go** (version 1.25 or higher)
 - **Git** installed and initialized in your project.
 - At least one **LLM provider** configured (API key or local endpoint). Examples:
   - **Google Gemini:** Get an API key [here](https://aistudio.google.com/).
@@ -127,10 +127,10 @@ revcli review --staged
 
 ### Use a Specific Model
 
-The model used for review is your configured **large** model in `~/.config/revcli`. You can change it via the TUI (run `revcli` and pick a provider/model) or by editing the config. The `--model` flag lets you request a specific model name for the current provider (e.g. `gemini-2.5-flash`, `gpt-4o`, `claude-3-5-sonnet`):
+The model used for review is your configured **large** model in `~/.config/revcli`. You can change it via the TUI (run `revcli` and pick a provider/model) or by editing the config. The `--model` flag lets you request a specific model name for the current provider:
 
 ```bash
-revcli review --model gemini-2.5-flash
+revcli review --model gemini-3.0-flash
 ```
 
 ### Non-Interactive Mode
