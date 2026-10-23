@@ -14,7 +14,7 @@ require (
 	github.com/atotto/clipboard v0.1.4
 	github.com/aymanbagabas/go-udiff v0.3.1
 	github.com/bmatcuk/doublestar/v4 v4.9.1
-	github.com/bytedance/sonic v1.14.2
+	github.com/bytedance/sonic v1.15.4
 	github.com/charlievieth/fastwalk v1.0.14
 	github.com/charmbracelet/catwalk v0.11.5
 	github.com/charmbracelet/colorprofile v0.4.1
@@ -94,7 +94,7 @@ require (
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/bytedance/gopkg v0.1.3 // indirect
-	github.com/bytedance/sonic/loader v0.4.0 // indirect
+	github.com/bytedance/sonic/loader v0.5.2 // indirect
 	github.com/catppuccin/go v0.3.0 // indirect
 	github.com/charmbracelet/anthropic-sdk-go v0.0.0-20251024181547-21d6f3d9a904 // indirect
 	github.com/charmbracelet/bubbles v0.21.1-0.20250623103423-23b8fd6302d7 // indirect
